@@ -506,6 +506,23 @@ void CAnimationSets::SetAnimationCallbackHandler(int nAnimationSet, CAnimationCa
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+CLoadedModelInfo::~CLoadedModelInfo()
+{
+}
+
+void CLoadedModelInfo::PrepareSkinning(int nSkinnedMeshes)
+{
+	m_pAnimationSets->m_nSkinnedMeshes = nSkinnedMeshes;
+	m_pAnimationSets->m_ppSkinnedMeshes = new CSkinnedMesh * [m_pAnimationSets->m_nSkinnedMeshes];
+
+	int nSkinnedMesh = 0;
+	m_pModelRootObject->FindAndSetSkinnedMesh(m_pAnimationSets->m_ppSkinnedMeshes, &nSkinnedMesh);
+
+	for (int i = 0; i < m_pAnimationSets->m_nSkinnedMeshes; i++) m_pAnimationSets->m_ppSkinnedMeshes[i]->PrepareSkinning(m_pModelRootObject);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 CAnimationController::CAnimationController(FbxScene *pfbxScene)
 {
     FbxArray<FbxString *> fbxAnimationStackNames;
@@ -581,6 +598,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed)
 //
 CGameObject::CGameObject()
 {
+	m_xmf4x4ToParent = Matrix4x4::Identity();
 	m_xmf4x4World = Matrix4x4::Identity();
 }
 
@@ -619,6 +637,29 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 
 	FbxAMatrix fbxf4x4World = ::XmFloat4x4MatrixToFbxMatrix(m_xmf4x4World);
 	if (m_pfbxScene) ::RenderFbxNodeHierarchy(pd3dCommandList, m_pfbxScene->GetRootNode(), m_pAnimationController->GetCurrentTime(), fbxf4x4World);
+}
+
+CSkinnedMesh* CGameObject::FindSkinnedMesh(char* pstrSkinnedMeshName)
+{
+	CSkinnedMesh* pSkinnedMesh = NULL;
+	if (m_pMesh && (m_pMesh->GetType() & VERTEXT_BONE_INDEX_WEIGHT))
+	{
+		pSkinnedMesh = (CSkinnedMesh*)m_pMesh;
+		if (!strcmp(pSkinnedMesh->m_pstrMeshName, pstrSkinnedMeshName)) return(pSkinnedMesh);
+	}
+
+	if (m_pSibling) if (pSkinnedMesh = m_pSibling->FindSkinnedMesh(pstrSkinnedMeshName)) return(pSkinnedMesh);
+	if (m_pChild) if (pSkinnedMesh = m_pChild->FindSkinnedMesh(pstrSkinnedMeshName)) return(pSkinnedMesh);
+
+	return(NULL);
+}
+
+void CGameObject::FindAndSetSkinnedMesh(CSkinnedMesh** ppSkinnedMeshes, int* pnSkinnedMesh)
+{
+	if (m_pMesh && (m_pMesh->GetType() & VERTEXT_BONE_INDEX_WEIGHT)) ppSkinnedMeshes[(*pnSkinnedMesh)++] = (CSkinnedMesh*)m_pMesh;
+
+	if (m_pSibling) m_pSibling->FindAndSetSkinnedMesh(ppSkinnedMeshes, pnSkinnedMesh);
+	if (m_pChild) m_pChild->FindAndSetSkinnedMesh(ppSkinnedMeshes, pnSkinnedMesh);
 }
 
 CGameObject* CGameObject::FindFrame(char* pstrFrameName)

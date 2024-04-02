@@ -289,6 +289,50 @@ public:
 	void SetAnimationCallbackHandler(int nAnimationSet, CAnimationCallbackHandler* pCallbackHandler);
 };
 
+class CAnimationTrack
+{
+public:
+	CAnimationTrack() { }
+	~CAnimationTrack() { }
+
+public:
+	BOOL 							m_bEnable = true;
+	float 							m_fSpeed = 1.0f;
+	float 							m_fPosition = 0.0f;
+	float 							m_fWeight = 1.0f;
+
+	int 							m_nAnimationSet = 0;
+
+	float							m_fStartTime = 0.0f;
+	float							m_fEndTime = 0.0f;
+	float							m_fLength = 0.0f;
+
+public:
+	void SetAnimationSet(int nAnimationSet) { m_nAnimationSet = nAnimationSet; }
+
+	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
+	void SetSpeed(float fSpeed) { m_fSpeed = fSpeed; }
+	void SetWeight(float fWeight) { m_fWeight = fWeight; }
+	void SetPosition(float fPosition) { m_fPosition = fPosition; }
+
+	void SetStartEndTime(float fTrackStartTime, float fTrackEndTime) { m_fStartTime = fTrackStartTime; m_fEndTime = fTrackEndTime; m_fLength = m_fEndTime - m_fStartTime; }
+};
+
+class CLoadedModelInfo
+{
+public:
+	CLoadedModelInfo() { }
+	~CLoadedModelInfo();
+
+public:
+	CGameObject* m_pModelRootObject = NULL;
+
+	CAnimationSets* m_pAnimationSets = NULL;
+
+public:
+	void PrepareSkinning(int nSkinnedMeshes);
+};
+
 class CAnimationController 
 {
 public:
@@ -336,8 +380,11 @@ public:
 public:
 	char							m_pstrFrameName[64];
 
+	CMesh							*m_pMesh = NULL;
+
 	FbxScene 						*m_pfbxScene = NULL;
 
+	XMFLOAT4X4						m_xmf4x4ToParent;
 	XMFLOAT4X4  					m_xmf4x4World;
 
 	XMFLOAT3						m_xmf3Scale;
@@ -388,6 +435,11 @@ public:
 	CGameObject* FindFrame(char* pstrFrameName);
 
 public:
+	CAnimationController* m_pSkinnedAnimationController = NULL;
+
+	CSkinnedMesh* FindSkinnedMesh(char* pstrSkinnedMeshName);
+	void FindAndSetSkinnedMesh(CSkinnedMesh** ppSkinnedMeshes, int* pnSkinnedMesh);
+
 	void SetAnimationStack(int nAnimationStack) { m_pAnimationController->SetAnimationStack(m_pfbxScene, nAnimationStack); }
 };
 
