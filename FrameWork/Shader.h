@@ -89,3 +89,32 @@ public:
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CWireFrameShader : public CShader
+{
+public:
+	CWireFrameShader();
+	virtual ~CWireFrameShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
+
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CSkinnedAnimationWireFrameShader : public CShader
+{
+public:
+	CSkinnedAnimationWireFrameShader();
+	virtual ~CSkinnedAnimationWireFrameShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
+
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+};
