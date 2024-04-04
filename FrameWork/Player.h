@@ -66,7 +66,7 @@ public:
 	void Move(float fxOffset = 0.0f, float fyOffset = 0.0f, float fzOffset = 0.0f);
 	void Rotate(float x, float y, float z);
 
-	void Update(float fTimeElapsed);
+	virtual void Update(float fTimeElapsed);
 
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed) { }
 	void SetPlayerUpdatedContext(LPVOID pContext) { m_pPlayerUpdatedContext = pContext; }
@@ -85,13 +85,34 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
 };
 
+class CSoundCallbackHandler : public CAnimationCallbackHandler
+{
+public:
+	CSoundCallbackHandler() { }
+	~CSoundCallbackHandler() { }
+
+public:
+	virtual void HandleCallback(void* pCallbackData, float fTrackPosition);
+};
+
+#define _WITH_SOUND_CALLBACK
+
 class CAngrybotPlayer : public CPlayer
 {
 public:
-	CAngrybotPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, FbxManager *pfbxSdkManager, FbxScene *pfbxScene);
+	CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL);
 	virtual ~CAngrybotPlayer();
 
 public:
+	virtual void OnPrepareRender();
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
+
+	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+	virtual void OnCameraUpdateCallback(float fTimeElapsed);
+
+#ifdef _WITH_SOUND_CALLBACK
+	virtual void Move(ULONG nDirection, float fDistance, bool bVelocity = false);
+	virtual void Update(float fTimeElapsed);
+#endif
 };
 
