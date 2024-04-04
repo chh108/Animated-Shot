@@ -41,8 +41,6 @@ public:
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	void CreateFbxSdkManager();
-
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
@@ -89,8 +87,5 @@ private:
 	POINT						m_ptOldCursorPos;
 
 	_TCHAR						m_pszFrameRate[70];
-
-	FbxManager 					*m_pfbxSdkManager = NULL;
-	FbxScene  					*m_pfbxScene = NULL;
 };
 

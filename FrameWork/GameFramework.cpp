@@ -395,38 +395,20 @@ void CGameFramework::OnDestroy()
 
 #define _WITH_TERRAIN_PLAYER
 
-void CGameFramework::CreateFbxSdkManager()
-{
-	m_pfbxSdkManager = FbxManager::Create();
-	FbxIOSettings *pfbxIOSettings = FbxIOSettings::Create(m_pfbxSdkManager, IOSROOT);
-	m_pfbxSdkManager->SetIOSettings(pfbxIOSettings);
-	FbxString fbxstrPath = ::FbxGetApplicationDirectory();
-	m_pfbxSdkManager->LoadPluginsDirectory(fbxstrPath.Buffer());
-}
-
 void CGameFramework::BuildObjects()
 {
-	CreateFbxSdkManager();
-
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-#ifdef _WITH_FBX_SCENE_INSTANCING
-	m_pfbxScene = ::LoadFbxSceneFromFile(m_pd3dDevice, m_pd3dCommandList, m_pfbxSdkManager, "Model/Angrybot.fbx");
-#endif
 	m_pScene = new CScene();
-	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pfbxSdkManager, m_pfbxScene);
+	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-#ifdef _WITH_FBX_SCENE_INSTANCING
-	::CreateMeshFromFbxNodeHierarchy(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pfbxScene->GetRootNode());
-#endif
-
-	CAngrybotPlayer *pPlayer = new CAngrybotPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pfbxSdkManager, m_pfbxScene);
+	CAngrybotPlayer* pPlayer = new CAngrybotPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pd3dCommandList->Close();
-	ID3D12CommandList *ppd3dCommandLists[] = { m_pd3dCommandList };
+	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 	WaitForGpuComplete();
@@ -434,9 +416,6 @@ void CGameFramework::BuildObjects()
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
-#ifdef _WITH_FBX_SCENE_INSTANCING
-	if (m_pfbxScene) ::ReleaseUploadBufferFromFbxNodeHierarchy(m_pfbxScene->GetRootNode());
-#endif
 	m_GameTimer.Reset();
 }
 
@@ -447,7 +426,7 @@ void CGameFramework::ReleaseObjects()
 	if (m_pfbxScene) m_pfbxScene->Destroy();
 #endif
 
-	if (m_pPlayer) m_pPlayer->Release();
+	// if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
