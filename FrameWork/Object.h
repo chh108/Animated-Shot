@@ -336,30 +336,38 @@ public:
 class CAnimationController 
 {
 public:
-	CAnimationController(FbxScene *pfbxScene);
+	CAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel, bool bApplyRootMotion = false);
 	~CAnimationController();
 
 public:
     float 							m_fTime = 0.0f;
 	bool							m_bApplyRootMotion = false;
 
-	int 							m_nAnimationStacks = 0;
-	FbxAnimStack 					**m_ppfbxAnimationStacks = NULL;
+	int 							m_nAnimationTracks = 0;
+	CAnimationTrack 				*m_pAnimationTracks = NULL;
 
-	int 							m_nAnimationStack = 0;
+	CAnimationSets					*m_pAnimationSets = NULL;
 
-	FbxTime							*m_pfbxStartTimes = NULL;
-	FbxTime							*m_pfbxStopTimes = NULL;
-
-	FbxTime							*m_pfbxCurrentTimes = NULL;
-
+	ID3D12Resource  				**m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
+	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL;
 public:
-	void SetAnimationStack(FbxScene *pfbxScene, int nAnimationStack);
 
-	void AdvanceTime(float fElapsedTime);
-	FbxTime GetCurrentTime() { return(m_pfbxCurrentTimes[m_nAnimationStack]); }
+	void SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet);
+	void SetTrackEnable(int nAnimationTrack, bool bEnable);
+	void SetTrackPosition(int nAnimationTrack, float fPosition);
+	void SetTrackSpeed(int nAnimationTrack, float fSpeed);
+	void SetTrackWeight(int nAnimationTrack, float fWeight);
+	void SetTrackStartEndTime(int nAnimationTrack, float fStartTime, float fEndTime);
 
-	void SetPosition(int nAnimationStack, float fPosition);
+	void SetAnimationType(int nAnimationSet, int nType);
+
+	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);
+	void SetCallbackKey(int nAnimationSet, int nKeyIndex, float fTime, void* pData);
+	void SetAnimationCallbackHandler(int nAnimationSet, CAnimationCallbackHandler* pCallbackHandler);
+
+	void AdvanceTime(float fElapsedTime, CGameObject* pRootGameObject);
+
+	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -375,15 +383,19 @@ public:
 
 public:
 	CGameObject();
+	CGameObject(int nMaterials);
     virtual ~CGameObject();
 
 public:
+	bool							m_bActive = true;
+
 	char							m_pstrFrameName[64];
 
 	CMesh							*m_pMesh = NULL;
 
-	FbxScene 						*m_pfbxScene = NULL;
-
+	int								m_nMaterials = 0;
+	CMaterial						**m_ppMaterials = NULL;
+	
 	XMFLOAT4X4						m_xmf4x4ToParent;
 	XMFLOAT4X4  					m_xmf4x4World;
 
@@ -402,9 +414,22 @@ public:
 
 	CAnimationController 			*m_pAnimationController = NULL;
 
+	void SetMesh(CMesh* pMesh);
+	void SetShader(CShader* pShader);
+	void SetShader(int nMaterial, CShader* pShader);
+	void SetWireFrameShader();
+	void SetSkinnedAnimationWireFrameShader();
+	void SetMaterial(int nMaterial, CMaterial* pMaterial);
+
+	void SetChild(CGameObject* pChild, bool bReferenceUpdate = false);
+
+	virtual void BuildMaterials(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList) { }
+
+	virtual void OnPrepareAnimate() { }
 	virtual void Animate(float fTimeElapsed);
+
 	virtual void OnPrepareRender() { }
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera);
+	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
@@ -432,7 +457,17 @@ public:
 	void Rotate(XMFLOAT3 *pxmf3Axis, float fAngle);
 	void Rotate(XMFLOAT4 *pxmf4Quaternion);
 
+	CGameObject* GetParent() { return (m_pParent); }
+	void UpdateTransform(XMFLOAT4X4* pxmf4x4Parent = NULL);
+
+	void ResetForAnimationBlending();
+
+	void CacheFrameHierachies(CGameObject** ppBoneFrameCaches, int* pnFrame);
+
 	CGameObject* FindFrame(char* pstrFrameName);
+	void SetActive(char* pstrFrameName, bool bActive);
+
+	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0x00); }
 
 public:
 	CAnimationController* m_pSkinnedAnimationController = NULL;
@@ -440,7 +475,15 @@ public:
 	CSkinnedMesh* FindSkinnedMesh(char* pstrSkinnedMeshName);
 	void FindAndSetSkinnedMesh(CSkinnedMesh** ppSkinnedMeshes, int* pnSkinnedMesh);
 
-	void SetAnimationStack(int nAnimationStack) { m_pAnimationController->SetAnimationStack(m_pfbxScene, nAnimationStack); }
+	void SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet);
+	void SetTrackAnimationPosition(int nAnimationTrack, float fPosition);
+
+	static void LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel);
+	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames);
+
+	static CLoadedModelInfo* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
+
+	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

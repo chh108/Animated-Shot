@@ -523,76 +523,187 @@ void CLoadedModelInfo::PrepareSkinning(int nSkinnedMeshes)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CAnimationController::CAnimationController(FbxScene *pfbxScene)
+CAnimationController::CAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel, bool bApplyRootMotion = false)
 {
-    FbxArray<FbxString *> fbxAnimationStackNames;
-	pfbxScene->FillAnimStackNameArray(fbxAnimationStackNames);
+	m_nAnimationTracks = nAnimationTracks;
+	m_pAnimationTracks = new CAnimationTrack[nAnimationTracks];
 
-	m_nAnimationStacks = fbxAnimationStackNames.Size();
+	m_bApplyRootMotion = bApplyRootMotion;
 
-	m_ppfbxAnimationStacks = new FbxAnimStack*[m_nAnimationStacks];
-	m_pfbxStartTimes = new FbxTime[m_nAnimationStacks];
-	m_pfbxStopTimes = new FbxTime[m_nAnimationStacks];
-	m_pfbxCurrentTimes = new FbxTime[m_nAnimationStacks];
+	if (m_pAnimationSets) m_pAnimationSets->Release();
+	m_pAnimationSets = pModel->m_pAnimationSets;
+	if (m_pAnimationSets) m_pAnimationSets->AddRef();
 
-	for (int i = 0; i < m_nAnimationStacks; i++)
+	m_ppd3dcbSkinningBoneTransforms = new ID3D12Resource * [m_pAnimationSets->m_nSkinnedMeshes];
+	m_ppcbxmf4x4MappedSkinningBoneTransforms = new XMFLOAT4X4 * [m_pAnimationSets->m_nSkinnedMeshes];
+
+	UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); // 256의 배수로 고정
+	for (int i = 0; i < m_pAnimationSets->m_nSkinnedMeshes; i++)
 	{
-		FbxString *pfbxStackName = fbxAnimationStackNames[i];
-		FbxAnimStack *pfbxAnimationStack = pfbxScene->FindMember<FbxAnimStack>(pfbxStackName->Buffer());
-		m_ppfbxAnimationStacks[i] = pfbxAnimationStack;
-
-		FbxTakeInfo *pfbxTakeInfo = pfbxScene->GetTakeInfo(*pfbxStackName);
-		FbxTime fbxStartTime, fbxStopTime;
-		if (pfbxTakeInfo)
-		{
-			fbxStartTime = pfbxTakeInfo->mLocalTimeSpan.GetStart();
-			fbxStopTime = pfbxTakeInfo->mLocalTimeSpan.GetStop();
-		}
-		else
-		{
-			FbxTimeSpan fbxTimeLineTimeSpan;
-			pfbxScene->GetGlobalSettings().GetTimelineDefaultTimeSpan(fbxTimeLineTimeSpan);
-			fbxStartTime = fbxTimeLineTimeSpan.GetStart();
-			fbxStopTime = fbxTimeLineTimeSpan.GetStop();
-		}
-
-		m_pfbxStartTimes[i] = fbxStartTime;
-		m_pfbxStopTimes[i] = fbxStopTime;
-		m_pfbxCurrentTimes[i] = FbxTime(0);
+		m_ppd3dcbSkinningBoneTransforms[i] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+		m_ppd3dcbSkinningBoneTransforms[i]->Map(0, NULL, (void**)&m_ppcbxmf4x4MappedSkinningBoneTransforms[i]);
 	}
-
-    FbxArrayDelete(fbxAnimationStackNames);
 }
 
 CAnimationController::~CAnimationController()
 {
-	if (m_ppfbxAnimationStacks) delete[] m_ppfbxAnimationStacks;
-	if (m_pfbxStartTimes) delete[] m_pfbxStartTimes;
-	if (m_pfbxStopTimes) delete[] m_pfbxStopTimes;
-	if (m_pfbxCurrentTimes) delete[] m_pfbxCurrentTimes;
+	if (m_pAnimationTracks) delete[] m_pAnimationTracks;
+
+	for (int i = 0; i < m_pAnimationSets->m_nSkinnedMeshes; i++)
+	{
+		m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
+		m_ppd3dcbSkinningBoneTransforms[i]->Release();
+	}
+	if (m_ppd3dcbSkinningBoneTransforms) delete[] m_ppd3dcbSkinningBoneTransforms;
+	if (m_ppcbxmf4x4MappedSkinningBoneTransforms) delete[] m_ppcbxmf4x4MappedSkinningBoneTransforms;
+
+	if (m_pAnimationSets) m_pAnimationSets->Release();
 }
 
-void CAnimationController::SetAnimationStack(FbxScene *pfbxScene, int nAnimationStack)
+void CAnimationController::SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet)
 {
-	m_nAnimationStack = nAnimationStack;
-	pfbxScene->SetCurrentAnimationStack(m_ppfbxAnimationStacks[nAnimationStack]);
+	if (m_pAnimationTracks)
+	{
+		m_pAnimationTracks[nAnimationTrack].SetAnimationSet(nAnimationSet);
+		m_pAnimationTracks[nAnimationTrack].SetStartEndTime(m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->m_fStartTime, m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->m_fEndTime);
+	}
 }
 
-void CAnimationController::SetPosition(int nAnimationStack, float fPosition)
+void CAnimationController::SetTrackEnable(int nAnimationTrack, bool bEnable)
 {
-	m_pfbxCurrentTimes[nAnimationStack].SetSecondDouble(fPosition);;
+	if (m_pAnimationTracks) m_pAnimationTracks[nAnimationTrack].SetEnable(bEnable);
 }
 
-void CAnimationController::AdvanceTime(float fTimeElapsed) 
+void CAnimationController::SetTrackPosition(int nAnimationTrack, float fPosition)
 {
-	m_fTime += fTimeElapsed; 
+	if (m_pAnimationTracks)
+	{
+		m_pAnimationTracks[nAnimationTrack].SetPosition(fPosition);
+		if (m_pAnimationSets->m_ppAnimationSets) m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[nAnimationTrack].m_nAnimationSet]->SetPosition(fPosition);
+	}
+}
 
-	FbxTime fbxElapsedTime;
-	fbxElapsedTime.SetSecondDouble(fTimeElapsed);
+void CAnimationController::SetTrackSpeed(int nAnimationTrack, float fSpeed)
+{
+	if (m_pAnimationTracks) m_pAnimationTracks[nAnimationTrack].SetSpeed(fSpeed);
+}
 
-	m_pfbxCurrentTimes[m_nAnimationStack] += fbxElapsedTime;
-	if (m_pfbxCurrentTimes[m_nAnimationStack] > m_pfbxStopTimes[m_nAnimationStack]) m_pfbxCurrentTimes[m_nAnimationStack] = m_pfbxStartTimes[m_nAnimationStack];
-} 
+void CAnimationController::SetTrackWeight(int nAnimationTrack, float fWeight)
+{
+	if (m_pAnimationTracks) m_pAnimationTracks[nAnimationTrack].SetWeight(fWeight);
+}
+
+void CAnimationController::SetTrackStartEndTime(int nAnimationTrack, float fStartTime, float fEndTime)
+{
+	if (m_pAnimationTracks) m_pAnimationTracks[nAnimationTrack].SetStartEndTime(fStartTime, fEndTime);
+}
+
+void CAnimationController::SetAnimationType(int nAnimationSet, int nType)
+{
+	if (m_pAnimationSets->m_ppAnimationSets) m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->SetAnimationType(nType);
+}
+
+void CAnimationController::SetCallbackKeys(int nAnimationSet, int nCallbackKeys)
+{
+	if (m_pAnimationSets)
+	{
+		m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->m_nCallbackKeys = nCallbackKeys;
+		m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->m_pCallbackKeys = new CALLBACKKEY[nCallbackKeys];
+	}
+}
+
+void CAnimationController::SetCallbackKey(int nAnimationSet, int nKeyIndex, float fTime, void* pData)
+{
+	if (m_pAnimationSets)
+	{
+		m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->m_pCallbackKeys[nKeyIndex].m_fTime = fTime;
+		m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->m_pCallbackKeys[nKeyIndex].m_pCallbackData = pData;
+	}
+}
+
+void CAnimationController::SetAnimationCallbackHandler(int nAnimationSet, CAnimationCallbackHandler* pCallbackHandler)
+{
+	if (m_pAnimationSets) m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->SetAnimationCallbackHandler(pCallbackHandler);
+}
+
+void CAnimationController::AdvanceTime(float fElapsedTime, CGameObject* pRootGameObject)
+{
+	m_fTime += fTimeElapsed;
+	int nEnabledAnimationTracks = 0;
+
+	if (m_pAnimationTracks)
+	{
+		for (int i = 0; i < m_nAnimationTracks; i++)
+		{
+			if (m_pAnimationTracks[i].m_bEnable)
+			{
+				nEnabledAnimationTracks++;
+				CAnimationSet* pAnimationSet = m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[i].m_nAnimationSet];
+				pAnimationSet->Animate(fTimeElapsed * m_pAnimationTracks[i].m_fSpeed, m_pAnimationTracks[i].m_fWeight, m_pAnimationTracks[i].m_fStartTime, m_pAnimationTracks[i].m_fEndTime, (i == 0));
+			}
+		}
+	}
+	//*
+	if (nEnabledAnimationTracks == 1)
+	{
+		for (int i = 0; i < m_nAnimationTracks; i++)
+		{
+			if (m_pAnimationTracks[i].m_bEnable)
+			{
+				CAnimationSet* pAnimationSet = m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[i].m_nAnimationSet];
+				for (int i = 0; i < pAnimationSet->m_nAnimationLayers; i++)
+				{
+					for (int j = 0; j < pAnimationSet->m_pAnimationLayers[i].m_nAnimatedBoneFrames; j++)
+					{
+						CGameObject* pBoneFrameCache = pAnimationSet->m_pAnimationLayers[i].m_ppAnimatedBoneFrameCaches[j];
+						XMMATRIX S = XMMatrixScaling(pBoneFrameCache->m_xmf3ScaleLayerBlending.x, pBoneFrameCache->m_xmf3ScaleLayerBlending.y, pBoneFrameCache->m_xmf3ScaleLayerBlending.z);
+						XMMATRIX R = XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(pBoneFrameCache->m_xmf3RotationLayerBlending.x), XMMatrixRotationY(pBoneFrameCache->m_xmf3RotationLayerBlending.y)), XMMatrixRotationZ(pBoneFrameCache->m_xmf3RotationLayerBlending.z));
+						XMMATRIX T = XMMatrixTranslation(pBoneFrameCache->m_xmf3TranslationLayerBlending.x, pBoneFrameCache->m_xmf3TranslationLayerBlending.y, pBoneFrameCache->m_xmf3TranslationLayerBlending.z);
+						XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply(S, R), T));
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < m_nAnimationTracks; i++)
+		{
+			if (m_pAnimationTracks[i].m_bEnable)
+			{
+				CAnimationSet* pAnimationSet = m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[i].m_nAnimationSet];
+				for (int i = 0; i < pAnimationSet->m_nAnimationLayers; i++)
+				{
+					for (int j = 0; j < pAnimationSet->m_pAnimationLayers[i].m_nAnimatedBoneFrames; j++)
+					{
+						CGameObject* pBoneFrameCache = pAnimationSet->m_pAnimationLayers[i].m_ppAnimatedBoneFrameCaches[j];
+						XMMATRIX S = XMMatrixScaling(pBoneFrameCache->m_xmf3ScaleLayerBlending.x, pBoneFrameCache->m_xmf3ScaleLayerBlending.y, pBoneFrameCache->m_xmf3ScaleLayerBlending.z);
+						XMMATRIX R = XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(pBoneFrameCache->m_xmf3RotationLayerBlending.x), XMMatrixRotationY(pBoneFrameCache->m_xmf3RotationLayerBlending.y)), XMMatrixRotationZ(pBoneFrameCache->m_xmf3RotationLayerBlending.z));
+						XMMATRIX T = XMMatrixTranslation(pBoneFrameCache->m_xmf3TranslationLayerBlending.x, pBoneFrameCache->m_xmf3TranslationLayerBlending.y, pBoneFrameCache->m_xmf3TranslationLayerBlending.z);
+						XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply(S, R), T));
+					}
+				}
+			}
+		}
+	}
+	//*/
+
+	pRootGameObject->UpdateTransform(NULL);
+
+	for (int k = 0; k < m_nAnimationTracks; k++)
+	{
+		if (m_pAnimationTracks[k].m_bEnable && m_pAnimationSets->m_ppAnimationSets) m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[k].m_nAnimationSet]->HandleCallback();
+	}
+}
+
+void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	for (int i = 0; i < m_pAnimationSets->m_nSkinnedMeshes; i++)
+	{
+		m_pAnimationSets->m_ppSkinnedMeshes[i]->m_pd3dcbSkinningBoneTransforms = m_ppd3dcbSkinningBoneTransforms[i];
+		m_pAnimationSets->m_ppSkinnedMeshes[i]->m_pcbxmf4x4MappedSkinningBoneTransforms = m_ppcbxmf4x4MappedSkinningBoneTransforms[i];
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -600,6 +711,16 @@ CGameObject::CGameObject()
 {
 	m_xmf4x4ToParent = Matrix4x4::Identity();
 	m_xmf4x4World = Matrix4x4::Identity();
+}
+
+CGameObject::CGameObject(int nMaterials)
+{
+	m_nMaterials = nMaterials;
+	if (m_nMaterials > 0)
+	{
+		m_ppMaterials = new CMaterial * [m_nMaterials];
+		for (int i = 0; i < m_nMaterials; i++) m_ppMaterials[i] = NULL;
+	}
 }
 
 CGameObject::~CGameObject()
@@ -619,6 +740,34 @@ void CGameObject::AddRef()
 void CGameObject::Release() 
 { 
 	if (--m_nReferences <= 0) delete this; 
+}
+
+void CGameObject::SetMesh(CMesh* pMesh)
+{
+}
+
+void CGameObject::SetShader(CShader* pShader)
+{
+}
+
+void CGameObject::SetShader(int nMaterial, CShader* pShader)
+{
+}
+
+void CGameObject::SetWireFrameShader()
+{
+}
+
+void CGameObject::SetSkinnedAnimationWireFrameShader()
+{
+}
+
+void CGameObject::SetMaterial(int nMaterial, CMaterial* pMaterial)
+{
+}
+
+void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
+{
 }
 
 void CGameObject::Animate(float fTimeElapsed)
@@ -662,6 +811,32 @@ void CGameObject::FindAndSetSkinnedMesh(CSkinnedMesh** ppSkinnedMeshes, int* pnS
 	if (m_pChild) m_pChild->FindAndSetSkinnedMesh(ppSkinnedMeshes, pnSkinnedMesh);
 }
 
+void CGameObject::SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet)
+{
+}
+
+void CGameObject::SetTrackAnimationPosition(int nAnimationTrack, float fPosition)
+{
+}
+
+void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel)
+{
+}
+
+CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames)
+{
+	return nullptr;
+}
+
+CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader)
+{
+	return nullptr;
+}
+
+void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
+{
+}
+
 CGameObject* CGameObject::FindFrame(char* pstrFrameName)
 {
 	CGameObject* pFrameObject = NULL;
@@ -672,6 +847,10 @@ CGameObject* CGameObject::FindFrame(char* pstrFrameName)
 	if (m_pChild) if (pFrameObject = m_pChild->FindFrame(pstrFrameName)) return(pFrameObject);
 
 	return(NULL);
+}
+
+void CGameObject::SetActive(char* pstrFrameName, bool bActive)
+{
 }
 
 void CGameObject::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
@@ -785,6 +964,18 @@ void CGameObject::Rotate(XMFLOAT4 *pxmf4Quaternion)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationQuaternion(XMLoadFloat4(pxmf4Quaternion));
 	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
+}
+
+void CGameObject::UpdateTransform(XMFLOAT4X4* pxmf4x4Parent)
+{
+}
+
+void CGameObject::ResetForAnimationBlending()
+{
+}
+
+void CGameObject::CacheFrameHierachies(CGameObject** ppBoneFrameCaches, int* pnFrame)
+{
 }
 
 //#define _WITH_DEBUG_FRAME_HIERARCHY
