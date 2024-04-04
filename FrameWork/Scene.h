@@ -6,6 +6,8 @@
 
 #include "Shader.h"
 #include "Player.h"
+#include "SkyBox.h"
+#include "Terrain.h"
 
 #define MAX_LIGHTS						16 
 

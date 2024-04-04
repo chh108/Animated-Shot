@@ -4,6 +4,8 @@
 #include "Object.h"
 #include "stdafx.h"
 
+class CHeightMapTerrain;
+
 class CHeightMapTerrain : public CGameObject
 {
 public:
@@ -11,12 +13,12 @@ public:
 	virtual ~CHeightMapTerrain();
 
 private:
-	CHeightMapImage* m_pHeightMapImage;
+	CHeightMapImage			*m_pHeightMapImage;
 
-	int				 m_nWidth;
-	int				 m_nLength;
+	int						 m_nWidth;
+	int						 m_nLength;
 
-	XMFLOAT3		 m_xmf3Scale;
+	XMFLOAT3				 m_xmf3Scale;
 
 public:
 	float GetHeight(float x, float z, bool bReverseQuad = false) { return(m_pHeightMapImage->GetHeight(x, z, bReverseQuad) * m_xmf3Scale.y); } //World

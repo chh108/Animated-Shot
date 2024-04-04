@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Shader.h"
+#include "SkyBox.h"
+#include "Terrain.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -275,8 +277,8 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)pContext;
-	SetPosition(XMFLOAT3(310.0f, p0Terrain->GetHeight(310.0f, 595.0f), 595.0f);
+	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
+	SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 595.0f), 595.0f));
 
 	SetScale(XMFLOAT3(0.2f, 0.2f, 0.2f));
 }

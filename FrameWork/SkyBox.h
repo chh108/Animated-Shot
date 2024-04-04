@@ -4,6 +4,8 @@
 #include "Object.h"
 #include "stdafx.h"
 
+class CSkybox;
+
 class CSkyBox : public CGameObject
 {
 public:

@@ -6,7 +6,8 @@
 
 #include "Mesh.h"
 #include "Camera.h"
-#include "FbxSceneContext.h"
+#include <cstddef>  // For Define NULL
+#include "stdafx.h"
 
 #define DIR_FORWARD					0x01
 #define DIR_BACKWARD				0x02
@@ -410,9 +411,6 @@ public:
 	CGameObject*					m_pParent = NULL;
 	CGameObject*					m_pChild = NULL;
 	CGameObject*					m_pSibling = NULL;
-
-
-	CAnimationController 			*m_pAnimationController = NULL;
 
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);

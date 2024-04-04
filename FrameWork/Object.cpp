@@ -523,7 +523,7 @@ void CLoadedModelInfo::PrepareSkinning(int nSkinnedMeshes)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CAnimationController::CAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel, bool bApplyRootMotion = false)
+CAnimationController::CAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel, bool bApplyRootMotion)
 {
 	m_nAnimationTracks = nAnimationTracks;
 	m_pAnimationTracks = new CAnimationTrack[nAnimationTracks];

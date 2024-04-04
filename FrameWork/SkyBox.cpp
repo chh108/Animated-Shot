@@ -1,7 +1,9 @@
+#include "stdafx.h"
 #include "SkyBox.h"
 #include "Object.h"
 #include "Shader.h"
 #include "Scene.h"
+#include "Mesh.h"
 
 CSkyBox::CSkyBox(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature) : CGameObject(1)
 {

@@ -426,12 +426,11 @@ void CGameFramework::ReleaseObjects()
 	if (m_pfbxScene) m_pfbxScene->Destroy();
 #endif
 
-	// if (m_pPlayer) m_pPlayer->Release();
+	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
 
-    if (m_pfbxSdkManager) m_pfbxSdkManager->Destroy();
 }
 
 void CGameFramework::ProcessInput()

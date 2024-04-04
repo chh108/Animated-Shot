@@ -39,10 +39,6 @@ using namespace std;
 #include <dxgidebug.h>
 #endif
 
-#include <fbxsdk.h>
-
-//#define _WITH_FBX_SCENE_INSTANCING
-
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
