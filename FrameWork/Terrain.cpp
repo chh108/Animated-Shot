@@ -1,8 +1,8 @@
-#include "Terrain.h"
 #include "Object.h"
+#include "stdafx.h"
+#include "Terrain.h"
 #include "Shader.h"
 #include "Scene.h"
-#include "stdafx.h"
 
 CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, LPCTSTR pFileName, int nWidth, int nLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color) : CGameObject(1)
 {
@@ -39,7 +39,7 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	SetMaterial(0, pTerrainMaterial);
 }
 
-CHeightMapTerrain::~CHeightMapTerrain()
+CHeightMapTerrain::~CHeightMapTerrain(void)
 {
 	if (m_pHeightMapImage) delete m_pHeightMapImage;
 }
