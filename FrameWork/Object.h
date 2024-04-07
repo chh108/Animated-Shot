@@ -225,14 +225,14 @@ public:
 	char							m_pstrAnimationSetName[64];
 
 	int								m_nAnimationLayers = 0;
-	CAnimationLayer* m_pAnimationLayers = NULL;
+	CAnimationLayer					*m_pAnimationLayers = NULL;
 
 	int								m_nCommonBoneFramesInLayers = 0;
-	CGameObject** m_ppCommonBoneFrameCachesInLayers = NULL; //[m_nAnimationLayers][m_nCommonBoneFramesInLayers]
+	CGameObject						**m_ppCommonBoneFrameCachesInLayers = NULL; //[m_nAnimationLayers][m_nCommonBoneFramesInLayers]
 
-	XMFLOAT3** m_ppxmf3Scales = NULL;
-	XMFLOAT3** m_ppxmf3Rotations = NULL;
-	XMFLOAT3** m_ppxmf3Translations = NULL;
+	XMFLOAT3						**m_ppxmf3Scales = NULL;
+	XMFLOAT3						**m_ppxmf3Rotations = NULL;
+	XMFLOAT3						**m_ppxmf3Translations = NULL;
 
 	float							m_fStartTime = 0.0f;
 	float							m_fEndTime = 0.0f;
@@ -242,9 +242,9 @@ public:
 	int 							m_nType = ANIMATION_TYPE_LOOP; //Once, Loop, PingPong
 
 	int 							m_nCallbackKeys = 0;
-	CALLBACKKEY* m_pCallbackKeys = NULL;
+	CALLBACKKEY						*m_pCallbackKeys = NULL;
 
-	CAnimationCallbackHandler* m_pAnimationCallbackHandler = NULL;
+	CAnimationCallbackHandler		*m_pAnimationCallbackHandler = NULL;
 
 public:
 	float UpdatePosition(float fElapsedTime, float fStartTime, float fEndTime);
@@ -276,13 +276,13 @@ public:
 
 public:
 	int								m_nAnimationSets = 0;
-	CAnimationSet** m_ppAnimationSets = NULL;
+	CAnimationSet					**m_ppAnimationSets = NULL;
 
 	int 							m_nSkinnedMeshes = 0;
-	CSkinnedMesh** m_ppSkinnedMeshes = NULL; //[SkinnedMeshes], Skinned Mesh Cache
+	CSkinnedMesh					**m_ppSkinnedMeshes = NULL; //[SkinnedMeshes], Skinned Mesh Cache
 
 	int								m_nBoneFrames = 0;
-	CGameObject** m_ppBoneFrameCaches = NULL; //[m_nBoneFrames]
+	CGameObject						**m_ppBoneFrameCaches = NULL; //[m_nBoneFrames]
 
 public:
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);
@@ -326,9 +326,9 @@ public:
 	~CLoadedModelInfo();
 
 public:
-	CGameObject* m_pModelRootObject = NULL;
+	CGameObject						*m_pModelRootObject = NULL;
 
-	CAnimationSets* m_pAnimationSets = NULL;
+	CAnimationSets					*m_pAnimationSets = NULL;
 
 public:
 	void PrepareSkinning(int nSkinnedMeshes);
@@ -456,19 +456,19 @@ public:
 	void Rotate(XMFLOAT4 *pxmf4Quaternion);
 
 	CGameObject* GetParent() { return (m_pParent); }
-	void UpdateTransform(XMFLOAT4X4* pxmf4x4Parent = NULL);
+	void UpdateTransform(XMFLOAT4X4 *pxmf4x4Parent = NULL);
 
 	void ResetForAnimationBlending();
 
-	void CacheFrameHierarchies(CGameObject** ppBoneFrameCaches, int* pnFrame);
+	void CacheFrameHierarchies(CGameObject **ppBoneFrameCaches, int* pnFrame);
 
-	CGameObject* FindFrame(char* pstrFrameName);
-	void SetActive(char* pstrFrameName, bool bActive);
+	CGameObject* FindFrame(char *pstrFrameName);
+	void SetActive(char *pstrFrameName, bool bActive);
 
 	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0x00); }
 
 public:
-	CAnimationController* m_pSkinnedAnimationController = NULL;
+	CAnimationController *m_pSkinnedAnimationController = NULL;
 
 	CSkinnedMesh* FindSkinnedMesh(char* pstrSkinnedMeshName);
 	void FindAndSetSkinnedMesh(CSkinnedMesh** ppSkinnedMeshes, int* pnSkinnedMesh);

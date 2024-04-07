@@ -9,6 +9,18 @@
 
 UINT gnCbvSrvDescriptorIncrementSize = 32;
 
+void SynchronizeResourceTransition(ID3D12GraphicsCommandList* pd3dCommandList, ID3D12Resource* pd3dResource, D3D12_RESOURCE_STATES d3dStateBefore, D3D12_RESOURCE_STATES d3dStateAfter)
+{
+	D3D12_RESOURCE_BARRIER d3dResourceBarrier;
+	d3dResourceBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	d3dResourceBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	d3dResourceBarrier.Transition.pResource = pd3dResource;
+	d3dResourceBarrier.Transition.StateBefore = d3dStateBefore;
+	d3dResourceBarrier.Transition.StateAfter = d3dStateAfter;
+	d3dResourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	pd3dCommandList->ResourceBarrier(1, &d3dResourceBarrier);
+}
+
 void WaitForGpuComplete(ID3D12CommandQueue* pd3dCommandQueue, ID3D12Fence* pd3dFence, UINT64 nFenceValue, HANDLE hFenceEvent)
 {
 	HRESULT hResult = pd3dCommandQueue->Signal(pd3dFence, nFenceValue);
@@ -18,6 +30,16 @@ void WaitForGpuComplete(ID3D12CommandQueue* pd3dCommandQueue, ID3D12Fence* pd3dF
 		hResult = pd3dFence->SetEventOnCompletion(nFenceValue, hFenceEvent);
 		::WaitForSingleObject(hFenceEvent, INFINITE);
 	}
+}
+
+void ExecuteCommandList(ID3D12GraphicsCommandList* pd3dCommandList, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Fence* pd3dFence, UINT64 nFenceValue, HANDLE hFenceEvent)
+{
+	pd3dCommandList->Close();
+
+	ID3D12CommandList* ppd3dCommandLists[] = { pd3dCommandList };
+	pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+
+	::WaitForGpuComplete(pd3dCommandQueue, pd3dFence, nFenceValue, hFenceEvent);
 }
 
 ID3D12Resource *CreateTextureResource(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, void *pData, UINT nBytes, D3D12_RESOURCE_DIMENSION d3dResourceDimension, UINT nWidth, UINT nHeight, UINT nDepthOrArraySize, UINT nMipLevels, D3D12_RESOURCE_FLAGS d3dResourceFlags, DXGI_FORMAT dxgiFormat, D3D12_HEAP_TYPE d3dHeapType, D3D12_RESOURCE_STATES d3dResourceStates, ID3D12Resource** ppd3dUploadBuffer)
@@ -93,6 +115,16 @@ ID3D12Resource *CreateTextureResource(ID3D12Device *pd3dDevice, ID3D12GraphicsCo
 			break;
 		}
 		case D3D12_HEAP_TYPE_READBACK:
+			d3dResourceStates |= D3D12_RESOURCE_STATE_COPY_DEST;
+			HRESULT hResult = pd3dDevice->CreateCommittedResource(&d3dHeapPropertiesDesc, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, d3dResourceStates, NULL, __uuidof(ID3D12Resource), (void**)&pd3dBuffer);
+			if (pData)
+			{
+				D3D12_RANGE d3dReadRange = { 0, 0 };
+				UINT8* pBufferDataBegin = NULL;
+				pd3dBuffer->Map(0, &d3dReadRange, (void**)&pBufferDataBegin);
+				memcpy(pBufferDataBegin, pData, nBytes);
+				pd3dBuffer->Unmap(0, NULL);
+			}
 			break;
 		}
 	}
