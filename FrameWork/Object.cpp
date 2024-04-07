@@ -44,23 +44,16 @@ CTexture::~CTexture()
 		}
 		delete[] m_ppd3dTextures;
 	}
-	if (m_pnResourceTypes)
-		delete[] m_pnResourceTypes;
+	if (m_pnResourceTypes) delete[] m_pnResourceTypes;
+	if (m_pdxgiBufferFormats) delete[] m_pdxgiBufferFormats;
 
-	if (m_pdxgiBufferFormats)
-		delete[] m_pdxgiBufferFormats;
+	if (m_pnBufferElements)	delete[] m_pnBufferElements;
 
-	if (m_pnBufferElements)
-		delete[] m_pnBufferElements;
+	if (m_pnRootParameterIndices) delete[] m_pnRootParameterIndices;
 
-	if (m_pnRootParameterIndices)
-		delete[] m_pnRootParameterIndices;
+	if (m_pd3dSrvGpuDescriptorHandles) delete[] m_pd3dSrvGpuDescriptorHandles;
 
-	if (m_pd3dSrvGpuDescriptorHandles)
-		delete[] m_pd3dSrvGpuDescriptorHandles;
-
-	if (m_pd3dSamplerGpuDescriptorHandles)
-		delete[] m_pd3dSamplerGpuDescriptorHandles;
+	if (m_pd3dSamplerGpuDescriptorHandles) delete[] m_pd3dSamplerGpuDescriptorHandles;
 }
 
 void CTexture::SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle)
@@ -94,18 +87,8 @@ void CTexture::ReleaseShaderVariables()
 
 void CTexture::LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
 {
-	if (m_ppd3dTextureUploadBuffers)
-	{
-		for (int i = 0; i < m_nTextures; i++)
-		{
-			if (m_ppd3dTextureUploadBuffers[i])
-				m_ppd3dTextureUploadBuffers[i]->Release();
-
-			delete[] m_ppd3dTextureUploadBuffers;
-
-			m_ppd3dTextureUploadBuffers = NULL;
-		}
-	}
+	m_pnResourceTypes[nIndex] = nResourceType;
+	m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromDDSFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ/*D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE*/);
 }
 
 void CTexture::LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex)
@@ -226,13 +209,10 @@ CMaterial::~CMaterial()
 
 void CMaterial::SetShader(CShader* pShader)
 {
-	if (m_pShader) 
-		m_pShader->Release();
-	
+	if (m_pShader) m_pShader->Release();	
 	m_pShader = pShader;
 
-	if (m_pShader) 
-		m_pShader->AddRef();
+	if (m_pShader) m_pShader->AddRef();
 }
 
 void CMaterial::SetTexture(CTexture* pTexture, UINT nTexture)
@@ -781,7 +761,7 @@ void CGameObject::SetWireFrameShader()
 	m_ppMaterials = new CMaterial * [m_nMaterials];
 	m_ppMaterials[0] = NULL;
 	CMaterial *pMaterial = new CMaterial(0);
-	m_ppMaterials[0]->SetWireFrameShader();
+	pMaterial->SetWireFrameShader();
 	SetMaterial(0, pMaterial);
 }
 
@@ -791,7 +771,7 @@ void CGameObject::SetSkinnedAnimationWireFrameShader()
 	m_ppMaterials = new CMaterial * [m_nMaterials];
 	m_ppMaterials[0] = NULL;
 	CMaterial* pMaterial = new CMaterial(0);
-	m_ppMaterials[0]->SetSkinnedAnimationWireFrameShader();
+	pMaterial->SetSkinnedAnimationWireFrameShader();
 	SetMaterial(0, pMaterial);
 }
 
