@@ -6,11 +6,15 @@
 *.lo
 *.o
 *.obj
+
+# Visual Studio 2022 cache/options directory
 /.vs
 .vs/
 .bin/
 .obj/
-/x64
+
+# Build Results
+x64/
 
 # Precompiled Headers
 *.gch
