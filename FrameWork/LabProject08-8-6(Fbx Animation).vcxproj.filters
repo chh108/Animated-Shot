@@ -75,7 +75,7 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>00.imgui</Filter>
     </ClInclude>
-    <ClInclude Include="LabProject08-8-6(Fbx Animation).h">
+    <ClInclude Include="AnimatedShot.h">
       <Filter>00.MainApp</Filter>
     </ClInclude>
     <ClInclude Include="GameFramework.h">
@@ -97,9 +97,6 @@
       <Filter>98.Default</Filter>
     </ClInclude>
     <ClInclude Include="DDSTextureLoader12.h">
-      <Filter>98.Default</Filter>
-    </ClInclude>
-    <ClInclude Include="FbxSceneContext.h">
       <Filter>98.Default</Filter>
     </ClInclude>
     <ClInclude Include="WICTextureLoader12.h">
@@ -126,6 +123,15 @@
     <ClInclude Include="PlayerManager.h">
       <Filter>03.Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="Mathmatics.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -149,7 +155,7 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>00.imgui</Filter>
     </ClCompile>
-    <ClCompile Include="LabProject08-8-6(Fbx Animation).cpp">
+    <ClCompile Include="AnimatedShot.cpp">
       <Filter>00.MainApp</Filter>
     </ClCompile>
     <ClCompile Include="GameFramework.cpp">
@@ -165,9 +171,6 @@
       <Filter>98.Default</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader12.cpp">
-      <Filter>98.Default</Filter>
-    </ClCompile>
-    <ClCompile Include="FbxSceneContext.cpp">
       <Filter>98.Default</Filter>
     </ClCompile>
     <ClCompile Include="WICTextureLoader12.cpp">
@@ -191,6 +194,12 @@
     <ClCompile Include="PlayerManager.cpp">
       <Filter>03.Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="LabProject08-8-6(Fbx Animation).ico">
@@ -207,6 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="Light.hlsl">
       <Filter>97.ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
