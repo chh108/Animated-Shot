@@ -73,7 +73,11 @@ void CCamera::SetScissorRect(LONG xLeft, LONG yTop, LONG xRight, LONG yBottom)
 
 void CCamera::GenerateProjectionMatrix(float fNearPlaneDistance, float fFarPlaneDistance, float fAspectRatio, float fFOVAngle)
 {
+#ifdef _WITH_LEFT_HAND_COORDINATES
 	m_xmf4x4Projection = Matrix4x4::PerspectiveFovLH(XMConvertToRadians(fFOVAngle), fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
+#else
+	m_xmf4x4Projection = Matrix4x4::PerspectiveFovRH(XMConvertToRadians(fFOVAngle), fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
+#endif
 //	XMMATRIX xmmtxProjection = XMMatrixPerspectiveFovLH(XMConvertToRadians(fFOVAngle), fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
 //	XMStoreFloat4x4(&m_xmf4x4Projection, xmmtxProjection);
 }
@@ -89,7 +93,11 @@ void CCamera::GenerateViewMatrix(XMFLOAT3 xmf3Position, XMFLOAT3 xmf3LookAt, XMF
 
 void CCamera::GenerateViewMatrix()
 {
+#ifdef _WITH_LEFT_HAND_COORDINATES
 	m_xmf4x4View = Matrix4x4::LookAtLH(m_xmf3Position, m_xmf3LookAtWorld, m_xmf3Up);
+#else
+	m_xmf4x4View = Matrix4x4::LookAtRH(m_xmf3Position, m_xmf3LookAtWorld, m_xmf3Up);
+#endif
 }
 
 void CCamera::RegenerateViewMatrix()
@@ -294,7 +302,11 @@ void CThirdPersonCamera::Update(const XMFLOAT3& xmf3LookAt, float fTimeElapsed)
 void CThirdPersonCamera::SetLookAt(const XMFLOAT3& xmf3LookAt)
 {
 	XMFLOAT3 xmf3PlayerUp = m_pPlayer->GetUpVector();
+#ifdef _WITH_LEFT_HAND_COORDINATES
 	XMFLOAT4X4 mtxLookAt = Matrix4x4::LookAtLH(m_xmf3Position, xmf3LookAt, xmf3PlayerUp);
+#else
+	XMFLOAT4X4 mtxLookAt = Matrix4x4::LookAtRH(m_xmf3Position, xmf3LookAt, xmf3PlayerUp);
+#endif
 	m_xmf3Right = XMFLOAT3(mtxLookAt._11, mtxLookAt._21, mtxLookAt._31);
 	m_xmf3Up = XMFLOAT3(mtxLookAt._12, mtxLookAt._22, mtxLookAt._32);
 	m_xmf3Look = XMFLOAT3(mtxLookAt._13, mtxLookAt._23, mtxLookAt._33);

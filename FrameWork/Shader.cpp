@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Shader.h"
 #include "Terrain.h"
+#include "SkyBox.h"
 
 CShader::CShader()
 {
@@ -121,7 +122,11 @@ D3D12_RASTERIZER_DESC CShader::CreateRasterizerState()
 	//	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+#ifdef _WITH_LEFT_HAND_COORDINATES
 	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
+#else
+	d3dRasterizerDesc.FrontCounterClockwise = TRUE;
+#endif
 	d3dRasterizerDesc.DepthBias = 0;
 	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
 	d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;

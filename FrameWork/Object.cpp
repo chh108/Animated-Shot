@@ -37,23 +37,27 @@ CTexture::~CTexture()
 {
 	if (m_ppd3dTextures)
 	{
-		for (int i = 0; i < m_nTextures; i++)
-		{
-			if (m_ppd3dTextures[i])
-				m_ppd3dTextures[i]->Release();
-		}
+		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
 		delete[] m_ppd3dTextures;
 	}
 	if (m_pnResourceTypes) delete[] m_pnResourceTypes;
 	if (m_pdxgiBufferFormats) delete[] m_pdxgiBufferFormats;
-
-	if (m_pnBufferElements)	delete[] m_pnBufferElements;
+	if (m_pnBufferElements) delete[] m_pnBufferElements;
 
 	if (m_pnRootParameterIndices) delete[] m_pnRootParameterIndices;
-
 	if (m_pd3dSrvGpuDescriptorHandles) delete[] m_pd3dSrvGpuDescriptorHandles;
 
 	if (m_pd3dSamplerGpuDescriptorHandles) delete[] m_pd3dSamplerGpuDescriptorHandles;
+}
+
+void CTexture::SetRootParameterIndex(int nIndex, UINT nRootParameterIndex)
+{
+	m_pnRootParameterIndices[nIndex] = nRootParameterIndex;
+}
+
+void CTexture::SetGpuDescriptorHandle(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGpuDescriptorHandle)
+{
+	m_pd3dSrvGpuDescriptorHandles[nIndex] = d3dSrvGpuDescriptorHandle;
 }
 
 void CTexture::SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle)
@@ -85,6 +89,21 @@ void CTexture::ReleaseShaderVariables()
 {
 }
 
+void CTexture::ReleaseUploadBuffers()
+{
+	if (m_ppd3dTextureUploadBuffers)
+	{
+		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextureUploadBuffers[i]) m_ppd3dTextureUploadBuffers[i]->Release();
+		delete[] m_ppd3dTextureUploadBuffers;
+		m_ppd3dTextureUploadBuffers = NULL;
+	}
+}
+
+//void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nIndex)
+//{
+//	m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromDDSFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
+//}
+
 void CTexture::LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
 {
 	m_pnResourceTypes[nIndex] = nResourceType;
@@ -96,8 +115,7 @@ void CTexture::LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* p
 	m_pnResourceTypes[nIndex] = RESOURCE_BUFFER;
 	m_pdxgiBufferFormats[nIndex] = ndxgiFormat;
 	m_pnBufferElements[nIndex] = nElements;
-	m_ppd3dTextures[nIndex] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pData, nElements * nStride, D3D12_HEAP_TYPE_DEFAULT,
-		D3D12_RESOURCE_STATE_GENERIC_READ, &m_ppd3dTextureUploadBuffers[nIndex]);
+	m_ppd3dTextures[nIndex] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pData, nElements * nStride, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_GENERIC_READ, &m_ppd3dTextureUploadBuffers[nIndex]);
 }
 
 ID3D12Resource* CTexture::CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nIndex, UINT nResourceType, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue)
@@ -105,16 +123,6 @@ ID3D12Resource* CTexture::CreateTexture(ID3D12Device* pd3dDevice, ID3D12Graphics
 	m_pnResourceTypes[nIndex] = nResourceType;
 	m_ppd3dTextures[nIndex] = ::CreateTexture2DResource(pd3dDevice, pd3dCommandList, nWidth, nHeight, nElements, nMipLevels, dxgiFormat, d3dResourceFlags, d3dResourceStates, pd3dClearValue);
 	return(m_ppd3dTextures[nIndex]);
-}
-
-void CTexture::SetRootParameterIndex(int nIndex, UINT nRootParameterIndex)
-{
-	m_pnRootParameterIndices[nIndex] = nRootParameterIndex;
-}
-
-void CTexture::SetGpuDescriptorHandle(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGpuDescriptorHandle)
-{
-	m_pd3dSrvGpuDescriptorHandles[nIndex] = d3dSrvGpuDescriptorHandle;
 }
 
 D3D12_SHADER_RESOURCE_VIEW_DESC CTexture::GetShaderResourceViewDesc(int nIndex)
@@ -128,8 +136,7 @@ D3D12_SHADER_RESOURCE_VIEW_DESC CTexture::GetShaderResourceViewDesc(int nIndex)
 	int nTextureType = GetTextureType(nIndex);
 	switch (nTextureType)
 	{
-	case RESOURCE_TEXTURE2D: 
-		//(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize == 1)
+	case RESOURCE_TEXTURE2D: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize == 1)
 	case RESOURCE_TEXTURE2D_ARRAY: //[]
 		d3dShaderResourceViewDesc.Format = d3dResourceDesc.Format;
 		d3dShaderResourceViewDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -138,7 +145,6 @@ D3D12_SHADER_RESOURCE_VIEW_DESC CTexture::GetShaderResourceViewDesc(int nIndex)
 		d3dShaderResourceViewDesc.Texture2D.PlaneSlice = 0;
 		d3dShaderResourceViewDesc.Texture2D.ResourceMinLODClamp = 0.0f;
 		break;
-
 	case RESOURCE_TEXTURE2DARRAY: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize != 1)
 		d3dShaderResourceViewDesc.Format = d3dResourceDesc.Format;
 		d3dShaderResourceViewDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
@@ -149,7 +155,6 @@ D3D12_SHADER_RESOURCE_VIEW_DESC CTexture::GetShaderResourceViewDesc(int nIndex)
 		d3dShaderResourceViewDesc.Texture2DArray.FirstArraySlice = 0;
 		d3dShaderResourceViewDesc.Texture2DArray.ArraySize = d3dResourceDesc.DepthOrArraySize;
 		break;
-
 	case RESOURCE_TEXTURE_CUBE: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize == 6)
 		d3dShaderResourceViewDesc.Format = d3dResourceDesc.Format;
 		d3dShaderResourceViewDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
@@ -157,7 +162,6 @@ D3D12_SHADER_RESOURCE_VIEW_DESC CTexture::GetShaderResourceViewDesc(int nIndex)
 		d3dShaderResourceViewDesc.TextureCube.MostDetailedMip = 0;
 		d3dShaderResourceViewDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 		break;
-
 	case RESOURCE_BUFFER: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_BUFFER)
 		d3dShaderResourceViewDesc.Format = m_pdxgiBufferFormats[nIndex];
 		d3dShaderResourceViewDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
@@ -168,16 +172,6 @@ D3D12_SHADER_RESOURCE_VIEW_DESC CTexture::GetShaderResourceViewDesc(int nIndex)
 		break;
 	}
 	return(d3dShaderResourceViewDesc);
-}
-
-void CTexture::ReleaseUploadBuffers()
-{
-	if (m_ppd3dTextureUploadBuffers)
-	{
-		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextureUploadBuffers[i]) m_ppd3dTextureUploadBuffers[i]->Release();
-		delete[] m_ppd3dTextureUploadBuffers;
-		m_ppd3dTextureUploadBuffers = NULL;
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -252,8 +246,7 @@ void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	for (int i = 0; i < m_nTextures; i++)
 	{
-		if (m_ppTextures[i]) 
-			m_ppTextures[i]->UpdateShaderVariables(pd3dCommandList);
+		if (m_ppTextures[i]) m_ppTextures[i]->UpdateShaderVariables(pd3dCommandList);
 		//		if (m_ppTextures[i]) m_ppTextures[i]->UpdateShaderVariable(pd3dCommandList, 0, 0);
 	}
 }
@@ -1393,6 +1386,8 @@ CAngrybotObject::~CAngrybotObject()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 CElvenWitchObject::CElvenWitchObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
 {
 	CLoadedModelInfo* pElvenWitchModel = pModel;
@@ -1414,6 +1409,8 @@ CElvenWitchObject::~CElvenWitchObject()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 CMonsterWeaponObject::CMonsterWeaponObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
 {
 	CLoadedModelInfo* pMonsterWeaponModel = pModel;
@@ -1431,6 +1428,8 @@ CMonsterWeaponObject::~CMonsterWeaponObject()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 CLionObject::CLionObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
 {
 	CLoadedModelInfo* pLionModel = pModel;
@@ -1453,6 +1452,8 @@ CLionObject::~CLionObject()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 CEagleObject::CEagleObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
 {
 	CLoadedModelInfo* pEagleModel = pModel;
