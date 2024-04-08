@@ -91,6 +91,9 @@ void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 
 void CPlayer::Rotate(float x, float y, float z)
 {
+#ifndef _WITH_LEFT_HAND_COORDINATES
+	x = -x; y = -y; z = -z;
+#endif
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA))
 	{
@@ -229,9 +232,6 @@ void CPlayer::OnPrepareRender()
 	m_xmf4x4World._21 = m_xmf3Up.x; m_xmf4x4World._22 = m_xmf3Up.y; m_xmf4x4World._23 = m_xmf3Up.z;
 	m_xmf4x4World._31 = m_xmf3Look.x; m_xmf4x4World._32 = m_xmf3Look.y; m_xmf4x4World._33 = m_xmf3Look.z;
 	m_xmf4x4World._41 = m_xmf3Position.x; m_xmf4x4World._42 = m_xmf3Position.y; m_xmf4x4World._43 = m_xmf3Position.z;
-
-	XMMATRIX xmmtxScale = XMMatrixScaling(m_xmf3Scale.x, m_xmf3Scale.y, m_xmf3Scale.z);
-	m_xmf4x4World = Matrix4x4::Multiply(xmmtxScale, m_xmf4x4World);
 }
 
 void CPlayer::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
