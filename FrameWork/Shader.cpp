@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "Shader.h"
 #include "Terrain.h"
-#include "SkyBox.h"
 
 CShader::CShader()
 {
@@ -36,17 +35,17 @@ D3D12_SHADER_BYTECODE CShader::CreatePixelShader()
 	return(d3dShaderByteCode);
 }
 
-D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(WCHAR *pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob **ppd3dShaderBlob)
+D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(WCHAR* pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob** ppd3dShaderBlob)
 {
 	UINT nCompileFlags = 0;
 #if defined(_DEBUG)
 	nCompileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
-	ID3DBlob *pd3dErrorBlob = NULL;
+	ID3DBlob* pd3dErrorBlob = NULL;
 	HRESULT hResult = ::D3DCompileFromFile(pszFileName, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, pszShaderName, pszShaderProfile, nCompileFlags, 0, ppd3dShaderBlob, &pd3dErrorBlob);
-	char *pErrorString = NULL;
-	if (pd3dErrorBlob) pErrorString = (char *)pd3dErrorBlob->GetBufferPointer();
+	char* pErrorString = NULL;
+	if (pd3dErrorBlob) pErrorString = (char*)pd3dErrorBlob->GetBufferPointer();
 
 	D3D12_SHADER_BYTECODE d3dShaderByteCode;
 	d3dShaderByteCode.BytecodeLength = (*ppd3dShaderBlob)->GetBufferSize();
@@ -65,15 +64,15 @@ D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(WCHAR *pszFileName, LPCSTR 
 #include <sstream>
 #endif
 
-D3D12_SHADER_BYTECODE CShader::ReadCompiledShaderFromFile(WCHAR *pszFileName, ID3DBlob **ppd3dShaderBlob)
+D3D12_SHADER_BYTECODE CShader::ReadCompiledShaderFromFile(WCHAR* pszFileName, ID3DBlob** ppd3dShaderBlob)
 {
 	UINT nReadBytes = 0;
 #ifdef _WITH_WFOPEN
-	FILE *pFile = NULL;
+	FILE* pFile = NULL;
 	::_wfopen_s(&pFile, pszFileName, L"rb");
 	::fseek(pFile, 0, SEEK_END);
 	int nFileSize = ::ftell(pFile);
-	BYTE *pByteCode = new BYTE[nFileSize];
+	BYTE* pByteCode = new BYTE[nFileSize];
 	::rewind(pFile);
 	nReadBytes = (UINT)::fread(pByteCode, sizeof(BYTE), nFileSize, pFile);
 	::fclose(pFile);
@@ -82,9 +81,9 @@ D3D12_SHADER_BYTECODE CShader::ReadCompiledShaderFromFile(WCHAR *pszFileName, ID
 	std::ifstream ifsFile;
 	ifsFile.open(pszFileName, std::ios::in | std::ios::ate | std::ios::binary);
 	nReadBytes = (int)ifsFile.tellg();
-	BYTE *pByteCode = new BYTE[*pnReadBytes];
+	BYTE* pByteCode = new BYTE[*pnReadBytes];
 	ifsFile.seekg(0);
-	ifsFile.read((char *)pByteCode, nReadBytes);
+	ifsFile.read((char*)pByteCode, nReadBytes);
 	ifsFile.close();
 #endif
 
@@ -181,7 +180,7 @@ D3D12_BLEND_DESC CShader::CreateBlendState()
 	return(d3dBlendDesc);
 }
 
-void CShader::CreateShader(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature)
+void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 	::ZeroMemory(&m_d3dPipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	m_d3dPipelineStateDesc.pRootSignature = pd3dGraphicsRootSignature;
@@ -199,7 +198,7 @@ void CShader::CreateShader(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *
 	m_d3dPipelineStateDesc.SampleDesc.Count = 1;
 	m_d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
-	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void **)&m_pd3dPipelineState);
+	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
 
 	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
 	if (m_pd3dPixelShaderBlob) m_pd3dPixelShaderBlob->Release();
@@ -207,19 +206,18 @@ void CShader::CreateShader(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *
 	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
 
-void CShader::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nPipelineState)
+void CShader::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, int nPipelineState)
 {
 	if (m_pd3dPipelineState) pd3dCommandList->SetPipelineState(m_pd3dPipelineState);
 }
 
-void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	OnPrepareRender(pd3dCommandList);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-
 CTerrainShader::CTerrainShader()
 {
 }
@@ -255,9 +253,8 @@ D3D12_SHADER_BYTECODE CTerrainShader::CreatePixelShader()
 	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSTerrain", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-
 CSkyBoxShader::CSkyBoxShader()
 {
 }
@@ -313,7 +310,6 @@ D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-
 CWireFrameShader::CWireFrameShader()
 {
 }
@@ -443,11 +439,6 @@ void CSkinnedAnimationObjectsWireFrameShader::BuildObjects(ID3D12Device* pd3dDev
 {
 }
 
-void CSkinnedAnimationObjectsWireFrameShader::AnimateObjects(float fTimeElapsed)
-{
-	m_fElapsedTime = fTimeElapsed;
-}
-
 void CSkinnedAnimationObjectsWireFrameShader::ReleaseObjects()
 {
 	if (m_ppObjects)
@@ -455,6 +446,11 @@ void CSkinnedAnimationObjectsWireFrameShader::ReleaseObjects()
 		for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->Release();
 		delete[] m_ppObjects;
 	}
+}
+
+void CSkinnedAnimationObjectsWireFrameShader::AnimateObjects(float fTimeElapsed)
+{
+	m_fElapsedTime = fTimeElapsed;
 }
 
 void CSkinnedAnimationObjectsWireFrameShader::ReleaseUploadBuffers()
