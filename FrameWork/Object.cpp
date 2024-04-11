@@ -1218,9 +1218,9 @@ void CGameObject::ReleaseUploadBuffers()
 
 void CGameObject::SetPosition(float x, float y, float z)
 {
-	m_xmf4x4World._41 = x;
-	m_xmf4x4World._42 = y;
-	m_xmf4x4World._43 = z;
+	m_xmf4x4ToParent._41 = x;
+	m_xmf4x4ToParent._42 = y;
+	m_xmf4x4ToParent._43 = z;
 
 	UpdateTransform(NULL);
 }
@@ -1233,7 +1233,7 @@ void CGameObject::SetPosition(XMFLOAT3 xmf3Position)
 void CGameObject::SetScale(float x, float y, float z)
 {
 	XMMATRIX mtxScale = XMMatrixScaling(x, y, z);
-	m_xmf4x4World = Matrix4x4::Multiply(mtxScale, m_xmf4x4World);
+	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxScale, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
 }
@@ -1285,7 +1285,7 @@ void CGameObject::MoveForward(float fDistance)
 void CGameObject::Rotate(float fPitch, float fYaw, float fRoll)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fPitch), XMConvertToRadians(fYaw), XMConvertToRadians(fRoll));
-	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
+	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
 }
@@ -1293,7 +1293,7 @@ void CGameObject::Rotate(float fPitch, float fYaw, float fRoll)
 void CGameObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationAxis(XMLoadFloat3(pxmf3Axis), XMConvertToRadians(fAngle));
-	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
+	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
 }
@@ -1301,7 +1301,7 @@ void CGameObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
 void CGameObject::Rotate(XMFLOAT4* pxmf4Quaternion)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationQuaternion(XMLoadFloat4(pxmf4Quaternion));
-	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
+	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
 }
