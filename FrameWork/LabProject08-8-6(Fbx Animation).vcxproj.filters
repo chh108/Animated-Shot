@@ -215,10 +215,19 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders.hlsl">
+    <FxCompile Include="Animation.hlsl">
       <Filter>97.ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="Light.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyBox.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="Terrain.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="WireFrame.hlsl">
       <Filter>97.ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

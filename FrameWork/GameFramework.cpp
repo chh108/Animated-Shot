@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "Shader.h"
 
 CGameFramework::CGameFramework()
 {
@@ -401,6 +402,9 @@ void CGameFramework::BuildObjects()
 
 	m_pScene = new CScene();
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+	/*CShader* pShader = new CShader();
+	pShader->SetObjectsShader(m_pd3dDevice);*/
 
 	CAngrybotPlayer* pPlayer = new CAngrybotPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 

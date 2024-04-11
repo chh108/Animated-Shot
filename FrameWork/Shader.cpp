@@ -43,15 +43,21 @@ D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(WCHAR* pszFileName, LPCSTR 
 #endif
 
 	ID3DBlob* pd3dErrorBlob = NULL;
+	//ppd3dShaderBlob = NULL;
+
 	HRESULT hResult = ::D3DCompileFromFile(pszFileName, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, pszShaderName, pszShaderProfile, nCompileFlags, 0, ppd3dShaderBlob, &pd3dErrorBlob);
 	char* pErrorString = NULL;
+
 	if (pd3dErrorBlob) pErrorString = (char*)pd3dErrorBlob->GetBufferPointer();
 
 	D3D12_SHADER_BYTECODE d3dShaderByteCode;
-	d3dShaderByteCode.BytecodeLength = (*ppd3dShaderBlob)->GetBufferSize();
-	d3dShaderByteCode.pShaderBytecode = (*ppd3dShaderBlob)->GetBufferPointer();
+	if (*ppd3dShaderBlob != NULL)
+	{
+		d3dShaderByteCode.BytecodeLength = (*ppd3dShaderBlob)->GetBufferSize();
+		d3dShaderByteCode.pShaderBytecode = (*ppd3dShaderBlob)->GetBufferPointer();
 
-	return(d3dShaderByteCode);
+		return(d3dShaderByteCode);
+	}
 }
 
 #define _WITH_WFOPEN
@@ -180,12 +186,50 @@ D3D12_BLEND_DESC CShader::CreateBlendState()
 	return(d3dBlendDesc);
 }
 
-void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+void CShader::SetObjectsShader(ID3D12Device* pd3dDevice)
+{
+
+	g_shaderInfo[0].VS = CShader::CompileShaderFromFile(L"Terrain.hlsl", "VSTerrain", "vs_5_1", &m_pd3dTerrain_VS_Blob);
+	g_shaderInfo[0].PS = CShader::CompileShaderFromFile(L"Terrain.hlsl", "PSTerrain", "ps_5_1", &m_pd3dTerrain_PS_Blob);
+
+	g_shaderInfo[1].VS = CShader::CompileShaderFromFile(L"SkyBox.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dSkyBox_VS_Blob);
+	g_shaderInfo[1].PS = CShader::CompileShaderFromFile(L"SkyBox.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dSkyBox_PS_Blob);
+
+	g_shaderInfo[2].VS = CShader::CompileShaderFromFile(L"WireFrame.hlsl", "VSWireFrame", "vs_5_1", &m_pd3dWireFrame_VS_Blob);
+	g_shaderInfo[2].PS = CShader::CompileShaderFromFile(L"WireFrame.hlsl", "PSWireFrame", "ps_5_1", &m_pd3dWireFrame_PS_Blob);
+
+	g_shaderInfo[3].VS = CShader::CompileShaderFromFile(L"Animation.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dAnimation_VS_Blob);
+	g_shaderInfo[3].PS = CShader::CompileShaderFromFile(L"Animation.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dAnimation_PS_Blob);
+}
+
+void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, SHADER_TYPE type)
 {
 	::ZeroMemory(&m_d3dPipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	m_d3dPipelineStateDesc.pRootSignature = pd3dGraphicsRootSignature;
-	m_d3dPipelineStateDesc.VS = CreateVertexShader();
-	m_d3dPipelineStateDesc.PS = CreatePixelShader();
+
+	SetObjectsShader(pd3dDevice);
+
+	switch (type) {
+	case SHADER_TYPE::Terrain:
+		m_d3dPipelineStateDesc.VS = g_shaderInfo[0].VS;
+		m_d3dPipelineStateDesc.PS = g_shaderInfo[0].PS;
+		break;
+	case SHADER_TYPE::SkyBox:
+		m_d3dPipelineStateDesc.VS = g_shaderInfo[1].VS;
+		m_d3dPipelineStateDesc.PS = g_shaderInfo[1].PS;
+		break;
+	case SHADER_TYPE::WireFrame:
+		m_d3dPipelineStateDesc.VS = g_shaderInfo[2].VS;
+		m_d3dPipelineStateDesc.PS = g_shaderInfo[2].PS;
+		break;
+	case SHADER_TYPE::SkinnedAnimationWireFrame:
+		m_d3dPipelineStateDesc.VS = g_shaderInfo[3].VS;
+		m_d3dPipelineStateDesc.PS = g_shaderInfo[3].PS;
+		break;
+	default:
+		// Handle Error.
+		break;
+	}
 	m_d3dPipelineStateDesc.RasterizerState = CreateRasterizerState();
 	m_d3dPipelineStateDesc.BlendState = CreateBlendState();
 	m_d3dPipelineStateDesc.DepthStencilState = CreateDepthStencilState();
@@ -200,8 +244,25 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
 
-	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
-	if (m_pd3dPixelShaderBlob) m_pd3dPixelShaderBlob->Release();
+	if (m_pd3dTerrain_VS_Blob)			
+		m_pd3dTerrain_VS_Blob->Release();
+	if (m_pd3dTerrain_PS_Blob)			
+		m_pd3dTerrain_PS_Blob->Release();
+
+	if (m_pd3dSkyBox_VS_Blob)			
+		m_pd3dSkyBox_VS_Blob->Release();
+	if (m_pd3dSkyBox_PS_Blob)			
+		m_pd3dSkyBox_PS_Blob->Release();
+
+	if (m_pd3dWireFrame_VS_Blob)		
+		m_pd3dWireFrame_VS_Blob->Release();
+	if (m_pd3dWireFrame_PS_Blob)		
+		m_pd3dWireFrame_PS_Blob->Release();
+
+	if (m_pd3dAnimation_VS_Blob)		
+		m_pd3dAnimation_VS_Blob->Release();
+	if (m_pd3dAnimation_PS_Blob)		
+		m_pd3dAnimation_PS_Blob->Release();
 
 	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
@@ -243,15 +304,15 @@ D3D12_INPUT_LAYOUT_DESC CTerrainShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CTerrainShader::CreateVertexShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSTerrain", "vs_5_1", &m_pd3dVertexShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CTerrainShader::CreatePixelShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSTerrain", "ps_5_1", &m_pd3dPixelShaderBlob));
-}
+//D3D12_SHADER_BYTECODE CTerrainShader::CreateVertexShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"Terrain.hlsl", "VSTerrain", "vs_5_1", &m_pd3dVertexShaderBlob));
+//}
+//
+//D3D12_SHADER_BYTECODE CTerrainShader::CreatePixelShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"Terrain.hlsl", "PSTerrain", "ps_5_1", &m_pd3dPixelShaderBlob));
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -298,15 +359,15 @@ D3D12_DEPTH_STENCIL_DESC CSkyBoxShader::CreateDepthStencilState()
 	return(d3dDepthStencilDesc);
 }
 
-D3D12_SHADER_BYTECODE CSkyBoxShader::CreateVertexShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dVertexShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dPixelShaderBlob));
-}
+//D3D12_SHADER_BYTECODE CSkyBoxShader::CreateVertexShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"SkyBox.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dVertexShaderBlob));
+//}
+//
+//D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"SkyBox.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dPixelShaderBlob));
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -355,15 +416,15 @@ D3D12_INPUT_LAYOUT_DESC CWireFrameShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CWireFrameShader::CreateVertexShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CWireFrameShader::CreatePixelShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
-}
+//D3D12_SHADER_BYTECODE CWireFrameShader::CreateVertexShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"WireFrame.hlsl", "VSWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
+//}
+//
+//D3D12_SHADER_BYTECODE CWireFrameShader::CreatePixelShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"WireFrame.hlsl", "PSWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -415,16 +476,16 @@ D3D12_RASTERIZER_DESC CSkinnedAnimationWireFrameShader::CreateRasterizerState()
 	return(d3dRasterizerDesc);
 }
 
-D3D12_SHADER_BYTECODE CSkinnedAnimationWireFrameShader::CreateVertexShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CSkinnedAnimationWireFrameShader::CreatePixelShader()
-{
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
-}
-
+//D3D12_SHADER_BYTECODE CSkinnedAnimationWireFrameShader::CreateVertexShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"Animation.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
+//}
+//
+//D3D12_SHADER_BYTECODE CSkinnedAnimationWireFrameShader::CreatePixelShader()
+//{
+//	return(CShader::CompileShaderFromFile(L"Animation.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
+//}
+// 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CSkinnedAnimationObjectsWireFrameShader::CSkinnedAnimationObjectsWireFrameShader()
