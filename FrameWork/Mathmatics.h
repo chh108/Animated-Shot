@@ -2,47 +2,6 @@
 
 namespace Vector3
 {
-	/*
-		inline XMFLOAT3& operator *=(XMFLOAT3& xmf3Vector, float fScalar)
-		{
-			XMStoreFloat3(&xmf3Vector, XMLoadFloat3(&xmf3Vector) * fScalar);
-			return(xmf3Vector);
-		}
-
-		inline XMFLOAT3& operator /=(XMFLOAT3& xmf3Vector, float fScalar)
-		{
-			XMStoreFloat3(&xmf3Vector, XMLoadFloat3(&xmf3Vector) * (1.0f / fScalar));
-			return(xmf3Vector);
-		}
-
-		inline XMFLOAT3& operator +=(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
-		{
-			XMStoreFloat3(&xmf3Vector1, XMLoadFloat3(&xmf3Vector1) + XMLoadFloat3(&xmf3Vector2));
-			return(xmf3Vector1);
-		}
-
-		inline XMFLOAT3& operator -=(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
-		{
-			XMFLOAT3 xmf3Result;
-			XMStoreFloat3(&xmf3Result, XMLoadFloat3(&xmf3Vector1) - XMLoadFloat3(&xmf3Vector2));
-			return(xmf3Result);
-		}
-
-		inline XMFLOAT3& operator +(XMFLOAT3 xmf3Vector1, XMFLOAT3 xmf3Vector2)
-		{
-			XMFLOAT3 xmf3Result;
-			XMStoreFloat3(&xmf3Result, XMLoadFloat3(&xmf3Vector1) + XMLoadFloat3(&xmf3Vector2));
-			return(xmf3Result);
-		}
-
-		inline XMFLOAT3& operator -(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
-		{
-			XMFLOAT3 xmf3Result;
-			XMStoreFloat3(&xmf3Result, XMLoadFloat3(&xmf3Vector1) - XMLoadFloat3(&xmf3Vector2));
-			return(xmf3Result);
-		}
-	*/
-
 	inline XMFLOAT3 XMVectorToFloat3(XMVECTOR& xmvVector)
 	{
 		XMFLOAT3 xmf3Result;
@@ -147,6 +106,13 @@ namespace Vector3
 	inline XMFLOAT3 TransformCoord(XMFLOAT3& xmf3Vector, XMFLOAT4X4& xmmtx4x4Matrix)
 	{
 		return(TransformCoord(xmf3Vector, XMLoadFloat4x4(&xmmtx4x4Matrix)));
+	}
+
+	inline XMFLOAT3 Multiply(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
+	{
+		XMFLOAT3 xmf3Result;
+		XMStoreFloat3(&xmf3Result, XMLoadFloat3(&xmf3Vector1) * XMLoadFloat3(&xmf3Vector2));
+		return (xmf3Result);
 	}
 }
 
