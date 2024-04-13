@@ -686,7 +686,7 @@ CGameObject::CGameObject()
 	m_xmf4x4World = Matrix4x4::Identity();
 }
 
-CGameObject::CGameObject(int nMaterials)
+CGameObject::CGameObject(int nMaterials) : CGameObject()
 {
 	m_nMaterials = nMaterials;
 	if (m_nMaterials > 0)
