@@ -270,14 +270,31 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Angrybot.bin", NULL);
+	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
+		"Model/M02.bin", NULL); //"Model/Characters/Archbishop/BIN/M04.bin"
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);
+	FILE* pAnimIdle = NULL;
+	errno_t err;  // Check Error
+	err = fopen_s(&pAnimIdle, "Model/Anim_IDLE1.bin", "rb");
+	if (err != 0 || pAnimIdle == NULL)
+	{
+		printf("Failed to Open Animation File.\n");
+		return;
+	}
+
+	CLoadedModelInfo* pAnimIdleModel = CGameObject::LoadAnimationFromFile(pAnimIdle, NULL);
+
+	pAngrybotModel->m_pAnimationSets = pAnimIdleModel->m_pAnimationSets;
+	pAngrybotModel->m_pAnimationSets->AddRef();
+
+	delete pAnimIdleModel;
+
+	fclose(pAnimIdle);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 1, pAngrybotModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
