@@ -273,28 +273,44 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
 		"Model/M02.bin", NULL); //"Model/Characters/Archbishop/BIN/M04.bin"
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
+	
+	pAngrybotModel->m_pAnimationSets = new CAnimationSets(3);
 
-	FILE* pAnimIdle = NULL;
-	errno_t err;  // Check Error
-	err = fopen_s(&pAnimIdle, "Model/Anim_IDLE1.bin", "rb");
-	if (err != 0 || pAnimIdle == NULL)
+	FILE* pIdleAnim;
+	if (fopen_s(&pIdleAnim, "Model/M02.bin", "rb") != NULL)
 	{
-		printf("Failed to Open Animation File.\n");
-		return;
+		CLoadedModelInfo* pIdleModel = new CLoadedModelInfo();
+		CGameObject::LoadAnimationFromFile(pIdleAnim, pIdleModel);
+		pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_IDLE, pIdleModel->m_pAnimationSets->m_ppAnimationSets[PS_IDLE]);
+		fclose(pIdleAnim);
 	}
+	else
+	{
+		printf("Failed to open File.\n");
+	}
+	//CLoadedModelInfo* pIdleModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+	//	"Model/Anim_IDLE1.bin", NULL);
+	//pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_IDLE, pIdleModel->m_pAnimationSets->m_ppAnimationSets[PS_IDLE]);
 
-	CLoadedModelInfo* pAnimIdleModel = CGameObject::LoadAnimationFromFile(pAnimIdle, NULL);
+	//CLoadedModelInfo* pWalkModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+	//	"Model/Anim_Walk.bin", NULL);
+	//pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_WALK, pWalkModel->m_pAnimationSets->m_ppAnimationSets[PS_WALK]);
 
-	pAngrybotModel->m_pAnimationSets = pAnimIdleModel->m_pAnimationSets;
-	pAngrybotModel->m_pAnimationSets->AddRef();
+	//CLoadedModelInfo* pRunModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+	//	"Model/Anim_Run.bin", NULL);
+	//pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_RUN, pRunModel->m_pAnimationSets->m_ppAnimationSets[PS_RUN]);
 
-	delete pAnimIdleModel;
+	//pAngrybotModel->m_pAnimationSets = new CAnimationSets(PS_WALK);
+	//pAngrybotModel->m_pAnimationSets = new CAnimationSets(PS_RUN);
 
-	fclose(pAnimIdle);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 3, pAngrybotModel);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, PS_IDLE);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 1.25f, 2.5f);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(1, PS_WALK);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 0.041667f, 1.041667f);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(2, PS_RUN);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(2, 0.041667f, 0.541667f);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 1, pAngrybotModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);

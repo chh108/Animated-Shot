@@ -460,6 +460,12 @@ CAnimationSets::~CAnimationSets()
 	if (m_ppSkinnedMeshes) delete[] m_ppSkinnedMeshes;
 }
 
+void CAnimationSets::AddAnimationSet(int nIndex, CAnimationSet *pAnimationSet)
+{
+	if (nIndex >= 0 && nIndex < m_nAnimationSets)
+		m_ppAnimationSets[nIndex] = new CAnimationSet(*pAnimationSet);
+}
+
 void CAnimationSets::SetCallbackKeys(int nAnimationSet, int nCallbackKeys)
 {
 	m_ppAnimationSets[nAnimationSet]->m_nCallbackKeys = nCallbackKeys;
@@ -869,7 +875,7 @@ void CGameObject::SetTrackAnimationPosition(int nAnimationTrack, float fPosition
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->SetTrackPosition(nAnimationTrack, fPosition);
 }
 
-CLoadedModelInfo* CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel)
+void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel)
 {
 	char pstrToken[64] = { '\0' };
 	UINT nReads = 0;
@@ -1000,7 +1006,6 @@ CLoadedModelInfo* CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModel
 			break;
 		}
 	}
-	return (pLoadedModel);
 }
 
 CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames)
