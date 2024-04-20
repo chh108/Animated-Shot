@@ -200,11 +200,11 @@ public:
 	~CAnimationLayer();
 
 public:
-	float							m_fWeight = 1.0f;
-	int								m_nBlendMode = 1; //0:Additive, 1:Override, 2:Override-Passthrough
+	float							m_fWeight = 1.0f; // Layer 가중치
+	int								m_nBlendMode = 1; // 0:Additive, 1:Override, 2:Override-Passthrough
 
-	int								m_nAnimatedBoneFrames = 0;
-	CAnimationCurve					*(*m_ppAnimationCurves)[9] = NULL;
+	int								m_nAnimatedBoneFrames = 0; // 애니메이션 된 Bone Frame
+	CAnimationCurve					*(*m_ppAnimationCurves)[9] = NULL; // 애니메이션 곡선에 대한 포인터 배열.
 	CGameObject						**m_ppAnimatedBoneFrameCaches = NULL; //[m_nAnimatedBoneFrames]
 
 //	bool							*m_pbBlendedBones = NULL;
@@ -481,6 +481,7 @@ public:
 
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames);
 
+	static CLoadedModelInfo* LoadModelFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
 	static CLoadedModelInfo* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
 
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);

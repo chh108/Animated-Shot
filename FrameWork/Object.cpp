@@ -253,20 +253,20 @@ void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CAnimationCurve::CAnimationCurve(int nKeys)
+CAnimationCurve::CAnimationCurve(int nKeys) // AnimationCurve
 {
 	m_nKeys = nKeys;
 	m_pfKeyTimes = new float[nKeys];
 	m_pfKeyValues = new float[nKeys];
 }
 
-CAnimationCurve::~CAnimationCurve()
+CAnimationCurve::~CAnimationCurve() // Delete AnimationCurve
 {
 	if (m_pfKeyTimes) delete[] m_pfKeyTimes;
 	if (m_pfKeyValues) delete[] m_pfKeyValues;
 }
 
-float CAnimationCurve::GetValueByLinearInterpolation(float fPosition)
+float CAnimationCurve::GetValueByLinearInterpolation(float fPosition) // 선형 보간. 
 {
 	for (int k = 0; k < (m_nKeys - 1); k++)
 	{
@@ -301,7 +301,7 @@ CAnimationLayer::~CAnimationLayer()
 
 void CAnimationLayer::LoadAnimationKeyValues(int nBoneFrame, int nCurve, FILE* pInFile)
 {
-	int nAnimationKeys = ::ReadIntegerFromFile(pInFile);
+	int nAnimationKeys = ::ReadIntegerFromFile(pInFile); 
 
 	m_ppAnimationCurves[nBoneFrame][nCurve] = new CAnimationCurve(nAnimationKeys);
 
@@ -1022,7 +1022,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 	for (; ; )
 	{
 		::ReadStringFromFile(pInFile, pstrToken);
-		if (!strcmp(pstrToken, "<Transform>:"))
+		if (!strcmp(pstrToken, "<Transform>:")) // Transform
 		{
 			nReads = (UINT)::fread(&pGameObject->m_xmf4x4ToParent, sizeof(XMFLOAT4X4), 1, pInFile);
 
@@ -1031,7 +1031,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 			nReads = (UINT)::fread(&pGameObject->m_xmf3Translation, sizeof(XMFLOAT3), 1, pInFile);
 
 		}
-		else if (!strcmp(pstrToken, "<Mesh>:"))
+		else if (!strcmp(pstrToken, "<Mesh>:")) // Mesh
 		{
 			CMesh* pMesh = new CMesh(pd3dDevice, pd3dCommandList);
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
@@ -1039,7 +1039,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 
 			/**/pGameObject->SetWireFrameShader();
 		}
-		else if (!strcmp(pstrToken, "<SkinDeformations>:"))
+		else if (!strcmp(pstrToken, "<SkinDeformations>:")) // SkinDeformation
 		{
 			if (pnSkinnedMeshes) (*pnSkinnedMeshes)++;
 
@@ -1054,7 +1054,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 
 			/**/pGameObject->SetSkinnedAnimationWireFrameShader();
 		}
-		else if (!strcmp(pstrToken, "<Children>:"))
+		else if (!strcmp(pstrToken, "<Children>:")) // Children
 		{
 			int nChilds = ::ReadIntegerFromFile(pInFile);
 			if (nChilds > 0)
@@ -1081,7 +1081,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 		}
 	}
 	return(pGameObject);
-}
+} 
 
 CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader)
 {
@@ -1365,8 +1365,11 @@ int ReadStringFromFile(FILE* pInFile, char* pstrToken)
 {
 	int nStrLength = 0;
 	UINT nReads = 0;
+	
 	nReads = (UINT)::fread(&nStrLength, sizeof(int), 1, pInFile);
 	nReads = (UINT)::fread(pstrToken, sizeof(char), nStrLength, pInFile);
+
+	// 문자열 끝에 NULL 종료 문자 추가
 	pstrToken[nStrLength] = '\0';
 
 	return(nStrLength);

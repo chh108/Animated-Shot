@@ -270,47 +270,17 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
+	// Animation이 없이 모델만 있는 파일을 읽어올 때 AnimationSet과 같은 변수들을 따로 만들어서 관리해주는 방식이 필요함. 2024-04-19
+
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
-		"Model/M02.bin", NULL); //"Model/Characters/Archbishop/BIN/M04.bin"
+		"Model/F02.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
-	
-	pAngrybotModel->m_pAnimationSets = new CAnimationSets(3);
 
-	FILE* pIdleAnim;
-	if (fopen_s(&pIdleAnim, "Model/M02.bin", "rb") != NULL)
-	{
-		CLoadedModelInfo* pIdleModel = new CLoadedModelInfo();
-		CGameObject::LoadAnimationFromFile(pIdleAnim, pIdleModel);
-		pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_IDLE, pIdleModel->m_pAnimationSets->m_ppAnimationSets[PS_IDLE]);
-		fclose(pIdleAnim);
-	}
-	else
-	{
-		printf("Failed to open File.\n");
-	}
-	//CLoadedModelInfo* pIdleModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-	//	"Model/Anim_IDLE1.bin", NULL);
-	//pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_IDLE, pIdleModel->m_pAnimationSets->m_ppAnimationSets[PS_IDLE]);
-
-	//CLoadedModelInfo* pWalkModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-	//	"Model/Anim_Walk.bin", NULL);
-	//pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_WALK, pWalkModel->m_pAnimationSets->m_ppAnimationSets[PS_WALK]);
-
-	//CLoadedModelInfo* pRunModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-	//	"Model/Anim_Run.bin", NULL);
-	//pAngrybotModel->m_pAnimationSets->AddAnimationSet(PS_RUN, pRunModel->m_pAnimationSets->m_ppAnimationSets[PS_RUN]);
-
-	//pAngrybotModel->m_pAnimationSets = new CAnimationSets(PS_WALK);
-	//pAngrybotModel->m_pAnimationSets = new CAnimationSets(PS_RUN);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 3, pAngrybotModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, PS_IDLE);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 1.25f, 2.5f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(1, PS_WALK);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 0.041667f, 1.041667f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(2, PS_RUN);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(2, 0.041667f, 0.541667f);
-
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
