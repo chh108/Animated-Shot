@@ -1075,6 +1075,86 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 					CMaterial::v_Materials.push_back(pMaterial);
 
 					::ReadStringFromFile(pInFile, pstrToken);
+					if (!strcmp(pstrToken, "<TextureProperties>:")) // TextureProperties
+					{
+						int nTextureProperties = ::ReadIntegerFromFile(pInFile);
+						for (int nLoop = 0; i < nTextureProperties; i++)
+						{
+							::ReadStringFromFile(pInFile, pstrToken);
+							if (!strcmp(pstrToken, "<Property>:"))
+							{
+								int nPropertyIndex = ::ReadIntegerFromFile(pInFile);
+								::ReadStringFromFile(pInFile, pstrToken);
+
+								switch (nPropertyIndex)
+								{
+								case 0:     // Diffuse Color
+									pMaterial->m_xmf4DiffuseColor.x = ::ReadFloatFromFile(pInFile);
+									pMaterial->m_xmf4DiffuseColor.y = ::ReadFloatFromFile(pInFile);
+									pMaterial->m_xmf4DiffuseColor.z = ::ReadFloatFromFile(pInFile);
+									pMaterial->m_xmf4DiffuseColor.w = ::ReadFloatFromFile(pInFile);
+									ReadStringFromFile(pInFile, pstrToken);
+									break;
+								case 1:     // Diffuse Factor
+									break;
+								case 2:     // EmissiveColor
+									break;
+								case 3:     // EmissiveFactor
+									break;
+								case 4:	    // AmbientColor
+									break;
+								case 5:	    // AmbientFactor
+									break;
+								case 6:	    // SpecularColor
+									break;
+								case 7:	    // SpecularFactor
+									break;
+								case 8:	    // ShininessExponent
+									break;
+								case 9:     // NormalMap
+									break;
+								case 10:    // Bump
+									break;
+								case 11:    // TransparentColor
+									break;
+								case 12:    // TransparencyFactor
+									break;
+								case 13:    // ReflectionColor
+									break;
+								case 14:    // ReflectionFactor
+									break;
+								case 15:    // DisplacementColor
+									break;
+								case 16:    // VectorDisplacementColor
+									break;
+								}
+							}
+							if (!strcmp(pstrToken, "<Textures>:")) // Texture
+							{
+								int nTextureCount = ::ReadIntegerFromFile(pInFile);
+								for (int j = 0; j < nTextureCount; ++j)
+								{
+									::ReadStringFromFile(pInFile, pstrToken);
+									if (!strcmp(pstrToken, "<Texture>:")) // Texture
+									{
+										int nTextureIndex = ::ReadIntegerFromFile(pInFile);
+										// Process texture based on index
+										switch (nTextureIndex)
+										{
+										case 0:
+											// Read and set texture information
+											// Example: ::ReadTextureFromFile(pInFile, pMaterial->m_ppTextures[0]);
+											break;
+											// Add cases for other texture indices as needed
+										default:
+											// Handle unrecognized texture index
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}

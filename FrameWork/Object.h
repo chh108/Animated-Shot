@@ -119,10 +119,29 @@ public:
 public:
 	CShader*					m_pShader = NULL;
 
-	XMFLOAT4					m_xmf4AlbedoColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	XMFLOAT4					m_xmf4EmissiveColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4					m_xmf4SpecularColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4					m_xmf4AmbientColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT4					m_xmf4DiffuseColor = XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f };    // 확산 색상 - 표면에서 들어오는 빛 처리
+	float						m_fDiffuseFactor = 1.0f;									    // 확산 강도 조절																						    
+	XMFLOAT4					m_xmf4EmissiveColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };   // 발광 색상 - 물체가 스스로 빛을 낼때
+	float						m_fEmissiveFactor = 1.0f;									    // 발광 강도 조절																					    
+	XMFLOAT4					m_xmfAmbientColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };     // 주변 색상 - 주변에 반사되는 빛의 색상
+	float						m_fAmbientFactor = 1.0f;									    // 주변 색상의 강도 조절																						    
+	XMFLOAT4					m_xmfSpecularColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };    // 반사 색상 - 표면에서 반사되는 빛의 색상
+	float						m_fSpecularFactor = 1.0f;									   // 반사 색상의 강도 조절
+																						   
+	float						m_fShininessExponent = 1.0f;							    // 물체 표면의 윤곽.
+																						    
+	XMFLOAT4					m_mxf4NormalMap = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);         // Normal Map																						  
+	XMFLOAT4					m_xmf4Bump = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);			    // Bump Map
+																						   
+	XMFLOAT4					m_xmf4TransparentColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);  // 투명도 색상
+	float						m_xmf4TransparencyFactor = 0.0f;						    // 투명도 계수
+																						   
+	XMFLOAT4					m_xmf4ReflectionColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);   // 반사 색상 : 빛이 표면에서 반사
+	float						m_xmf4ReflectionFactor = 0.0f;                              // 반사 계수
+
+	XMFLOAT4					m_xmf4DisplacementColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);		  // 변위 맵 색상
+	XMFLOAT4					m_xmf4VectorDisplacementColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f); // 벡터 변위 맵 색상
+
 
 	void SetShader(CShader* pShader);
 	void SetMaterialType(UINT nType) { m_nType |= nType; }
