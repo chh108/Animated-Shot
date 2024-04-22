@@ -106,6 +106,13 @@ void CTexture::ReleaseUploadBuffers()
 //	m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromDDSFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
 //}
 
+void CTexture::LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
+{
+	m_pnResourceTypes[nIndex] = nResourceType;
+	m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ); 
+	// D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+}
+
 void CTexture::LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
 {
 	m_pnResourceTypes[nIndex] = nResourceType;
@@ -895,6 +902,46 @@ void CGameObject::SetTrackAnimationPosition(int nAnimationTrack, float fPosition
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->SetTrackPosition(nAnimationTrack, fPosition);
 }
 
+void CGameObject::LoadTextureInfoFromFile(FILE* pInFile, char* pstrToken)
+{
+	if (strcmp(pstrToken, "Null") != 0 )  // Texture NULL 값
+	{
+		::ReadStringFromFile(pInFile, pstrToken);
+	}
+	if (!strcmp(pstrToken, "<Textures>:")) // Texture
+	{
+		int nTextureCount = ::ReadIntegerFromFile(pInFile); // GetTextureCount
+		for (int j = 0; j < nTextureCount; ++j)
+		{
+			::ReadStringFromFile(pInFile, pstrToken);           // Get Tag
+			if (!strcmp(pstrToken, "<Texture>:")) // Texture
+			{
+				int nTextureIndex = ::ReadIntegerFromFile(pInFile); // GetTextureIndex
+				::ReadStringFromFile(pInFile, pstrToken);			// "file path"
+				::ReadStringFromFile(pInFile, pstrToken);			// "0"
+				::ReadStringFromFile(pInFile, pstrToken);			// "Skin.png"
+				::ReadFloatFromFile(pInFile);						// Texture Width Mag(배율)	
+				::ReadFloatFromFile(pInFile);						// Texture Height Mag(배율)
+				::ReadFloatFromFile(pInFile);						// Texture width move
+				::ReadFloatFromFile(pInFile);						// Texture height move
+				::ReadFloatFromFile(pInFile);						// Texture Rotating
+				::ReadFloatFromFile(pInFile);						// Texture Width
+				::ReadFloatFromFile(pInFile);						// Texture Height
+				::ReadFloatFromFile(pInFile);						// Texture Thickness
+				::ReadFloatFromFile(pInFile);						// Texture Using
+				::ReadFloatFromFile(pInFile);						// Texture Tiling
+				::ReadFloatFromFile(pInFile);						// Texture Width Tiling
+				::ReadFloatFromFile(pInFile);						// Texture Height Tiling
+				::ReadFloatFromFile(pInFile);						// Texture Angle
+				::ReadFloatFromFile(pInFile);						// Texture Coord Process
+				::ReadFloatFromFile(pInFile);						// Texture Coord Process Info  
+				::ReadFloatFromFile(pInFile);						// Texture Weight
+				::ReadFloatFromFile(pInFile);						// Texture Weight Info
+				::ReadFloatFromFile(pInFile);						// Texture Fine Tuning
+			}
+		}
+	}
+}
 void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel)
 {
 	char pstrToken[64] = { '\0' };
@@ -1027,7 +1074,6 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoaded
 		}
 	}
 }
-
 CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames)
 {
 	char pstrToken[64] = { '\0' };
@@ -1078,7 +1124,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 					if (!strcmp(pstrToken, "<TextureProperties>:")) // TextureProperties
 					{
 						int nTextureProperties = ::ReadIntegerFromFile(pInFile);
-						for (int nLoop = 0; i < nTextureProperties; i++)
+						for (int nLoop = 0; nLoop < nTextureProperties; nLoop++)
 						{
 							::ReadStringFromFile(pInFile, pstrToken);
 							if (!strcmp(pstrToken, "<Property>:"))
@@ -1089,68 +1135,94 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 								switch (nPropertyIndex)
 								{
 								case 0:     // Diffuse Color
-									pMaterial->m_xmf4DiffuseColor.x = ::ReadFloatFromFile(pInFile);
-									pMaterial->m_xmf4DiffuseColor.y = ::ReadFloatFromFile(pInFile);
-									pMaterial->m_xmf4DiffuseColor.z = ::ReadFloatFromFile(pInFile);
-									pMaterial->m_xmf4DiffuseColor.w = ::ReadFloatFromFile(pInFile);
-									ReadStringFromFile(pInFile, pstrToken);
+									//pMaterial->m_xmf4DiffuseColor.x = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4DiffuseColor.y = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4DiffuseColor.z = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4DiffuseColor.w = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 1:     // Diffuse Factor
+									//pMaterial->m_fDiffuseFactor = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 2:     // EmissiveColor
+									//pMaterial->m_xmf4EmissiveColor.x = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4EmissiveColor.y = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4EmissiveColor.z = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4EmissiveColor.w = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 3:     // EmissiveFactor
+									//pMaterial->m_fEmissiveFactor = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 4:	    // AmbientColor
+									//pMaterial->m_xmf4AmbientColor.x = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4AmbientColor.y = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4AmbientColor.z = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4AmbientColor.w = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 5:	    // AmbientFactor
+									//pMaterial->m_fAmbientFactor = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 6:	    // SpecularColor
+									//pMaterial->m_xmf4SpecularColor.x = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4SpecularColor.y = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4SpecularColor.z = ::ReadFloatFromFile(pInFile);
+									//pMaterial->m_xmf4SpecularColor.w = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 7:	    // SpecularFactor
+									//pMaterial->m_fSpecularFactor = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 8:	    // ShininessExponent
+									//pMaterial->m_fShininessExponent = ::ReadFloatFromFile(pInFile);
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 9:     // NormalMap
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 10:    // Bump
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 11:    // TransparentColor
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 12:    // TransparencyFactor
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 13:    // ReflectionColor
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 14:    // ReflectionFactor
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 15:    // DisplacementColor
+									::ReadStringFromFile(pInFile, pstrToken);
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
 									break;
 								case 16:    // VectorDisplacementColor
-									break;
-								}
-							}
-							if (!strcmp(pstrToken, "<Textures>:")) // Texture
-							{
-								int nTextureCount = ::ReadIntegerFromFile(pInFile);
-								for (int j = 0; j < nTextureCount; ++j)
-								{
 									::ReadStringFromFile(pInFile, pstrToken);
-									if (!strcmp(pstrToken, "<Texture>:")) // Texture
-									{
-										int nTextureIndex = ::ReadIntegerFromFile(pInFile);
-										// Process texture based on index
-										switch (nTextureIndex)
-										{
-										case 0:
-											// Read and set texture information
-											// Example: ::ReadTextureFromFile(pInFile, pMaterial->m_ppTextures[0]);
-											break;
-											// Add cases for other texture indices as needed
-										default:
-											// Handle unrecognized texture index
-											break;
-										}
-									}
+									CGameObject::LoadTextureInfoFromFile(pInFile, pstrToken);
+									break;
 								}
 							}
 						}
@@ -1192,6 +1264,27 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 #endif
 					}
 				}
+			}
+		}
+		else if (!strcmp(pstrToken, "<ShadingModel>:"))
+		{
+			::ReadStringFromFile(pInFile, pstrToken); // m_pShaderName : Lambert
+			::ReadStringFromFile(pInFile, pstrToken);
+			if (!strcmp(pstrToken, "<Lambert>:"))
+			{
+				::ReadFloatFromFile(pInFile);   // AmbientColor
+				::ReadFloatFromFile(pInFile);   // DiffuseColor
+				::ReadFloatFromFile(pInFile);   // SpecularColor
+
+				::ReadFloatFromFile(pInFile);   // AmbientIntensity
+				::ReadFloatFromFile(pInFile);   // DiffuseIntensity
+				::ReadFloatFromFile(pInFile);   // apecularIntensity
+
+				::ReadFloatFromFile(pInFile);   // AmbientEffect
+				::ReadFloatFromFile(pInFile);	// DiffuseEffect
+				::ReadFloatFromFile(pInFile);	// SpecularEffect
+
+				::ReadFloatFromFile(pInFile);	// ReflectionFactor
 			}
 		}
 		else if (!strcmp(pstrToken, "</Frame>"))

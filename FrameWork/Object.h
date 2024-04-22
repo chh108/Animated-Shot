@@ -65,8 +65,9 @@ public:
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, int nParameterIndex, int nTextureIndex);
 	void ReleaseShaderVariables();
 
-	//	void LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nIndex);
+	void LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
 	void LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
+
 	//	void LoadBufferFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, UINT nIndex);
 	void LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex);
 	ID3D12Resource* CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nIndex, UINT nResourceType,
@@ -120,13 +121,16 @@ public:
 	CShader*					m_pShader = NULL;
 
 	XMFLOAT4					m_xmf4DiffuseColor = XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f };    // 확산 색상 - 표면에서 들어오는 빛 처리
-	float						m_fDiffuseFactor = 1.0f;									    // 확산 강도 조절																						    
+	float						m_fDiffuseFactor = 1.0f;									// 확산 강도 조절		
+
 	XMFLOAT4					m_xmf4EmissiveColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };   // 발광 색상 - 물체가 스스로 빛을 낼때
-	float						m_fEmissiveFactor = 1.0f;									    // 발광 강도 조절																					    
-	XMFLOAT4					m_xmfAmbientColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };     // 주변 색상 - 주변에 반사되는 빛의 색상
-	float						m_fAmbientFactor = 1.0f;									    // 주변 색상의 강도 조절																						    
-	XMFLOAT4					m_xmfSpecularColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };    // 반사 색상 - 표면에서 반사되는 빛의 색상
-	float						m_fSpecularFactor = 1.0f;									   // 반사 색상의 강도 조절
+	float						m_fEmissiveFactor = 1.0f;									// 발광 강도 조절		
+
+	XMFLOAT4					m_xmf4AmbientColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };    // 주변 색상 - 주변에 반사되는 빛의 색상
+	float						m_fAmbientFactor = 1.0f;									// 주변 색상의 강도 조절	
+
+	XMFLOAT4					m_xmf4SpecularColor = XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f };   // 반사 색상 - 표면에서 반사되는 빛의 색상
+	float						m_fSpecularFactor = 1.0f;									// 반사 색상의 강도 조절
 																						   
 	float						m_fShininessExponent = 1.0f;							    // 물체 표면의 윤곽.
 																						    
@@ -506,6 +510,7 @@ public:
 	void SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet);
 	void SetTrackAnimationPosition(int nAnimationTrack, float fPosition);
 
+	static void LoadTextureInfoFromFile(FILE* pInFile, char* pstrToken);
 	static void LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel);
 
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames);

@@ -276,11 +276,11 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Model/M02.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
+	//m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);
+	//m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	//m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
+	//m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
+	//m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
