@@ -273,7 +273,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	// Animation이 없이 모델만 있는 파일을 읽어올 때 AnimationSet과 같은 변수들을 따로 만들어서 관리해주는 방식이 필요함. 2024-04-19
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
-		"Model/F02.bin", NULL);
+		"Model/M04.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);

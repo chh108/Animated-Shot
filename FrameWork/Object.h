@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include <cstddef>  // For Define NULL
 #include "stdafx.h"
+#include <vector>
 
 #define DIR_FORWARD					0x01
 #define DIR_BACKWARD				0x02
@@ -127,6 +128,11 @@ public:
 	void SetMaterialType(UINT nType) { m_nType |= nType; }
 	void SetTexture(CTexture* pTexture, UINT nTexture = 0);
 
+	void SetMaterialName(const char* pName);
+	
+	const char* GetMaterialName() const;
+
+	virtual void AddMaterial(CMaterial* pMaterial);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList);
 
 	virtual void ReleaseUploadBuffers();
@@ -134,11 +140,15 @@ public:
 public:
 	UINT						m_nType = 0x00;
 
+	char						m_pstrMaterialName[64];
+
 	float						m_fGlossiness = 0.0f;
 	float						m_fSmoothness = 0.0f;
 	float						m_fSpecularHighlight = 0.0f;
 	float						m_fMetallic = 0.0f;
 	float						m_fGlossyReflection = 0.0f;
+
+	static std::vector<CMaterial*> v_Materials;
 
 public:
 	int 						m_nTextures = 0;
@@ -481,7 +491,6 @@ public:
 
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames);
 
-	static CLoadedModelInfo* LoadModelFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
 	static CLoadedModelInfo* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
 
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);

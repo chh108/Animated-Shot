@@ -7,6 +7,8 @@
 #include "Shader.h"
 #include "Scene.h"
 
+std::vector<CMaterial*> CMaterial::v_Materials;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootParameters)
@@ -220,6 +222,19 @@ void CMaterial::SetTexture(CTexture* pTexture, UINT nTexture)
 		m_ppTextures[nTexture]->AddRef();
 }
 
+void CMaterial::SetMaterialName(const char* pName)
+{
+	if (m_pstrMaterialName)
+		delete[] m_pstrMaterialName;
+
+	strncpy_s(m_pstrMaterialName, sizeof(m_pstrMaterialName), pName, _TRUNCATE);
+}
+
+const char* CMaterial::GetMaterialName() const
+{
+	return m_pstrMaterialName;
+}
+
 void CMaterial::ReleaseUploadBuffers()
 {
 	for (int i = 0; i < m_nTextures; i++)
@@ -240,6 +255,11 @@ void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationWireFrameShader = new CSkinnedAnimationWireFrameShader();
 	m_pSkinnedAnimationWireFrameShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, SHADER_TYPE::SkinnedAnimationWireFrame);
 	m_pSkinnedAnimationWireFrameShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+}
+
+void CMaterial::AddMaterial(CMaterial* pMaterial)
+{
+	v_Materials.push_back(pMaterial);
 }
 
 void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList)
@@ -1038,6 +1058,25 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 			pGameObject->SetMesh(pMesh);
 
 			/**/pGameObject->SetWireFrameShader();
+		}
+		else if (!strcmp(pstrToken, "<Materials>:")) // Materials
+		{
+			int nMaterials = ::ReadIntegerFromFile(pInFile);
+			for (int i = 0; i < nMaterials; i++)
+			{
+				::ReadStringFromFile(pInFile, pstrToken);
+				if (!strcmp(pstrToken, "<Material>:")) // Material
+				{
+					CMaterial* pMaterial = new CMaterial(nMaterials);
+
+					int nMaterial = ::ReadIntegerFromFile(pInFile);
+					::ReadStringFromFile(pInFile, pMaterial->m_pstrMaterialName);
+
+					CMaterial::v_Materials.push_back(pMaterial);
+
+					::ReadStringFromFile(pInFile, pstrToken);
+				}
+			}
 		}
 		else if (!strcmp(pstrToken, "<SkinDeformations>:")) // SkinDeformation
 		{
