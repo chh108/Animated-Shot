@@ -361,6 +361,7 @@ public:
 
 public:
 	CGameObject						*m_pModelRootObject = NULL;
+	CGameObject						*m_pAnimationModelRootObject = NULL;
 
 	CAnimationSets					*m_pAnimationSets = NULL;
 
@@ -395,6 +396,7 @@ public:
 	void SetTrackStartEndTime(int nAnimationTrack, float fStartTime, float fEndTime);
 
 	void SetAnimationType(int nAnimationSet, int nType);
+	void SetAnimationToModel(CLoadedModelInfo* pObjModel, CLoadedModelInfo* pAnimModel);
 
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);
 	void SetCallbackKey(int nAnimationSet, int nKeyIndex, float fTime, void* pData);
@@ -433,6 +435,7 @@ public:
 	
 	XMFLOAT4X4						m_xmf4x4ToParent;
 	XMFLOAT4X4  					m_xmf4x4World;
+	XMFLOAT4X4						*TransAxisMatrix;
 
 	XMFLOAT3						m_xmf3Scale;
 	XMFLOAT3						m_xmf3Rotation;

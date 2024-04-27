@@ -26,6 +26,14 @@ CPlayer::CPlayer()
 	m_fMaxVelocityY = 0.0f;
 	m_fFriction = 0.0f;
 
+	TransAxisMatrix = new XMFLOAT4X4
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f,
+	};
+
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
 	m_fYaw = 0.0f;
@@ -270,22 +278,38 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	// Animation이 없이 모델만 있는 파일을 읽어올 때 AnimationSet과 같은 변수들을 따로 만들어서 관리해주는 방식이 필요함. 2024-04-19
+	// Animation이 없이 모델만 있는 파일을 읽어올 때 AnimationSet과 같은 변수들을 따로 만들어서 관리해주는 방식이 필요 0419 fin
+	// Texture, Material 읽어온 DATA 저장해야함. 0424
 
-	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
-		"Model/M02.bin", NULL);
-	SetChild(pAngrybotModel->m_pModelRootObject, true);
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
+		"Model/Anto.bin", NULL);
+	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	//m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);
-	//m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	//m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
+	//CLoadedModelInfo* pAnimModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+	//	"Model/Anim_IdleB.bin", NULL);
+	//SetChild(pAnimModel->m_pModelRootObject, true);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
+	//m_pSkinnedAnimationController->SetAnimationToModel(pPlayerModel, pAnimModel);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 300.0f);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 300.0f, 600.0f);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 0);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(2, 600.0f, 900.0f);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(3, 0);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(3, 900.0f, 1200.0f);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(4, 0);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(4, 1200.0f, 1500.0f);
+
+
 	//m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
 	//m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	if (pAngrybotModel) delete pAngrybotModel;
+	if (pPlayerModel) delete pPlayerModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 

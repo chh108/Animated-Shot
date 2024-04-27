@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 #include "Shader.h"
+#include "Object.h"
 
 CGameFramework::CGameFramework()
 {
@@ -409,6 +410,8 @@ void CGameFramework::BuildObjects()
 	CAngrybotPlayer* pPlayer = new CAngrybotPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+
+	m_pPlayer->SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pd3dCommandList->Close();

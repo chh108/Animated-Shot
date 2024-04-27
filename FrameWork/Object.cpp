@@ -609,6 +609,38 @@ void CAnimationController::SetAnimationType(int nAnimationSet, int nType)
 	if (m_pAnimationSets->m_ppAnimationSets) m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->SetAnimationType(nType);
 }
 
+void CAnimationController::SetAnimationToModel(CLoadedModelInfo* pObjModel, CLoadedModelInfo* pAnimModel)
+{
+	// Load Animation Data
+	CAnimationSets* pObjAnimSets = pObjModel->m_pAnimationSets;
+	CAnimationSets* pAnimSets = pAnimModel->m_pAnimationSets;
+
+	// Copy pAnimModel Animation Data to pObjModel
+	if (pObjAnimSets && pAnimSets)
+	{
+		// Delete Animation
+		if (pObjAnimSets->m_ppAnimationSets)
+		{
+			delete[] pObjAnimSets->m_ppAnimationSets;
+			pObjAnimSets->m_ppAnimationSets = NULL;
+		}
+
+		// Copy Animation Data
+		pObjAnimSets->m_nAnimationSets = pAnimSets->m_nAnimationSets;
+		pObjAnimSets->m_ppAnimationSets = new CAnimationSet * [pObjAnimSets->m_nAnimationSets];
+
+		for (int i = 0; i < pObjAnimSets->m_nAnimationSets; i++)
+		{
+			pObjAnimSets->m_ppAnimationSets[i] = new CAnimationSet(*pAnimSets->m_ppAnimationSets[i]);
+		}
+
+		// Update CAnimationSets
+		pObjModel->m_pAnimationSets = pAnimSets;
+	}
+
+
+}
+
 void CAnimationController::SetCallbackKeys(int nAnimationSet, int nCallbackKeys)
 {
 	if (m_pAnimationSets)
@@ -695,6 +727,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 	//*/
 
 	pRootGameObject->UpdateTransform(NULL);
+	//pRootGameObject->UpdateTransform(TransAxisMatrix);
 
 	for (int k = 0; k < m_nAnimationTracks; k++)
 	{
@@ -942,6 +975,7 @@ void CGameObject::LoadTextureInfoFromFile(FILE* pInFile, char* pstrToken)
 		}
 	}
 }
+
 void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel)
 {
 	char pstrToken[64] = { '\0' };
@@ -1074,6 +1108,7 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoaded
 		}
 	}
 }
+
 CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames)
 {
 	char pstrToken[64] = { '\0' };
@@ -1441,6 +1476,7 @@ void CGameObject::SetPosition(float x, float y, float z)
 	m_xmf4x4ToParent._43 = z;
 
 	UpdateTransform(NULL);
+	//UpdateTransform(NULL);
 }
 
 void CGameObject::SetPosition(XMFLOAT3 xmf3Position)
@@ -1454,6 +1490,7 @@ void CGameObject::SetScale(float x, float y, float z)
 	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxScale, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
+	//UpdateTransform(NULL);
 }
 
 XMFLOAT3 CGameObject::GetPosition()
@@ -1506,6 +1543,7 @@ void CGameObject::Rotate(float fPitch, float fYaw, float fRoll)
 	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
+	//UpdateTransform(NULL);
 }
 
 void CGameObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
@@ -1514,6 +1552,7 @@ void CGameObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
 	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
+	//UpdateTransform(NULL);
 }
 
 void CGameObject::Rotate(XMFLOAT4* pxmf4Quaternion)
@@ -1522,11 +1561,18 @@ void CGameObject::Rotate(XMFLOAT4* pxmf4Quaternion)
 	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
+	//UpdateTransform(NULL);
 }
 
 void CGameObject::UpdateTransform(XMFLOAT4X4* pxmf4x4Parent)
 {
-	m_xmf4x4World = (pxmf4x4Parent) ? Matrix4x4::Multiply(m_xmf4x4ToParent, *pxmf4x4Parent) : m_xmf4x4ToParent;
+	if (TransAxisMatrix)
+	{
+		XMFLOAT4X4 matrix = Matrix4x4::Multiply(*TransAxisMatrix, m_xmf4x4ToParent);
+		m_xmf4x4World = (pxmf4x4Parent) ? Matrix4x4::Multiply(matrix, *pxmf4x4Parent) : matrix;
+	}
+	else
+		m_xmf4x4World = (pxmf4x4Parent) ? Matrix4x4::Multiply(m_xmf4x4ToParent, *pxmf4x4Parent) : m_xmf4x4ToParent;
 
 	if (m_pSibling) m_pSibling->UpdateTransform(pxmf4x4Parent);
 	if (m_pChild) m_pChild->UpdateTransform(&m_xmf4x4World);
