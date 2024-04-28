@@ -14,17 +14,19 @@ std::vector<CMaterial*> CMaterial::v_Materials;
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootParameters)
 {
 	m_nTextureType = nTextureType;
-
 	m_nTextures = nTextures;
+
 	if (m_nTextures > 0)
 	{
 		m_ppd3dTextureUploadBuffers = new ID3D12Resource * [m_nTextures];
 		m_ppd3dTextures = new ID3D12Resource * [m_nTextures];
+		m_pnResourceTypes = new UINT[m_nTextures];
+
 		for (int i = 0; i < m_nTextures; i++) m_ppd3dTextureUploadBuffers[i] = m_ppd3dTextures[i] = NULL;
 
 		m_pd3dSrvGpuDescriptorHandles = new D3D12_GPU_DESCRIPTOR_HANDLE[m_nTextures];
 
-		m_pnResourceTypes = new UINT[m_nTextures];
+
 		m_pdxgiBufferFormats = new DXGI_FORMAT[m_nTextures];
 		m_pnBufferElements = new int[m_nTextures];
 	}
@@ -101,22 +103,13 @@ void CTexture::ReleaseUploadBuffers()
 	}
 }
 
-//void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nIndex)
-//{
-//	m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromDDSFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
-//}
-
-void CTexture::LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
+void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex, bool bIsDDSType)
 {
 	m_pnResourceTypes[nIndex] = nResourceType;
-	m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ); 
-	// D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-}
-
-void CTexture::LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
-{
-	m_pnResourceTypes[nIndex] = nResourceType;
-	m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromDDSFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ/*D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE*/);
+	if (bIsDDSType)
+		m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromDDSFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
+	else
+		m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ/*D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE*/);
 }
 
 void CTexture::LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex)
@@ -252,6 +245,11 @@ void CMaterial::ReleaseUploadBuffers()
 
 CShader* CMaterial::m_pWireFrameShader = NULL;
 CShader* CMaterial::m_pSkinnedAnimationWireFrameShader = NULL;
+
+void CMaterial::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nType, UINT nRootParameter, _TCHAR* pwstrTextureName, CTexture** ppTexture, CGameObject* pParent, FILE* pInFile, CShader* pShader)
+{
+	char strTextureName[64] = { '\0' };
+}
 
 void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
@@ -1142,6 +1140,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 		}
 		else if (!strcmp(pstrToken, "<Materials>:")) // Materials
 		{
+			//pGameObject->LoadMaterialsFromFile(pd3dDevice, pd3dCommandList, pParent, pInFile, pShader);
 			int nMaterials = ::ReadIntegerFromFile(pInFile);
 			for (int i = 0; i < nMaterials; i++)
 			{
@@ -1566,9 +1565,9 @@ void CGameObject::Rotate(XMFLOAT4* pxmf4Quaternion)
 
 void CGameObject::UpdateTransform(XMFLOAT4X4* pxmf4x4Parent)
 {
-	if (TransAxisMatrix)
+	if (m_pxmf4x4Trans)
 	{
-		XMFLOAT4X4 matrix = Matrix4x4::Multiply(*TransAxisMatrix, m_xmf4x4ToParent);
+		XMFLOAT4X4 matrix = Matrix4x4::Multiply(*m_pxmf4x4Trans, m_xmf4x4ToParent);
 		m_xmf4x4World = (pxmf4x4Parent) ? Matrix4x4::Multiply(matrix, *pxmf4x4Parent) : matrix;
 	}
 	else
@@ -1652,49 +1651,6 @@ CAngrybotObject::CAngrybotObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 CAngrybotObject::~CAngrybotObject()
 {
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CElvenWitchObject::CElvenWitchObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
-{
-	CLoadedModelInfo* pElvenWitchModel = pModel;
-	if (!pElvenWitchModel) pElvenWitchModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Elven_Witch.bin", NULL);
-
-	SetChild(pElvenWitchModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pElvenWitchModel);
-
-	strcpy_s(m_pstrFrameName, "ElvenWitch");
-
-	Rotate(-90.0f, 0.0f, 0.0f);
-	SetScale(0.15f, 0.15f, 0.15f);
-
-	SetActive("elven_staff", false);
-	SetActive("elven_staff01", false);
-}
-
-CElvenWitchObject::~CElvenWitchObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CMonsterWeaponObject::CMonsterWeaponObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
-{
-	CLoadedModelInfo* pMonsterWeaponModel = pModel;
-	if (!pMonsterWeaponModel) pMonsterWeaponModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/MonsterWeapon.bin", NULL);
-
-	SetChild(pMonsterWeaponModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMonsterWeaponModel);
-
-	strcpy_s(m_pstrFrameName, "MonsterWeapon");
-
-	SetScale(0.35f, 0.35f, 0.35f);
-}
-
-CMonsterWeaponObject::~CMonsterWeaponObject()
-{
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CLionObject::CLionObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
@@ -1736,5 +1692,175 @@ CEagleObject::CEagleObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 }
 
 CEagleObject::~CEagleObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
+CAntoObject::CAntoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	CLoadedModelInfo* pAntoModel = pModel;
+	if (!pAntoModel) pAntoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Anto.bin", NULL);
+
+	// 몸체 y축, Leg_L 180도
+
+	SetChild(pAntoModel->m_pModelRootObject, true);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pAntoModel);
+
+	strcpy_s(m_pstrFrameName, "Anto");
+
+	Rotate(0.0f, 0.0f, 0.0f);
+	SetScale(0.5f, 0.5f, 0.5f);
+}
+
+CAntoObject::~CAntoObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CCactusoObject::CCactusoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	CLoadedModelInfo* pCactusoModel = pModel;
+	if (!pCactusoModel) pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
+
+	SetChild(pCactusoModel->m_pModelRootObject, true);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pCactusoModel);
+
+	strcpy_s(m_pstrFrameName, "Cactuso");
+
+	Rotate(0.0f, 0.0f, 0.0f);
+	SetScale(0.3f, 0.3f, 0.3f);
+}
+
+CCactusoObject::~CCactusoObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CMegaGolemAObject::CMegaGolemAObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	// 다리 제대로 돌려줘야 함.
+	CLoadedModelInfo* pMegaGolemAModel = pModel;
+	if (!pMegaGolemAModel) pMegaGolemAModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Mega_Golem_A.bin", NULL);
+
+	SetChild(pMegaGolemAModel->m_pModelRootObject, true);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMegaGolemAModel);
+
+	strcpy_s(m_pstrFrameName, "MegaGolem_A");
+
+	Rotate(0.0f, 90.0f, 0.0f);
+	SetScale(1.5f, 1.5f, 1.5f);
+}
+
+CMegaGolemAObject::~CMegaGolemAObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CMegaGolemBObject::CMegaGolemBObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	// 다리 제대로 돌려줘야 함.
+	CLoadedModelInfo* pMegaGolemBModel = pModel;
+	if (!pMegaGolemBModel) pMegaGolemBModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Mega_Golem_B.bin", NULL);
+
+	SetChild(pMegaGolemBModel->m_pModelRootObject, true);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMegaGolemBModel);
+
+	strcpy_s(m_pstrFrameName, "MegaGolem_B");
+
+	Rotate(0.0f, 90.0f, 0.0f);
+	SetScale(1.5f, 1.5f, 1.5f);
+}
+
+CMegaGolemBObject::~CMegaGolemBObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CRatoObject::CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	CLoadedModelInfo* pRatoModel = pModel;
+	if (!pRatoModel) pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Rato.bin", NULL);
+
+	SetChild(pRatoModel->m_pModelRootObject, true);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pRatoModel);
+
+	strcpy_s(m_pstrFrameName, "Rato");
+
+	Rotate(0.0f, 0.0f, 0.0f);
+	SetScale(0.5f, 0.5f, 0.5f);
+}
+
+CRatoObject::~CRatoObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CScorpiontoObject::CScorpiontoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	CLoadedModelInfo* pScorpiontoModel = pModel;
+	if (!pScorpiontoModel) pScorpiontoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Scorpionto.bin", NULL);
+
+	SetChild(pScorpiontoModel->m_pModelRootObject, true);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pScorpiontoModel);
+
+	strcpy_s(m_pstrFrameName, "Scorpionto");
+
+	Rotate(0.0f, 0.0f, 0.0f);
+	SetScale(1.5f, 1.5f, 1.5f);
+}
+
+CScorpiontoObject::~CScorpiontoObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CWormoObject::CWormoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	CLoadedModelInfo* pWormoModel = pModel;
+	if (!pWormoModel) pWormoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Wormo.bin", NULL);
+
+	SetChild(pWormoModel->m_pModelRootObject, true);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pWormoModel);
+
+	strcpy_s(m_pstrFrameName, "Wormo");
+
+	Rotate(0.0f, 0.0f, 0.0f);
+	SetScale(1.0f, 1.0f, 1.0f);
+}
+
+CWormoObject::~CWormoObject()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CGolemChildObject::CGolemChildObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
+{
+	CLoadedModelInfo* pGolemChildModel = pModel;
+	if (!pGolemChildModel) pGolemChildModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Golem_Child.bin", NULL);
+
+	SetChild(pGolemChildModel->m_pModelRootObject, true);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pGolemChildModel);
+
+	strcpy_s(m_pstrFrameName, "GolemChild");
+
+	Rotate(0.0f, 0.0f, 0.0f);
+	SetScale(0.5f, 0.5f, 0.5f);
+}
+
+CGolemChildObject::~CGolemChildObject()
 {
 }

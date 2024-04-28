@@ -411,7 +411,7 @@ void CGameFramework::BuildObjects()
 
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 
-	m_pPlayer->SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
+	//m_pPlayer->SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pd3dCommandList->Close();

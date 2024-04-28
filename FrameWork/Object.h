@@ -19,6 +19,7 @@
 
 class CShader;
 class CStandardShader;
+class CGameObject;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -38,22 +39,23 @@ private:
 	int								m_nReferences = 0;
 	int								m_nTextures = 0;
 
+	char							m_pstrTextureName[64];
+
 	UINT							m_nTextureType;
+	UINT*							m_pnResourceTypes = NULL;
 
 	ID3D12Resource**				m_ppd3dTextures = NULL;
 	ID3D12Resource**				m_ppd3dTextureUploadBuffers;
 
-	UINT*							m_pnResourceTypes = NULL;
-
-	DXGI_FORMAT*					m_pdxgiBufferFormats = NULL;
-	int*							m_pnBufferElements = NULL;
-
 	int								m_nRootParameters = 0;
 	UINT*							m_pnRootParameterIndices = NULL;
-	D3D12_GPU_DESCRIPTOR_HANDLE*	m_pd3dSrvGpuDescriptorHandles = NULL;
 
 	int m_nSamplers = 0;
 	D3D12_GPU_DESCRIPTOR_HANDLE*	m_pd3dSamplerGpuDescriptorHandles = NULL;
+	D3D12_GPU_DESCRIPTOR_HANDLE*	m_pd3dSrvGpuDescriptorHandles = NULL;
+
+	DXGI_FORMAT* m_pdxgiBufferFormats = NULL;
+	int* m_pnBufferElements = NULL;
 
 public:
 	void AddRef() { m_nReferences++; }
@@ -65,8 +67,7 @@ public:
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, int nParameterIndex, int nTextureIndex);
 	void ReleaseShaderVariables();
 
-	void LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
-	void LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
+	void LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex, bool bIsDDSType = true);
 
 	//	void LoadBufferFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, UINT nIndex);
 	void LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex);
@@ -102,8 +103,6 @@ public:
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
-class CGameObject;
-
 class CMaterial
 {
 public:
@@ -133,15 +132,12 @@ public:
 	float						m_fSpecularFactor = 1.0f;									// 반사 색상의 강도 조절
 																						   
 	float						m_fShininessExponent = 1.0f;							    // 물체 표면의 윤곽.
-																						    
-	XMFLOAT4					m_mxf4NormalMap = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);         // Normal Map																						  
-	XMFLOAT4					m_xmf4Bump = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);			    // Bump Map
-																						   
+																						  																					   
 	XMFLOAT4					m_xmf4TransparentColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);  // 투명도 색상
-	float						m_xmf4TransparencyFactor = 0.0f;						    // 투명도 계수
+	float						m_fTransparencyFactor = 0.0f;						    // 투명도 계수
 																						   
 	XMFLOAT4					m_xmf4ReflectionColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);   // 반사 색상 : 빛이 표면에서 반사
-	float						m_xmf4ReflectionFactor = 0.0f;                              // 반사 계수
+	float						m_fReflectionFactor = 0.0f;                              // 반사 계수
 
 	XMFLOAT4					m_xmf4DisplacementColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);		  // 변위 맵 색상
 	XMFLOAT4					m_xmf4VectorDisplacementColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f); // 벡터 변위 맵 색상
@@ -175,11 +171,10 @@ public:
 
 public:
 	int 						m_nTextures = 0;
-	_TCHAR(*m_ppstrTextureNames)[64] = NULL;
-	CTexture** m_ppTextures = NULL; //0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
+	_TCHAR						(*m_ppstrTextureNames)[64] = NULL;
+	CTexture					**m_ppTextures = NULL; //0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
 
 	void LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nType, UINT nRootParameter, _TCHAR* pwstrTextureName, CTexture** ppTexture, CGameObject* pParent, FILE* pInFile, CShader* pShader);
-
 public:
 	static CShader*				m_pWireFrameShader;
 	static CShader*				m_pSkinnedAnimationWireFrameShader;
@@ -195,7 +190,7 @@ public:
 struct CALLBACKKEY
 {
 	float  							m_fTime = 0.0f;
-	void* m_pCallbackData = NULL;
+	void							*m_pCallbackData = NULL;
 };
 
 #define _WITH_ANIMATION_INTERPOLATION
@@ -435,7 +430,7 @@ public:
 	
 	XMFLOAT4X4						m_xmf4x4ToParent;
 	XMFLOAT4X4  					m_xmf4x4World;
-	XMFLOAT4X4						*TransAxisMatrix;
+	XMFLOAT4X4						*m_pxmf4x4Trans;
 
 	XMFLOAT3						m_xmf3Scale;
 	XMFLOAT3						m_xmf3Rotation;
@@ -457,6 +452,7 @@ public:
 	void SetMaterial(int nMaterial, CMaterial* pMaterial);
 
 	void SetChild(CGameObject* pChild, bool bReferenceUpdate = false);
+	//void UpdateBonesTransform(CGameObject* pGameObject, XMFLOAT4X4* pxmf4x4Parent);
 
 	virtual void BuildMaterials(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList) { }
 
@@ -515,7 +511,7 @@ public:
 
 	static void LoadTextureInfoFromFile(FILE* pInFile, char* pstrToken);
 	static void LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel);
-
+	//static void LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CGameObject* pParent, FILE* pInFile, CShader* pShader);
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames);
 
 	static CLoadedModelInfo* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
@@ -534,24 +530,6 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class CElvenWitchObject : public CGameObject
-{
-public:
-	CElvenWitchObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CElvenWitchObject();
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CMonsterWeaponObject : public CGameObject
-{
-public:
-	CMonsterWeaponObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CMonsterWeaponObject();
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 class CLionObject : public CGameObject
 {
 public:
@@ -566,4 +544,70 @@ class CEagleObject : public CGameObject
 public:
 	CEagleObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CEagleObject();
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CCactusoObject : public CGameObject
+{
+public:
+	CCactusoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CCactusoObject();
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CMegaGolemAObject : public CGameObject
+{
+public:
+	CMegaGolemAObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CMegaGolemAObject();
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CMegaGolemBObject : public CGameObject
+{
+public:
+	CMegaGolemBObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CMegaGolemBObject();
+};
+
+class CRatoObject : public CGameObject
+{
+public:
+	CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CRatoObject();
+};
+
+class CScorpiontoObject : public CGameObject
+{
+public:
+	CScorpiontoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CScorpiontoObject();
+};
+
+class CWormoObject : public CGameObject
+{
+public:
+	CWormoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CWormoObject();
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CAntoObject : public CGameObject
+{
+public:
+	CAntoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CAntoObject();
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CGolemChildObject : public CGameObject
+{
+public:
+	CGolemChildObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CGolemChildObject();
 };

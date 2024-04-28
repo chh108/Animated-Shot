@@ -26,13 +26,13 @@ CPlayer::CPlayer()
 	m_fMaxVelocityY = 0.0f;
 	m_fFriction = 0.0f;
 
-	TransAxisMatrix = new XMFLOAT4X4
-	{
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f,
-	};
+	//TransAxisMatrix = new XMFLOAT4X4
+	//{
+	//	1.0f, 0.0f, 0.0f, 0.0f,
+	//	0.0f, 0.0f, 1.0f, 0.0f,
+	//	0.0f, 1.0f, 0.0f, 0.0f,
+	//	0.0f, 0.0f, 0.0f, 1.0f,
+	//};
 
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
@@ -282,25 +282,19 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	// Texture, Material 읽어온 DATA 저장해야함. 0424
 
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
-		"Model/Anto.bin", NULL);
+		"Monster/Anto.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
 	//CLoadedModelInfo* pAnimModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 	//	"Model/Anim_IdleB.bin", NULL);
 	//SetChild(pAnimModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pPlayerModel);
 	//m_pSkinnedAnimationController->SetAnimationToModel(pPlayerModel, pAnimModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 300.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 300.0f, 600.0f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(2, 600.0f, 900.0f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(3, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(3, 900.0f, 1200.0f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(4, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(4, 1200.0f, 1500.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
 
 
 	//m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);

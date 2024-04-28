@@ -91,70 +91,94 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	XMFLOAT4 xmf4Color(1.0f, 1.0f, 0.0f, 0.25f);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 
-	m_nGameObjects = 7;
+	m_nGameObjects = 8;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
 
-	CLoadedModelInfo* pLionModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Lion.bin", NULL);
-	m_ppGameObjects[0] = new CLionObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pLionModel, 1);
-	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	//CLoadedModelInfo* pLionModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Lion.bin", NULL);
+	//m_ppGameObjects[0] = new CLionObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pLionModel, 1);
+	//m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	//m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f);
+	//if (pLionModel) delete pLionModel;
+
+	CLoadedModelInfo* pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Rato.bin", NULL);
+	m_ppGameObjects[0] = new CRatoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRatoModel, 1);
+	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f);
-	if (pLionModel) delete pLionModel;
+	if (pRatoModel) delete pRatoModel;
 
-	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Angrybot.bin", NULL);
-	m_ppGameObjects[1] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 2);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackPosition(0, 0.55f);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.5f);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackWeight(0, 1.0f);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.65f, 4.5f);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 1.0f);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackWeight(1, 1.0f);
-	//	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	CLoadedModelInfo* pWormoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Wormo.bin", NULL);
+	m_ppGameObjects[1] = new CWormoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pWormoModel, 1);
+	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[1]->SetPosition(380.0f, m_pTerrain->GetHeight(380.0f, 725.0f), 725.0f);
+	if (pWormoModel) delete pWormoModel;
 
-	m_ppGameObjects[6] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 2);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackPosition(0, 0.55f);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.5f);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackWeight(0, 1.0f);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.65f, 4.5f);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.05f);
-	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackWeight(1, 1.0f);
-	//	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-	m_ppGameObjects[6]->SetPosition(320.0f, m_pTerrain->GetHeight(320.0f, 675.0f), 675.0f);
+	//CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Angrybot.bin", NULL);
+	//m_ppGameObjects[1] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 2);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackPosition(0, 0.55f);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.5f);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackWeight(0, 1.0f);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.65f, 4.5f);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 1.0f);
+	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackWeight(1, 1.0f);
+	////	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	//m_ppGameObjects[1]->SetPosition(380.0f, m_pTerrain->GetHeight(380.0f, 725.0f), 725.0f);
 
-	if (pAngrybotModel) delete pAngrybotModel;
+	//m_ppGameObjects[6] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 2);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackPosition(0, 0.55f);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.5f);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackWeight(0, 1.0f);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.65f, 4.5f);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.05f);
+	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackWeight(1, 1.0f);
+	////m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	//m_ppGameObjects[6]->SetPosition(320.0f, m_pTerrain->GetHeight(320.0f, 675.0f), 675.0f);
 
-	CLoadedModelInfo* pElvenWitchModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Elven_Witch.bin", NULL);
-	m_ppGameObjects[2] = new CElvenWitchObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pElvenWitchModel, 1);
-	m_ppGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppGameObjects[2]->SetPosition(330.0f, m_pTerrain->GetHeight(330.0f, 700.0f) + 25.0f, 700.0f);
-	if (pElvenWitchModel) delete pElvenWitchModel;
+	//if (pAngrybotModel) delete pAngrybotModel;
 
-	CLoadedModelInfo* pMonsterModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/MonsterWeapon.bin", NULL);
-	m_ppGameObjects[3] = new CMonsterWeaponObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMonsterModel, 1);
-	m_ppGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppGameObjects[3]->m_pSkinnedAnimationController->SetAnimationType(0, ANIMATION_TYPE_ONCE);
+	CLoadedModelInfo* pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
+	m_ppGameObjects[2] = new CCactusoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pCactusoModel, 1);
+	m_ppGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[2]->SetPosition(330.0f, m_pTerrain->GetHeight(330.0f, 700.0f), 700.0f);
+	if (pCactusoModel) delete pCactusoModel;
 
-	m_ppGameObjects[3]->SetPosition(300.0f, m_pTerrain->GetHeight(300.0f, 650.0f), 650.0f);
-	if (pMonsterModel) delete pMonsterModel;
+	CLoadedModelInfo* pMegaGolemAModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Mega_Golem_A.bin", NULL);
+	m_ppGameObjects[3] = new CMegaGolemAObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemAModel, 1);
+	m_ppGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 
-	CLoadedModelInfo* pEagleModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Eagle.bin", NULL);
-	m_ppGameObjects[4] = new CEagleObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pEagleModel, 1);
-	m_ppGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppGameObjects[3]->SetPosition(300.0f, m_pTerrain->GetHeight(300.0f, 650.0f) + 10.0f, 650.0f);
+	if (pMegaGolemAModel) delete pMegaGolemAModel;
+
+	CLoadedModelInfo* pMegaGolemBModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Mega_Golem_B.bin", NULL);
+	m_ppGameObjects[4] = new CMegaGolemBObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemBModel, 1);
+	m_ppGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[4]->SetPosition(230.0f, m_pTerrain->GetHeight(230.0f, 580.0f), 580.0f);
 
-	m_ppGameObjects[5] = new CEagleObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pEagleModel, 1);
-	m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	CLoadedModelInfo* pScorpiontoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Scorpionto.bin", NULL);
+	m_ppGameObjects[5] = new CScorpiontoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pScorpiontoModel, 1);
+	m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
-	m_ppGameObjects[5]->SetPosition(200.0f, m_pTerrain->GetHeight(200.0f, 620.0f) + 20.0f, 620.0f);
-	if (pEagleModel) delete pEagleModel;
+	m_ppGameObjects[5]->SetPosition(200.0f, m_pTerrain->GetHeight(200.0f, 620.0f), 620.0f);
+	if (pScorpiontoModel) delete pScorpiontoModel;
+
+	CLoadedModelInfo* pAntoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Anto.bin", NULL);
+	m_ppGameObjects[6] = new CAntoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAntoModel, 1);
+	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[6]->SetPosition(230.0f, m_pTerrain->GetHeight(230.0f, 700.0f), 700.0f);
+
+	CLoadedModelInfo* pGolemChildModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Golem_Child.bin", NULL);
+	m_ppGameObjects[7] = new CGolemChildObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGolemChildModel, 1);
+	m_ppGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[7]->SetPosition(350.0f, m_pTerrain->GetHeight(350.0f, 400.0f), 400.0f);
+
+	if (pAntoModel) delete pAntoModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -484,6 +508,8 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		case 'D': m_ppGameObjects[0]->MoveStrafe(+3.0f); break;
 		case 'Q': m_ppGameObjects[0]->MoveUp(+3.0f); break;
 		case 'R': m_ppGameObjects[0]->MoveUp(-3.0f); break;
+		case 'T': m_ppGameObjects[0]->Rotate(0.0f, 1.0f, 0.0f); break;
+		case 'Y': m_ppGameObjects[0]->Rotate(0.0f, -1.0f, 0.0f); break;
 		default:
 			break;
 		}
