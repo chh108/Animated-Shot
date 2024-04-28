@@ -6,6 +6,7 @@
 #include "Object.h"
 #include "Shader.h"
 #include "Scene.h"
+#include "Client_Defines.h"
 
 std::vector<CMaterial*> CMaterial::v_Materials;
 
@@ -607,38 +608,6 @@ void CAnimationController::SetAnimationType(int nAnimationSet, int nType)
 	if (m_pAnimationSets->m_ppAnimationSets) m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->SetAnimationType(nType);
 }
 
-void CAnimationController::SetAnimationToModel(CLoadedModelInfo* pObjModel, CLoadedModelInfo* pAnimModel)
-{
-	// Load Animation Data
-	CAnimationSets* pObjAnimSets = pObjModel->m_pAnimationSets;
-	CAnimationSets* pAnimSets = pAnimModel->m_pAnimationSets;
-
-	// Copy pAnimModel Animation Data to pObjModel
-	if (pObjAnimSets && pAnimSets)
-	{
-		// Delete Animation
-		if (pObjAnimSets->m_ppAnimationSets)
-		{
-			delete[] pObjAnimSets->m_ppAnimationSets;
-			pObjAnimSets->m_ppAnimationSets = NULL;
-		}
-
-		// Copy Animation Data
-		pObjAnimSets->m_nAnimationSets = pAnimSets->m_nAnimationSets;
-		pObjAnimSets->m_ppAnimationSets = new CAnimationSet * [pObjAnimSets->m_nAnimationSets];
-
-		for (int i = 0; i < pObjAnimSets->m_nAnimationSets; i++)
-		{
-			pObjAnimSets->m_ppAnimationSets[i] = new CAnimationSet(*pAnimSets->m_ppAnimationSets[i]);
-		}
-
-		// Update CAnimationSets
-		pObjModel->m_pAnimationSets = pAnimSets;
-	}
-
-
-}
-
 void CAnimationController::SetCallbackKeys(int nAnimationSet, int nCallbackKeys)
 {
 	if (m_pAnimationSets)
@@ -742,6 +711,10 @@ void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3d
 	}
 }
 
+void CAnimationController::ChangeAnimationState()
+{
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CGameObject::CGameObject()

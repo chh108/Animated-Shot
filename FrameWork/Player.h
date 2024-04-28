@@ -9,6 +9,7 @@
 
 #include "Object.h"
 #include "Camera.h"
+#include "Client_Defines.h"
 
 class CPlayer : public CGameObject
 {
@@ -34,6 +35,9 @@ protected:
 	LPVOID						m_pCameraUpdatedContext = NULL;
 
 	CCamera						*m_pCamera = NULL;
+
+public:
+	int							m_iCurrentState = PS_IDLE;
 
 public:
 	CPlayer();
@@ -83,6 +87,8 @@ public:
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
+
+	void PlayerStateChange(int state);
 };
 
 class CSoundCallbackHandler : public CAnimationCallbackHandler

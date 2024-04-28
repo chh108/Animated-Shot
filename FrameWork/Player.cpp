@@ -65,8 +65,12 @@ void CPlayer::ReleaseShaderVariables()
 
 void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
+	int prev_state = m_iCurrentState;
+
 	if (dwDirection)
 	{
+		m_iCurrentState = PLAYERSTATE::PS_WALK;
+
 		float SetSpeed = 0.3f;
 
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
@@ -86,6 +90,19 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 
 		Move(xmf3Shift, bUpdateVelocity);
 	}
+	else
+	{
+		m_iCurrentState = PLAYERSTATE::PS_IDLE;
+	}
+
+	if (prev_state != m_iCurrentState)
+	{
+		PlayerStateChange(m_iCurrentState);
+	}
+}
+void CPlayer::PlayerStateChange(int state)
+{
+
 }
 
 void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
@@ -291,11 +308,14 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pPlayerModel);
 	//m_pSkinnedAnimationController->SetAnimationToModel(pPlayerModel, pAnimModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
-
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, m_iCurrentState);
+	m_pSkinnedAnimationController->SetTrackSpeed(0, 1.0f);
+	//m_pSkinnedAnimationController->SetPlayerState(PS_IDLE);
+	//m_pSkinnedAnimationController->SetPlayerState(PS_WALK);
+	//m_pSkinnedAnimationController->SetPlayerState(PS_ATTACK);
+	//m_pSkinnedAnimationController->SetPlayerState(PS_HIT);
+	//m_pSkinnedAnimationController->SetPlayerState(PS_DIE);
+	//m_pSkinnedAnimationController->SetPlayerState(PS_END);
 
 	//m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
 	//m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
@@ -310,7 +330,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
 	SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 595.0f), 595.0f));
 
-	SetScale(XMFLOAT3(0.2f, 0.2f, 0.2f));
+	SetScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 }
 
 CAngrybotPlayer::~CAngrybotPlayer()

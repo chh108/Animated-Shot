@@ -381,8 +381,8 @@ public:
 
 	ID3D12Resource  				**m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL;
-public:
 
+public:
 	void SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet);
 	void SetTrackEnable(int nAnimationTrack, bool bEnable);
 	void SetTrackPosition(int nAnimationTrack, float fPosition);
@@ -391,7 +391,6 @@ public:
 	void SetTrackStartEndTime(int nAnimationTrack, float fStartTime, float fEndTime);
 
 	void SetAnimationType(int nAnimationSet, int nType);
-	void SetAnimationToModel(CLoadedModelInfo* pObjModel, CLoadedModelInfo* pAnimModel);
 
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);
 	void SetCallbackKey(int nAnimationSet, int nKeyIndex, float fTime, void* pData);
@@ -400,6 +399,7 @@ public:
 	void AdvanceTime(float fElapsedTime, CGameObject* pRootGameObject);
 
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+	void ChangeAnimationState();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
