@@ -26,13 +26,13 @@ CPlayer::CPlayer()
 	m_fMaxVelocityY = 0.0f;
 	m_fFriction = 0.0f;
 
-	//TransAxisMatrix = new XMFLOAT4X4
-	//{
-	//	1.0f, 0.0f, 0.0f, 0.0f,
-	//	0.0f, 0.0f, 1.0f, 0.0f,
-	//	0.0f, 1.0f, 0.0f, 0.0f,
-	//	0.0f, 0.0f, 0.0f, 1.0f,
-	//};
+	m_pxmf4x4Trans = new XMFLOAT4X4
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f,
+	};
 
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
@@ -282,7 +282,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	// Texture, Material 읽어온 DATA 저장해야함. 0424
 
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
-		"Monster/Anto.bin", NULL);
+		"Monster/Cactuso.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
 	//CLoadedModelInfo* pAnimModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
@@ -383,7 +383,7 @@ void CAngrybotPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 	XMFLOAT3 xmf3PlayerPosition = GetPosition();
 	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
-	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 0.0f;
+	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 2.0f;
 	if (xmf3PlayerPosition.y < fHeight)
 	{
 		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();
