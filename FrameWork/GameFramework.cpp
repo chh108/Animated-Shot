@@ -41,7 +41,7 @@ CGameFramework::CGameFramework()
 
 CGameFramework::~CGameFramework()
 {
-}
+} 
 
 bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 {
@@ -126,8 +126,8 @@ void CGameFramework::CreateDirect3DDevice()
 
 	UINT nDXGIFactoryFlags = 0;
 #if defined(_DEBUG)
-	ID3D12Debug *pd3dDebugController = NULL;
-	hResult = D3D12GetDebugInterface(__uuidof(ID3D12Debug), (void **)&pd3dDebugController);
+	ID3D12Debug* pd3dDebugController = NULL;
+	hResult = D3D12GetDebugInterface(__uuidof(ID3D12Debug), (void**)&pd3dDebugController);
 	if (pd3dDebugController)
 	{
 		pd3dDebugController->EnableDebugLayer();
@@ -136,22 +136,22 @@ void CGameFramework::CreateDirect3DDevice()
 	nDXGIFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 
-	hResult = ::CreateDXGIFactory2(nDXGIFactoryFlags, __uuidof(IDXGIFactory4), (void **)&m_pdxgiFactory);
+	hResult = ::CreateDXGIFactory2(nDXGIFactoryFlags, __uuidof(IDXGIFactory4), (void**)&m_pdxgiFactory);
 
-	IDXGIAdapter1 *pd3dAdapter = NULL;
+	IDXGIAdapter1* pd3dAdapter = NULL;
 
 	for (UINT i = 0; DXGI_ERROR_NOT_FOUND != m_pdxgiFactory->EnumAdapters1(i, &pd3dAdapter); i++)
 	{
 		DXGI_ADAPTER_DESC1 dxgiAdapterDesc;
 		pd3dAdapter->GetDesc1(&dxgiAdapterDesc);
 		if (dxgiAdapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;
-		if (SUCCEEDED(D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void **)&m_pd3dDevice))) break;
+		if (SUCCEEDED(D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void**)&m_pd3dDevice))) break;
 	}
 
 	if (!pd3dAdapter)
 	{
-		m_pdxgiFactory->EnumWarpAdapter(_uuidof(IDXGIFactory4), (void **)&pd3dAdapter);
-		hResult = D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void **)&m_pd3dDevice);
+		m_pdxgiFactory->EnumWarpAdapter(_uuidof(IDXGIFactory4), (void**)&pd3dAdapter);
+		hResult = D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void**)&m_pd3dDevice);
 	}
 
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS d3dMsaaQualityLevels;
@@ -163,13 +163,14 @@ void CGameFramework::CreateDirect3DDevice()
 	m_nMsaa4xQualityLevels = d3dMsaaQualityLevels.NumQualityLevels;
 	m_bMsaa4xEnable = (m_nMsaa4xQualityLevels > 1) ? true : false;
 
-	hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void **)&m_pd3dFence);
+	hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)&m_pd3dFence);
 	for (UINT i = 0; i < m_nSwapChainBuffers; i++) m_nFenceValues[i] = 0;
 
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	if (pd3dAdapter) pd3dAdapter->Release();
-	::gnCbvSrvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);;
+	// Get DescriptorIncrementSize
+	::gnCbvSrvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void CGameFramework::CreateCommandQueueAndList()
