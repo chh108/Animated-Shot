@@ -289,6 +289,8 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	//	"Model/Anim_IdleB.bin", NULL);
 	//SetChild(pAnimModel->m_pModelRootObject, true);
 
+	// Animation 넘어갈떄 BoneTransform 확인 해야함 0430
+
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
 	m_pSkinnedAnimationController->SetTrackSpeed(PS_IDLE, 1.0f);
@@ -315,13 +317,14 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);
+
 	//m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
 	//m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
 
 #ifdef _WITH_SOUND_CALLBACK
-	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND
-	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 0, 0.0f, _T("Sound/Footstep01.wav"));
-	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 1, 0.3f, _T("Sound/Footstep01.wav"));
+	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK
+	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 0, 1.3f, _T("Sound/SmallFootstep01.wav"));
+	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 1, 1.57f, _T("Sound/SmallFootstep01.wav"));
 
 	CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
 	m_pSkinnedAnimationController->SetAnimationCallbackHandler(PS_WALK, pAnimationCallbackHandler);
@@ -337,7 +340,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
 	SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 595.0f), 595.0f));
 
-	SetScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
 }
 
 CAngrybotPlayer::~CAngrybotPlayer()
@@ -456,9 +459,16 @@ void CAngrybotPlayer::Update(float fTimeElapsed)
 	if (m_pSkinnedAnimationController)
 	{
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
+
+		float fWALKWweight = fLength;
+
+		float fIDLEWeight = 1.2f - fWALKWweight;
+
+		m_pSkinnedAnimationController->SetTrackWeight(PS_IDLE, fIDLEWeight);
+		m_pSkinnedAnimationController->SetTrackWeight(PS_WALK, fWALKWweight);
+
 		m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, ::IsZero(fLength));
 		m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, !::IsZero(fLength));
-		m_pSkinnedAnimationController->SetTrackWeight(PS_WALK, 1.1f);
 	}
 }
 #endif

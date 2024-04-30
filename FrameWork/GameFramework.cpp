@@ -169,6 +169,7 @@ void CGameFramework::CreateDirect3DDevice()
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	if (pd3dAdapter) pd3dAdapter->Release();
+	::gnCbvSrvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);;
 }
 
 void CGameFramework::CreateCommandQueueAndList()
