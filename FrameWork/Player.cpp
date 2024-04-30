@@ -65,12 +65,8 @@ void CPlayer::ReleaseShaderVariables()
 
 void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
-	int prev_state = m_iCurrentState;
-
 	if (dwDirection)
 	{
-		m_iCurrentState = PLAYERSTATE::PS_WALK;
-
 		float SetSpeed = 0.3f;
 
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
@@ -90,19 +86,6 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 
 		Move(xmf3Shift, bUpdateVelocity);
 	}
-	else
-	{
-		m_iCurrentState = prev_state;
-	}
-
-	if (prev_state != m_iCurrentState)
-	{
-		PlayerStateChange(prev_state, m_iCurrentState);
-	}
-}
-void CPlayer::PlayerStateChange(int nPrev, int nCurrent)
-{
-	nCurrent = nPrev;
 }
 
 void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)

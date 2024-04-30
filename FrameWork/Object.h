@@ -399,7 +399,6 @@ public:
 	void AdvanceTime(float fElapsedTime, CGameObject* pRootGameObject);
 
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
-	void ChangeState(CPlayer* pPlayer, int nState);
 	void SetAnimationBlend();
 
 

@@ -712,11 +712,6 @@ void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3d
 }
 // ChangeAnimationState PLAYERSTATE 에 따른 Animation 변경 작업 04 28
 
-void CAnimationController::ChangeState(CPlayer* pPlayer, int nState)
-{
-	pPlayer->m_iCurrentState = nState;
-}
-
 void CAnimationController::SetAnimationBlend()
 {
 
