@@ -92,17 +92,17 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 	}
 	else
 	{
-		m_iCurrentState = PLAYERSTATE::PS_IDLE;
+		m_iCurrentState = prev_state;
 	}
 
 	if (prev_state != m_iCurrentState)
 	{
-		PlayerStateChange(m_iCurrentState);
+		PlayerStateChange(prev_state, m_iCurrentState);
 	}
 }
-void CPlayer::PlayerStateChange(int state)
+void CPlayer::PlayerStateChange(int nPrev, int nCurrent)
 {
-
+	nCurrent = nPrev;
 }
 
 void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
@@ -306,19 +306,43 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	//	"Model/Anim_IdleB.bin", NULL);
 	//SetChild(pAnimModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pPlayerModel);
-	//m_pSkinnedAnimationController->SetAnimationToModel(pPlayerModel, pAnimModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, m_iCurrentState);
-	m_pSkinnedAnimationController->SetTrackSpeed(0, 1.0f);
-	//m_pSkinnedAnimationController->SetPlayerState(PS_IDLE);
-	//m_pSkinnedAnimationController->SetPlayerState(PS_WALK);
-	//m_pSkinnedAnimationController->SetPlayerState(PS_ATTACK);
-	//m_pSkinnedAnimationController->SetPlayerState(PS_HIT);
-	//m_pSkinnedAnimationController->SetPlayerState(PS_DIE);
-	//m_pSkinnedAnimationController->SetPlayerState(PS_END);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_IDLE, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_IDLE, 0.0f, 1.0f);
 
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_WALK, PS_WALK);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_WALK, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_WALK, 1.3f, 1.875f);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_ATTACK, PS_ATTACK);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_ATTACK, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_ATTACK, 6.3f, 6.875f);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DAMAGED, PS_DAMAGED);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_DAMAGED, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DAMAGED, 3.375f, 4.0f);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DIE, PS_DIE);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_DIE, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DIE, 4.2f, 5.4f);
+
+	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, true);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);
 	//m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
 	//m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
+
+#ifdef _WITH_SOUND_CALLBACK
+	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND
+	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 0, 0.0f, _T("Sound/Footstep01.wav"));
+	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 1, 0.3f, _T("Sound/Footstep01.wav"));
+
+	CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
+	m_pSkinnedAnimationController->SetAnimationCallbackHandler(PS_WALK, pAnimationCallbackHandler);
+#endif
 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
@@ -437,7 +461,7 @@ void CAngrybotPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 #ifdef _WITH_SOUND_CALLBACK
 void CAngrybotPlayer::Move(ULONG dwDirection, float fDistance, bool bUpdateVelocity)
 {
-	m_pSkinnedAnimationController->SetTrackEnable(0, (dwDirection) ? true : false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, (dwDirection) ? true : false);
 
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
 }
@@ -449,8 +473,9 @@ void CAngrybotPlayer::Update(float fTimeElapsed)
 	if (m_pSkinnedAnimationController)
 	{
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
-		m_pSkinnedAnimationController->SetTrackEnable(0, ::IsZero(fLength));
-		m_pSkinnedAnimationController->SetTrackEnable(1, !::IsZero(fLength));
+		m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, ::IsZero(fLength));
+		m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, !::IsZero(fLength));
+		m_pSkinnedAnimationController->SetTrackWeight(PS_WALK, 1.1f);
 	}
 }
 #endif
