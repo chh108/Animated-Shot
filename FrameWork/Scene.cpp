@@ -79,7 +79,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 60); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
+	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 100); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
 	CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
@@ -94,12 +94,6 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_nGameObjects = 8;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
 
-	//CLoadedModelInfo* pLionModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Lion.bin", NULL);
-	//m_ppGameObjects[0] = new CLionObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pLionModel, 1);
-	//m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
-	//m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f);
-	//if (pLionModel) delete pLionModel;
-
 	CLoadedModelInfo* pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Rato.bin", NULL);
 	m_ppGameObjects[0] = new CRatoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRatoModel, 1);
 	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
@@ -111,37 +105,6 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[1]->SetPosition(380.0f, m_pTerrain->GetHeight(380.0f, 725.0f), 725.0f);
 	if (pWormoModel) delete pWormoModel;
-
-	//CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Angrybot.bin", NULL);
-	//m_ppGameObjects[1] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 2);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackPosition(0, 0.55f);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.5f);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackWeight(0, 1.0f);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.65f, 4.5f);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 1.0f);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackWeight(1, 1.0f);
-	////	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-	//m_ppGameObjects[1]->SetPosition(380.0f, m_pTerrain->GetHeight(380.0f, 725.0f), 725.0f);
-
-	//m_ppGameObjects[6] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 2);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackStartEndTime(0, 0.0f, 2.5f);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackPosition(0, 0.55f);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.5f);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackWeight(0, 1.0f);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.65f, 4.5f);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.05f);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackWeight(1, 1.0f);
-	////m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-	//m_ppGameObjects[6]->SetPosition(320.0f, m_pTerrain->GetHeight(320.0f, 675.0f), 675.0f);
-
-	//if (pAngrybotModel) delete pAngrybotModel;
 
 	CLoadedModelInfo* pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
 	m_ppGameObjects[2] = new CCactusoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pCactusoModel, 1);

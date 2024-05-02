@@ -649,7 +649,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 		}
 	}
 	//*
-	if (nEnabledAnimationTracks == 1)
+	if (nEnabledAnimationTracks == 1) // DON'T CARE
 	{
 		for (int i = 0; i < m_nAnimationTracks; i++)
 		{
@@ -664,7 +664,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						XMMATRIX S = XMMatrixScaling(pBoneFrameCache->m_xmf3ScaleLayerBlending.x, pBoneFrameCache->m_xmf3ScaleLayerBlending.y, pBoneFrameCache->m_xmf3ScaleLayerBlending.z);
 						XMMATRIX R = XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(pBoneFrameCache->m_xmf3RotationLayerBlending.x), XMMatrixRotationY(pBoneFrameCache->m_xmf3RotationLayerBlending.y)), XMMatrixRotationZ(pBoneFrameCache->m_xmf3RotationLayerBlending.z));
 						XMMATRIX T = XMMatrixTranslation(pBoneFrameCache->m_xmf3TranslationLayerBlending.x, pBoneFrameCache->m_xmf3TranslationLayerBlending.y, pBoneFrameCache->m_xmf3TranslationLayerBlending.z);
-						XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply(S, R), T));
+						XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply (S, R), T));
 					}
 				}
 			}
@@ -755,8 +755,8 @@ void CGameObject::AddRef()
 { 
 	m_nReferences++; 
 
-	if (m_pSibling) m_pSibling->AddRef();
 	if (m_pChild) m_pChild->AddRef();
+	if (m_pSibling) m_pSibling->AddRef();
 }
 
 void CGameObject::Release() 
@@ -820,6 +820,7 @@ void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
 	{
 		pChild->m_pParent = this;
 		if (bReferenceUpdate) pChild->AddRef();
+		m_vChildren.push_back(pChild);
 	}
 	if (m_pChild)
 	{
@@ -842,8 +843,9 @@ void CGameObject::Animate(float fTimeElapsed)
 		m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
 	}
 
-	if (m_pSibling) m_pSibling->Animate(fTimeElapsed);
-	if (m_pChild) m_pChild->Animate(fTimeElapsed);
+	//if (m_pSibling) m_pSibling->Animate(fTimeElapsed);
+	//if (m_pChild) m_pChild->Animate(fTimeElapsed);
+
 }
 
 void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)

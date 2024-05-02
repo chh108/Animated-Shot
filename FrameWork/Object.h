@@ -410,6 +410,8 @@ class CGameObject
 {
 private:
 	int								m_nReferences = 0;
+	CGameObject						*m_Parent;
+	std::vector<CGameObject*>		m_vChildren;
 
 public:
 	void AddRef();

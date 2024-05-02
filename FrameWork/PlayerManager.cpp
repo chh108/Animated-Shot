@@ -10,4 +10,3 @@ CPlayerManager::CPlayerManager()
 CPlayerManager::~CPlayerManager()
 {
 }
-

@@ -282,12 +282,8 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	// Texture, Material 읽어온 DATA 저장해야함. 0424
 
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
-		"Monster/Cactuso.bin", NULL);
+		"Monster/Anto.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
-
-	//CLoadedModelInfo* pAnimModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-	//	"Model/Anim_IdleB.bin", NULL);
-	//SetChild(pAnimModel->m_pModelRootObject, true);
 
 	// Animation 넘어갈떄 BoneTransform 확인 해야함 0430
 
@@ -312,7 +308,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	m_pSkinnedAnimationController->SetTrackSpeed(PS_DIE, 1.0f);
 	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DIE, 4.2f, 5.4f);
 
-	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, true);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
