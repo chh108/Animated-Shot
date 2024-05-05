@@ -230,5 +230,8 @@
     <FxCompile Include="WireFrame.hlsl">
       <Filter>97.ShaderFile</Filter>
     </FxCompile>
+    <FxCompile Include="Texture.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

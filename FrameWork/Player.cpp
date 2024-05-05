@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "SkyBox.h"
 #include "Terrain.h"
+#include "Scene.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -282,7 +283,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	// Texture, Material 읽어온 DATA 저장해야함. 0424
 
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
-		"Monster/Anto.bin", NULL);
+		"Monster/Cactuso.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
 	// Animation 넘어갈떄 BoneTransform 확인 해야함 0430

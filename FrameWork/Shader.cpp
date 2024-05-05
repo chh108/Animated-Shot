@@ -200,6 +200,10 @@ void CShader::SetObjectsShader(ID3D12Device* pd3dDevice)
 
 	g_shaderInfo[3].VS = CShader::CompileShaderFromFile(L"Animation.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dAnimation_VS_Blob);
 	g_shaderInfo[3].PS = CShader::CompileShaderFromFile(L"Animation.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dAnimation_PS_Blob);
+
+	// Material 오류 찾아서 해결하기.
+	//g_shaderInfo[4].VS = CShader::CompileShaderFromFile(L"Texture.hlsl", "VSTexture", "vs_5_1", &m_pd3dTexture_VS_Blob);
+	//g_shaderInfo[4].PS = CShader::CompileShaderFromFile(L"Texture.hlsl", "PSTexture", "ps_5_1", &m_pd3dTexture_PS_Blob);
 }
 
 void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, SHADER_TYPE type) // ENUM으로 셰이더 타입 관리
@@ -226,6 +230,9 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 		m_d3dPipelineStateDesc.VS = g_shaderInfo[3].VS;
 		m_d3dPipelineStateDesc.PS = g_shaderInfo[3].PS;
 		break;
+	//case SHADER_TYPE::Texture:
+	//	m_d3dPipelineStateDesc.VS = g_shaderInfo[4].VS;
+	//	m_d3dPipelineStateDesc.PS = g_shaderInfo[4].PS;
 	default:
 		// Handle Error.
 		break;
@@ -263,6 +270,11 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 		m_pd3dAnimation_VS_Blob->Release();
 	if (m_pd3dAnimation_PS_Blob)		
 		m_pd3dAnimation_PS_Blob->Release();
+
+	//if (m_pd3dTexture_VS_Blob)
+	//	m_pd3dTexture_VS_Blob->Release();
+	//if (m_pd3dTexture_PS_Blob)
+	//	m_pd3dTexture_PS_Blob->Release();
 
 	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
@@ -531,6 +543,37 @@ void CSkinnedAnimationObjectsWireFrameShader::Render(ID3D12GraphicsCommandList* 
 			m_ppObjects[j]->Render(pd3dCommandList, pCamera);
 		}
 	}
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////
+
+CPlayerShader::CPlayerShader()
+{
+}
+
+CPlayerShader::~CPlayerShader()
+{
+}
+
+D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
+{
+	UINT nInputElementDescs = 3;
+	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
+
+	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[1] = { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+
+	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
+	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
+	d3dInputLayoutDesc.NumElements = nInputElementDescs;
+
+	return d3dInputLayoutDesc;
+}
+
+D3D12_DEPTH_STENCIL_DESC CPlayerShader::CreateDepthStencilState()
+{
+	return D3D12_DEPTH_STENCIL_DESC();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

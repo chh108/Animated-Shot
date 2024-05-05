@@ -29,6 +29,33 @@ class CGameObject;
 #define RESOURCE_TEXTURE_CUBE		0x04
 #define	RESOURCE_BUFFER				0x05
 
+struct TEXTUREINFO {
+	int	  nTextureIndex;
+	int	  nFileType;
+
+	std::string sFilePath;
+	std::string sFileName;
+
+	float fWidthMag;
+	float fHeightMag;
+	float fWidthMove;
+	float fHeightMove;
+	float fRotate;
+	float fWidth;
+	float fHeight;
+	float fThickness;
+	float fUsing;
+	float fTiling;
+	float fWidthTiling;
+	float fHeightTiling;
+	float fAngle;
+	float nCoordProcess;
+	float nCoordProcessInfo;
+	float fWeight;
+	float fWeightInfo;
+	float fFineTuning;
+};
+
 class CTexture
 {
 public:
@@ -56,6 +83,8 @@ private:
 
 	DXGI_FORMAT* m_pdxgiBufferFormats = NULL;
 	int* m_pnBufferElements = NULL;
+
+	static std::vector<TEXTUREINFO*>	v_Textures;
 
 public:
 	void AddRef() { m_nReferences++; }
@@ -89,7 +118,6 @@ public:
 	D3D12_SHADER_RESOURCE_VIEW_DESC GetShaderResourceViewDesc(int nIndex);
 
 	void ReleaseUploadBuffers();
-
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,11 +206,13 @@ public:
 public:
 	static CShader*				m_pWireFrameShader;
 	static CShader*				m_pSkinnedAnimationWireFrameShader;
+	static CShader*				m_pTextureShader;
 
 	static void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 
 	void SetWireFrameShader() { CMaterial::SetShader(m_pWireFrameShader); }
 	void SetSkinnedAnimationWireFrameShader() { CMaterial::SetShader(m_pSkinnedAnimationWireFrameShader); }
+	void SetPlayerShader() { CMaterial::SetShader(m_pTextureShader); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +386,6 @@ public:
 
 public:
 	CGameObject						*m_pModelRootObject = NULL;
-	CGameObject						*m_pAnimationModelRootObject = NULL;
 
 	CAnimationSets					*m_pAnimationSets = NULL;
 
