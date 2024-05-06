@@ -14,7 +14,7 @@ cbuffer cbGameObjectInfo : register(b2)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 #define MAX_VERTEX_INFLUENCES			4
-#define SKINNED_ANIMATION_BONES			256
+#define SKINNED_ANIMATION_BONES			128
 
 cbuffer cbBoneOffsets : register(b7)
 {

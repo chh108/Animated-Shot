@@ -382,7 +382,7 @@ class CLoadedModelInfo
 {
 public:
 	CLoadedModelInfo() { }
-	~CLoadedModelInfo();
+	~CLoadedModelInfo() { }
 
 public:
 	CGameObject						*m_pModelRootObject = NULL;
@@ -482,6 +482,7 @@ public:
 	void SetShader(int nMaterial, CShader* pShader);
 	void SetWireFrameShader();
 	void SetSkinnedAnimationWireFrameShader();
+	void SetPlayerShader();
 	void SetMaterial(int nMaterial, CMaterial* pMaterial);
 
 	void SetChild(CGameObject* pChild, bool bReferenceUpdate = false);

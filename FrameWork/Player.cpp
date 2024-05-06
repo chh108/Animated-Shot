@@ -286,7 +286,14 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Monster/Cactuso.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	// Animation 넘어갈떄 BoneTransform 확인 해야함 0430
+	// Animation 넘어갈떄 BoneTransform 확인 해야함 0430 
+	//// PLAYER TEXTURE 적용 작업 시작.
+	//CTexture* pPlayerTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	//pPlayerTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Monster/Cactuso.dds", RESOURCE_TEXTURE2D_ARRAY, 0, DDS);
+
+	//CScene::CreateShaderResourceViews(pd3dDevice, pPlayerTexture, 0, 15);
+
+	//pPlayerModel->m_pModelRootObject->SetPlayerShader();
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
@@ -315,8 +322,6 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);
 
-	//m_pSkinnedAnimationController->SetTrackAnimationSet(1, 0);
-	//m_pSkinnedAnimationController->SetTrackStartEndTime(1, 2.5f, 4.5f);
 
 #ifdef _WITH_SOUND_CALLBACK
 	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK

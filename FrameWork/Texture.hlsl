@@ -1,54 +1,65 @@
 cbuffer cbCameraInfo : register(b1)
 {
-	matrix					gmtxView : packoffset(c0);
-	matrix					gmtxProjection : packoffset(c4);
-	float3					gvCameraPosition : packoffset(c8);
+    matrix                  gmtxView : packoffset(c0);
+    matrix                  gmtxProjection : packoffset(c4);
+    float3                  gvCameraPosition : packoffset(c8);
 };
 
 cbuffer cbGameObjectInfo : register(b2)
 {
-	matrix					gmtxWorldViewProjection : packoffset(c0);
-	float4					gcPixelColor : packoffset(c4); 
+    matrix                  gmtxGameObject : packoffset(c0);
+    float4                  gcPixelColor : packoffset(c4);
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+#define MAX_VERTEX_INFLUENCES          4
+#define SKINNED_ANIMATION_BONES        256
 
-Texture2D gTexture : register(t14);
+cbuffer cbBoneOffsets : register(b7)
+{
+    float4x4 gpmtxBoneOffsets[SKINNED_ANIMATION_BONES];
+};
 
-SamplerState gssClamp : register(s1);
+cbuffer cbBoneTransforms : register(b8)
+{
+    float4x4 gpmtxBoneTransforms[SKINNED_ANIMATION_BONES];
+};
 
-struct VS_TEXTURE_INPUT
+Texture2D gTexture : register(t0);
+SamplerState gSampler : register(s0);
+
+struct VS_SKINNED_INPUT
 {
     float3 position : POSITION;
-    float4 color : COLOR;
-    float2 uv : TEXCOORD;
+    float2 texCoord : TEXCOORD0;
+    int4 indices : BONEINDEX;
+    float4 weights : BONEWEIGHT;
 };
 
-struct VS_TEXTURE_OUTPUT
+struct VS_SKINNED_OUTPUT
 {
     float4 position : SV_POSITION;
-    float4 color : COLOR;
-    float2 uv : TEXCOORD;
+    float2 texCoord : TEXCOORD0;
 };
 
-VS_TEXTURE_OUTPUT VSTexture(VS_TEXTURE_INPUT input)
+VS_SKINNED_OUTPUT VSSkinnedAnimation(VS_SKINNED_INPUT input)
 {
-    VS_TEXTURE_OUTPUT output;
+    VS_SKINNED_OUTPUT output;
 
-    // 정점 위치 계산
-    output.position = mul(float4(input.position, 1.0f), gmtxWorldViewProjection);
+    float3 positionW = float3(0.0f, 0.0f, 0.0f);
+    matrix mtxVertexToBoneWorld;
+    for (int i = 0; i < MAX_VERTEX_INFLUENCES; i++)
+    {
+        mtxVertexToBoneWorld = mul(gpmtxBoneOffsets[input.indices[i]], gpmtxBoneTransforms[input.indices[i]]);
+        positionW += input.weights[i] * mul(float4(input.position, 1.0f), mtxVertexToBoneWorld).xyz;
+    }
 
-    output.color = input.color;
-    output.uv = input.uv;
+    output.position = mul(mul(float4(positionW, 1.0f), gmtxView), gmtxProjection);
+    output.texCoord = input.texCoord;
 
-    return (output);
+    return(output);
 }
 
-float4 PSTexture(VS_TEXTURE_OUTPUT input) : SV_TARGET
+float4 PSSkinnedAnimation(VS_SKINNED_OUTPUT input) : SV_TARGET
 {
-    // 텍스처에서 픽셀 색상을 샘플링
-    float4 texColor = gTexture.Sample(gSampler, input.uv);
-
-    return (texColor);
+    return gTexture.Sample(gSampler, input.texCoord);
 }

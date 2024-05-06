@@ -201,9 +201,9 @@ void CShader::SetObjectsShader(ID3D12Device* pd3dDevice)
 	g_shaderInfo[3].VS = CShader::CompileShaderFromFile(L"Animation.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dAnimation_VS_Blob);
 	g_shaderInfo[3].PS = CShader::CompileShaderFromFile(L"Animation.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dAnimation_PS_Blob);
 
-	// Material 오류 찾아서 해결하기.
-	//g_shaderInfo[4].VS = CShader::CompileShaderFromFile(L"Texture.hlsl", "VSTexture", "vs_5_1", &m_pd3dTexture_VS_Blob);
-	//g_shaderInfo[4].PS = CShader::CompileShaderFromFile(L"Texture.hlsl", "PSTexture", "ps_5_1", &m_pd3dTexture_PS_Blob);
+	//Material 오류 찾아서 해결하기.
+	g_shaderInfo[4].VS = CShader::CompileShaderFromFile(L"Texture.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dTexture_VS_Blob);
+	g_shaderInfo[4].PS = CShader::CompileShaderFromFile(L"Texture.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dTexture_PS_Blob);
 }
 
 void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, SHADER_TYPE type) // ENUM으로 셰이더 타입 관리
@@ -230,9 +230,9 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 		m_d3dPipelineStateDesc.VS = g_shaderInfo[3].VS;
 		m_d3dPipelineStateDesc.PS = g_shaderInfo[3].PS;
 		break;
-	//case SHADER_TYPE::Texture:
-	//	m_d3dPipelineStateDesc.VS = g_shaderInfo[4].VS;
-	//	m_d3dPipelineStateDesc.PS = g_shaderInfo[4].PS;
+	case SHADER_TYPE::Texture:
+		m_d3dPipelineStateDesc.VS = g_shaderInfo[4].VS;
+		m_d3dPipelineStateDesc.PS = g_shaderInfo[4].PS;
 	default:
 		// Handle Error.
 		break;
@@ -271,10 +271,10 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	if (m_pd3dAnimation_PS_Blob)		
 		m_pd3dAnimation_PS_Blob->Release();
 
-	//if (m_pd3dTexture_VS_Blob)
-	//	m_pd3dTexture_VS_Blob->Release();
-	//if (m_pd3dTexture_PS_Blob)
-	//	m_pd3dTexture_PS_Blob->Release();
+	if (m_pd3dTexture_VS_Blob)
+		m_pd3dTexture_VS_Blob->Release();
+	if (m_pd3dTexture_PS_Blob)
+		m_pd3dTexture_PS_Blob->Release();
 
 	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
@@ -561,19 +561,37 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 
 	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[1] = { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[1] = { "BONEINDEX", 0, DXGI_FORMAT_R32G32B32A32_SINT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[2] = { "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 2, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
 
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
 	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
 
-	return d3dInputLayoutDesc;
+	return(d3dInputLayoutDesc);
 }
 
-D3D12_DEPTH_STENCIL_DESC CPlayerShader::CreateDepthStencilState()
+D3D12_RASTERIZER_DESC CPlayerShader::CreateRasterizerState()
 {
-	return D3D12_DEPTH_STENCIL_DESC();
+	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
+	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
+	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // 와이어프레임이 아닌 폴리곤을 채워줍니다.
+	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+#ifdef _WITH_LEFT_HAND_COORDINATES
+	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
+#else
+	d3dRasterizerDesc.FrontCounterClockwise = TRUE;
+#endif
+	d3dRasterizerDesc.DepthBias = 0;
+	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
+	d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	d3dRasterizerDesc.DepthClipEnable = TRUE;
+	d3dRasterizerDesc.MultisampleEnable = FALSE;
+	d3dRasterizerDesc.AntialiasedLineEnable = FALSE;
+	d3dRasterizerDesc.ForcedSampleCount = 0;
+	d3dRasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+	return d3dRasterizerDesc;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

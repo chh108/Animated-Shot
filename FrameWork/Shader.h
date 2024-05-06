@@ -65,12 +65,14 @@ protected:
 	ID3DBlob							*m_pd3dWireFrame_PS_Blob = NULL;
 	ID3DBlob							*m_pd3dAnimation_VS_Blob = NULL;
 	ID3DBlob							*m_pd3dAnimation_PS_Blob = NULL;
+	ID3DBlob							*m_pd3dTexture_VS_Blob = NULL;
+	ID3DBlob							*m_pd3dTexture_PS_Blob = NULL;
 
 	ID3D12PipelineState					*m_pd3dPipelineState = NULL;
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_d3dPipelineStateDesc;
 
-	ShaderInfo							g_shaderInfo[4];
+	ShaderInfo							g_shaderInfo[5];
 	float								m_fElapsedTime = 0.0f;
 };
 
@@ -112,7 +114,7 @@ public:
 	virtual ~CPlayerShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
-	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
+	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
