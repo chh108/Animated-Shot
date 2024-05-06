@@ -322,7 +322,6 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);
 
-
 #ifdef _WITH_SOUND_CALLBACK
 	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK
 	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 0, 1.3f, _T("Sound/SmallFootstep01.wav"));

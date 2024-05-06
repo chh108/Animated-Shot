@@ -1138,7 +1138,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
 			pGameObject->SetMesh(pMesh);
 
-			/**/pGameObject->SetWireFrameShader();
+			pGameObject->SetWireFrameShader();
 		}
 		else if (!strcmp(pstrToken, "<Materials>:")) // Materials
 		{
