@@ -91,12 +91,7 @@ void CMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	{
 		::ReadStringFromFile(pInFile, pstrToken);
 
-		if (!strcmp(pstrToken, "<Bounds>:"))
-		{
-			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
-		}
-		else if (!strcmp(pstrToken, "<ControlPoints>:"))
+		if (!strcmp(pstrToken, "<ControlPoints>:"))
 		{
 			m_nVertices = ::ReadUnsignedIntegerFromFile(pInFile);
 			if (m_nVertices > 0)
@@ -111,6 +106,26 @@ void CMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 				m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
 				m_d3dPositionBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
 			}
+		}
+		else if (!strcmp(pstrToken, "<UVs>:"))
+		{
+			m_nVertices = ::ReadIntegerFromFile(pInFile);				// m_nVertices
+			int m_nUVsPerVertex = ::ReadIntegerFromFile(pInFile);      // UVs Per Vertex
+
+			::ReadStringFromFile(pInFile, pstrToken); // Read "<UV>:"
+			::ReadIntegerFromFile(pInFile); // Read UVIndex
+
+			XMFLOAT2* pUVs = new XMFLOAT2[m_nVertices];
+
+			nReads = (UINT)::fread(pUVs, sizeof(XMFLOAT2), m_nVertices, pInFile);
+
+			m_pd3dUVBuffer = CreateBufferResource(pd3dDevice, pd3dCommandList, pUVs, sizeof(XMFLOAT2) * m_nVertices,
+				D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dUVUploadBuffer);  // Make UVBuffer
+
+			m_d3dUVBufferView.BufferLocation = m_pd3dUVBuffer->GetGPUVirtualAddress();
+			m_d3dUVBufferView.StrideInBytes = sizeof(XMFLOAT2);
+			m_d3dUVBufferView.SizeInBytes = sizeof(XMFLOAT2) * m_nVertices;
+
 		}
 		else if (!strcmp(pstrToken, "<Polygons>:"))
 		{
@@ -408,11 +423,6 @@ void CSkinnedMesh::LoadSkinDeformationsFromFile(ID3D12Device* pd3dDevice, ID3D12
 		if (!strcmp(pstrToken, "<BonesPerVertex>:"))
 		{
 			m_nBonesPerVertex = ::ReadIntegerFromFile(pInFile);
-		}
-		else if (!strcmp(pstrToken, "<Bounds>:"))
-		{
-			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
 		}
 		else if (!strcmp(pstrToken, "<BoneNames>:"))
 		{
