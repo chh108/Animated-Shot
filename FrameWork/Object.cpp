@@ -185,8 +185,8 @@ void CTexture::LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 	pTexture->m_nMaterialUse = ::ReadIntegerFromFile(pInFile);				// m_nMaterialUse 
 	pTexture->m_nTextureUse = ::ReadIntegerFromFile(pInFile);				// m_nTextureUse 
-
 }
+
 void CTexture::LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex)
 {
 	m_pnResourceTypes[nIndex] = RESOURCE_BUFFER;
