@@ -57,6 +57,7 @@ protected:
 
 protected:
 	XMFLOAT3*								m_pxmf3Positions = NULL;
+	XMFLOAT2*								m_pxmf2UVs = NULL;
 
 	ID3D12Resource*							m_pd3dPositionBuffer = NULL;
 	ID3D12Resource*							m_pd3dPositionUploadBuffer = NULL;

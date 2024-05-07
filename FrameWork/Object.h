@@ -28,40 +28,14 @@ class CGameObject;
 #define	RESOURCE_TEXTURE2DARRAY		0x03
 #define RESOURCE_TEXTURE_CUBE		0x04
 #define	RESOURCE_BUFFER				0x05
-
-struct TEXTUREINFO {
-	int	  nTextureIndex;
-	int	  nFileType;
-
-	std::string sFilePath;
-	std::string sFileName;
-
-	float fWidthMag;
-	float fHeightMag;
-	float fWidthMove;
-	float fHeightMove;
-	float fRotate;
-	float fWidth;
-	float fHeight;
-	float fThickness;
-	float fUsing;
-	float fTiling;
-	float fWidthTiling;
-	float fHeightTiling;
-	float fAngle;
-	float nCoordProcess;
-	float nCoordProcessInfo;
-	float fWeight;
-	float fWeightInfo;
-	float fFineTuning;
-};
+#define FILE_PATH		"Model/Textures/"
 
 class CTexture
 {
 public:
+	CTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 	CTexture(int nTextureResources, UINT nResouceType, int nSamplers, int nRootParameters);
 	virtual ~CTexture();
-
 private:
 	int								m_nReferences = 0;
 	int								m_nTextures = 0;
@@ -69,6 +43,7 @@ private:
 	char							m_pstrTextureName[64];
 
 	UINT							m_nTextureType;
+
 	UINT*							m_pnResourceTypes = NULL;
 
 	ID3D12Resource**				m_ppd3dTextures = NULL;
@@ -84,7 +59,32 @@ private:
 	DXGI_FORMAT* m_pdxgiBufferFormats = NULL;
 	int* m_pnBufferElements = NULL;
 
-	static std::vector<TEXTUREINFO*>	v_Textures;
+	// From FBX File
+	std::string			m_strTextureTag = {};
+
+	int					m_nTextureLoadType = 0;
+
+	std::string			m_strFileName = {};
+
+	XMFLOAT2			m_xmf2UVScale = { 1.0f, 1.0f };
+	XMFLOAT2			m_xmf2UVTrans = { 0.0f, 0.0f };
+	bool				m_bUVSwapped = FALSE;
+	XMFLOAT3			m_xmf3UVWRotate = { 0.0f, 0.0f, 0.0f };
+
+	int					m_nAlphaSource = 0;
+
+	int					m_nCroppingL = 0;
+	int					m_nCroppingT = 0;
+	int					m_nCroppingR = 0;
+	int					m_nCroppingB = 0;
+
+	int					m_nMappingType = 0;
+	int					m_nBlendMode = 0;
+
+	float				m_fDefaultAlpha = 0.0f;
+
+	int					m_nMaterialUse = 0;
+	int					m_nTextureUse = 0;
 
 public:
 	void AddRef() { m_nReferences++; }
@@ -97,6 +97,9 @@ public:
 	void ReleaseShaderVariables();
 
 	void LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex, bool bIsDDSType = true);
+	void LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
+
+	void LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, const std::string& pszFileName, UINT nResourceType, UINT nIndex);
 
 	//	void LoadBufferFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, UINT nIndex);
 	void LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex);
@@ -123,6 +126,30 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 
+class CTextureProperty
+{
+private:
+	std::string m_strPropertyName;
+	std::vector<CTexture> v_Textures;
+
+public:
+	CTextureProperty() {}
+	//CTextureProperty(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
+	CTextureProperty(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile, const std::string& pszFileName);
+	~CTextureProperty() {}
+
+	void LoadTexturePropertyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
+
+	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int nParameterIndex, int nTextureIndex);
+
+	void ReleaseUploadBuffers();
+
+	void CreateShaderResourceViews(ID3D12Device* pd3dDevice, CTexture* pTexture, UINT nDescriptorHeapIndex, UINT nRootParameterStartIndex);
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
 #define MATERIAL_ALBEDO_MAP			0x01
 #define MATERIAL_SPECULAR_MAP		0x02
 #define MATERIAL_NORMAL_MAP			0x04
@@ -134,11 +161,14 @@ public:
 class CMaterial
 {
 public:
+	CMaterial();
 	CMaterial(int nTextures);
 	virtual ~CMaterial();
 
 private:
 	int							m_nReferences = 0;
+
+	std::vector<CTextureProperty>    v_TexProperties;
 
 public:
 	void AddRef() { m_nReferences++; }
@@ -179,7 +209,6 @@ public:
 	
 	const char* GetMaterialName() const;
 
-	virtual void AddMaterial(CMaterial* pMaterial);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList);
 
 	virtual void ReleaseUploadBuffers();
@@ -187,7 +216,7 @@ public:
 public:
 	UINT						m_nType = 0x00;
 
-	char						m_pstrMaterialName[64];
+	char						m_pstrMaterialName[64] = {};
 
 	float						m_fGlossiness = 0.0f;
 	float						m_fSmoothness = 0.0f;
@@ -202,7 +231,7 @@ public:
 	_TCHAR						(*m_ppstrTextureNames)[64] = NULL;
 	CTexture					**m_ppTextures = NULL; //0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
 
-	void LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nType, UINT nRootParameter, _TCHAR* pwstrTextureName, CTexture** ppTexture, CGameObject* pParent, FILE* pInFile, CShader* pShader);
+	void LoadTexturePropersFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 public:
 	static CShader*				m_pWireFrameShader;
 	static CShader*				m_pSkinnedAnimationWireFrameShader;
@@ -214,6 +243,7 @@ public:
 	void SetSkinnedAnimationWireFrameShader() { CMaterial::SetShader(m_pSkinnedAnimationWireFrameShader); }
 	void SetPlayerShader() { CMaterial::SetShader(m_pTextureShader); }
 };
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -543,9 +573,9 @@ public:
 	void SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet);
 	void SetTrackAnimationPosition(int nAnimationTrack, float fPosition);
 
-	static void LoadTextureInfoFromFile(FILE* pInFile, char* pstrToken);
+	static void LoadMaterialFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
+
 	static void LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel);
-	//static void LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CGameObject* pParent, FILE* pInFile, CShader* pShader);
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames);
 
 	static CLoadedModelInfo* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
