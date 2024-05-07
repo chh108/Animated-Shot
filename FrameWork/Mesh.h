@@ -83,6 +83,8 @@ protected:
 	D3D12_VERTEX_BUFFER_VIEW				m_d3dUVBufferView;
 	D3D12_INDEX_BUFFER_VIEW*				m_pd3dIndexBufferViews;
 
+	std::vector<D3D12_VERTEX_BUFFER_VIEW>   m_vd3dInputBufferViews;
+
 public:
 	UINT GetType() { return(m_nType); }
 	void SetType(const int& nType)  { m_nType = nType; }
@@ -98,6 +100,8 @@ public:
 	virtual void OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
 
 	void LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
+
+	virtual void CreateInputBufferView();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

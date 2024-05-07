@@ -185,6 +185,15 @@ void CMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 			break;
 		}
 	}
+	CreateInputBufferView();
+}
+
+void CMesh::CreateInputBufferView()
+{
+	if (m_pd3dVertexBuffer)
+		m_vd3dInputBufferViews.emplace_back(m_d3dVertexBufferView);
+	if (m_pd3dUVBuffer)
+		m_vd3dInputBufferViews.emplace_back(m_d3dUVBufferView);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
