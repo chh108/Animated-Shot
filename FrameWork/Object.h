@@ -33,6 +33,7 @@ class CGameObject;
 class CTexture
 {
 public:
+	CTexture() {}
 	CTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 	CTexture(int nTextureResources, UINT nResouceType, int nSamplers, int nRootParameters);
 	virtual ~CTexture();
@@ -43,8 +44,13 @@ private:
 	char							m_pstrTextureName[64];
 
 	UINT							m_nTextureType;
+	UINT							m_nRootParameterIndex;
 
+	UINT							m_nResourceType = NULL;
 	UINT*							m_pnResourceTypes = NULL;
+
+	ID3D12Resource*					m_pd3dTexture = NULL;
+	ID3D12Resource*					m_pd3dTextureUploadBuffers;
 
 	ID3D12Resource**				m_ppd3dTextures = NULL;
 	ID3D12Resource**				m_ppd3dTextureUploadBuffers;
@@ -62,44 +68,46 @@ private:
 	// From FBX File
 	std::string			m_strTextureTag = {};
 
-	int					m_nTextureLoadType = 0;
+	int					m_nTextureLoadType;
 
 	std::string			m_strFileName = {};
 
-	XMFLOAT2			m_xmf2UVScale = { 1.0f, 1.0f };
-	XMFLOAT2			m_xmf2UVTrans = { 0.0f, 0.0f };
-	bool				m_bUVSwapped = FALSE;
-	XMFLOAT3			m_xmf3UVWRotate = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT2			m_xmf2UVScale;
+	XMFLOAT2			m_xmf2UVTrans;
+	bool				m_bUVSwapped;
+	XMFLOAT3			m_xmf3UVWRotate;
 
-	int					m_nAlphaSource = 0;
+	int					m_nAlphaSource;
 
-	int					m_nCroppingL = 0;
-	int					m_nCroppingT = 0;
-	int					m_nCroppingR = 0;
-	int					m_nCroppingB = 0;
+	int					m_nCroppingL;
+	int					m_nCroppingT;
+	int					m_nCroppingR;
+	int					m_nCroppingB;
 
-	int					m_nMappingType = 0;
-	int					m_nBlendMode = 0;
+	int					m_nMappingType;
+	int					m_nBlendMode;
 
-	float				m_fDefaultAlpha = 0.0f;
+	float				m_fDefaultAlpha;
 
-	int					m_nMaterialUse = 0;
-	int					m_nTextureUse = 0;
+	int					m_nMaterialUse;
+	int					m_nTextureUse;
 
 public:
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
 	void SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle);
+	void LoadCTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, int nParameterIndex, int nTextureIndex);
 	void ReleaseShaderVariables();
 
 	void LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex, bool bIsDDSType = true);
-	void LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
+	CTexture* LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 
-	void LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, const std::string& pszFileName, UINT nResourceType, UINT nIndex);
+	void LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
+	void LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
 
 	//	void LoadBufferFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, UINT nIndex);
 	void LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex);
@@ -130,13 +138,14 @@ class CTextureProperty
 {
 private:
 	std::string m_strPropertyName;
-	std::vector<CTexture> v_Textures;
+	std::vector<CTexture*> v_Textures;
 
 public:
 	CTextureProperty() {}
 	//CTextureProperty(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
-	CTextureProperty(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile, const std::string& pszFileName);
 	~CTextureProperty() {}
+
+	void LoadCTextureProperty(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile, const std::string& pszFileName);
 
 	void LoadTexturePropertyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 
@@ -145,6 +154,14 @@ public:
 	void ReleaseUploadBuffers();
 
 	void CreateShaderResourceViews(ID3D12Device* pd3dDevice, CTexture* pTexture, UINT nDescriptorHeapIndex, UINT nRootParameterStartIndex);
+
+	CTexture* GetTextureFromVec(int nIndex)
+	{
+		if (nIndex >= 0 && nIndex < v_Textures.size())
+			return v_Textures[nIndex];
+		else
+			return NULL;
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,7 +186,6 @@ private:
 	int							m_nReferences = 0;
 
 	std::vector<CTextureProperty>    v_TexProperties;
-
 public:
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
@@ -200,6 +216,13 @@ public:
 	XMFLOAT4					m_xmf4DisplacementColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);		  // º¯À§ ¸Ê »ö»ó
 	XMFLOAT4					m_xmf4VectorDisplacementColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f); // º¤ÅÍ º¯À§ ¸Ê »ö»ó
 
+	CTextureProperty& GetTextureProperty(int nIndex)
+	{
+		if (nIndex >= 0 && nIndex < v_TexProperties.size())
+			return v_TexProperties[nIndex];
+		else
+			throw std::out_of_range("Index out of range");
+	}
 
 	void SetShader(CShader* pShader);
 	void SetMaterialType(UINT nType) { m_nType |= nType; }

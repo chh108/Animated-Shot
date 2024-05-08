@@ -98,16 +98,18 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppGameObjects[0] = new CRatoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRatoModel, 1);
 	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f);
+	
+	CTexture* pRatoTexture = NULL;
+	CMaterial* pMaterial = CMaterial::v_Materials[0];
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	pRatoTexture = TextureProperty.GetTextureFromVec(0);
 
 
-	CTexture* pTestTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	pTestTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rato_A.png", RESOURCE_TEXTURE2D_ARRAY, 0, PNG);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, pTestTexture, 0, 16);
-
-	CMaterial* pTerrainMaterial = new CMaterial(1);
-	pTerrainMaterial->SetTexture(pTestTexture, 0);
-	pTerrainMaterial->SetPlayerShader();
+	//if (!CMaterial::v_Materials.empty())
+	//{
+	//	int nTexIndex = 0;
+	//	pRatoTexture = CMaterial::v_Materials[nTexIndex].
+	//}
 
 	if (pRatoModel) delete pRatoModel;
 

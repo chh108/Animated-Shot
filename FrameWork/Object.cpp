@@ -125,66 +125,89 @@ void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE/*D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE*/);
 }
 
-void CTexture::LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
+void CTexture::LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
+{
+	m_nResourceType = nResourceType;
+	m_nRootParameterIndex = nIndex;
+
+	m_pd3dTexture = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
+}
+
+void CTexture::LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
+{
+	m_nResourceType = nResourceType;
+	m_nRootParameterIndex = nIndex;
+
+	m_pd3dTexture = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
+}
+
+CTexture* CTexture::LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
 {
 	char pstrToken[64] = { '\0' };
+	ReadStringFromFile(pInFile, pstrToken);
 
-	int nTextureIndex = ::ReadIntegerFromFile(pInFile); // nTextureIndex
+	if (!strcmp(pstrToken, "<Texture>:"))
+	{
+		CTexture* pObjTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 1, 1);
 
-	::ReadStringFromFile(pInFile, pstrToken);           // Get TextureTag
+		int nTextureIndex = ::ReadIntegerFromFile(pInFile); // nTextureIndex
 
-	m_strTextureTag = pstrToken;
+		::ReadStringFromFile(pInFile, pstrToken);           // Get TextureTag
 
-	m_nTextureLoadType = ::ReadIntegerFromFile(pInFile);
+		pObjTexture->m_strTextureTag = pstrToken;
 
-	::ReadStringFromFile(pInFile, pstrToken);
+		pObjTexture->m_nTextureLoadType = ::ReadIntegerFromFile(pInFile);
 
-	m_strFileName = pstrToken; 									// "Skin.png"
-	m_strFileName = FILE_PATH + m_strFileName.substr(0, m_strFileName.size());
+		::ReadStringFromFile(pInFile, pstrToken);
 
-	const char* strName = m_strFileName.c_str();
+		pObjTexture->m_strFileName = pstrToken; 									// "Skin.png"
+		pObjTexture->m_strFileName = FILE_PATH + pObjTexture->m_strFileName.substr(0, pObjTexture->m_strFileName.size());
 
-	int nLength = static_cast<int>(m_strFileName.length());
+		const char* strName = pObjTexture->m_strFileName.c_str();
 
-	int wcharCount = MultiByteToWideChar(CP_UTF8, 0, strName, nLength, NULL, 0);
+		int nLength = static_cast<int>(pObjTexture->m_strFileName.length());
 
-	// wchar_t 배열 동적 할당
-	wchar_t* wideStr = new wchar_t[wcharCount + 1];
+		int wcharCount = MultiByteToWideChar(CP_UTF8, 0, strName, nLength, NULL, 0);
 
-	// UTF-8 문자열을 wchar_t로 변환
-	MultiByteToWideChar(CP_UTF8, 0, strName, nLength, wideStr, wcharCount);
-	wideStr[wcharCount] = L'\0'; // 널 종료 문자 추가
+		// wchar_t 배열 동적 할당
+		wchar_t* wideStr = new wchar_t[wcharCount + 1];
 
-	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1); // Textre for new One
-	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wideStr, RESOURCE_TEXTURE2D_ARRAY, 16, PNG);
+		// UTF-8 문자열을 wchar_t로 변환
+		MultiByteToWideChar(CP_UTF8, 0, strName, nLength, wideStr, wcharCount);
+		wideStr[wcharCount] = L'\0'; // 널 종료 문자 추가
 
-	delete[] wideStr;
+		pObjTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wideStr, RESOURCE_TEXTURE2D_ARRAY, 16, PNG);
 
-	pTexture->m_xmf2UVScale.x = ::ReadFloatFromFile(pInFile);				// m_fScaleU
-	pTexture->m_xmf2UVScale.y = ::ReadFloatFromFile(pInFile);				// m_fScaleV
+		pObjTexture->m_xmf2UVScale.x = ::ReadFloatFromFile(pInFile);				// m_fScaleU
+		pObjTexture->m_xmf2UVScale.y = ::ReadFloatFromFile(pInFile);				// m_fScaleV
 
-	pTexture->m_xmf2UVTrans.x = ::ReadFloatFromFile(pInFile);				// m_fTranslationU
-	pTexture->m_xmf2UVTrans.y = ::ReadFloatFromFile(pInFile);				// m_fTranslationV
+		pObjTexture->m_xmf2UVTrans.x = ::ReadFloatFromFile(pInFile);				// m_fTranslationU
+		pObjTexture->m_xmf2UVTrans.y = ::ReadFloatFromFile(pInFile);				// m_fTranslationV
 
-	pTexture->m_bUVSwapped = (bool)::ReadIntegerFromFile(pInFile);			// m_nSwapUV
+		pObjTexture->m_bUVSwapped = (bool)::ReadIntegerFromFile(pInFile);			// m_nSwapUV
 
-	pTexture->m_xmf3UVWRotate.x = ::ReadFloatFromFile(pInFile);				// m_fRotationU
-	pTexture->m_xmf3UVWRotate.y = ::ReadFloatFromFile(pInFile);				// m_fRotationV
-	pTexture->m_xmf3UVWRotate.z = ::ReadFloatFromFile(pInFile);				// m_fRotationW
+		pObjTexture->m_xmf3UVWRotate.x = ::ReadFloatFromFile(pInFile);				// m_fRotationU
+		pObjTexture->m_xmf3UVWRotate.y = ::ReadFloatFromFile(pInFile);				// m_fRotationV
+		pObjTexture->m_xmf3UVWRotate.z = ::ReadFloatFromFile(pInFile);				// m_fRotationW
 
-	pTexture->m_nAlphaSource = ::ReadIntegerFromFile(pInFile);				// m_nAlphaSource
-	pTexture->m_nCroppingL = ::ReadIntegerFromFile(pInFile);				// m_nCroppingL
-	pTexture->m_nCroppingT = ::ReadIntegerFromFile(pInFile);				// m_nCroppingT
-	pTexture->m_nCroppingR = ::ReadIntegerFromFile(pInFile);				// m_nCroppingR
-	pTexture->m_nCroppingB = ::ReadIntegerFromFile(pInFile);				// m_nCroppingB
+		pObjTexture->m_nAlphaSource = ::ReadIntegerFromFile(pInFile);				// m_nAlphaSource
+		pObjTexture->m_nCroppingL = ::ReadIntegerFromFile(pInFile);					// m_nCroppingL
+		pObjTexture->m_nCroppingT = ::ReadIntegerFromFile(pInFile);					// m_nCroppingT
+		pObjTexture->m_nCroppingR = ::ReadIntegerFromFile(pInFile);					// m_nCroppingR
+		pObjTexture->m_nCroppingB = ::ReadIntegerFromFile(pInFile);					// m_nCroppingB
 
-	pTexture->m_nMappingType = ::ReadIntegerFromFile(pInFile);				// m_nMappingType 
-	pTexture->m_nBlendMode = ::ReadIntegerFromFile(pInFile);				// m_nBlendMode 
+		pObjTexture->m_nMappingType = ::ReadIntegerFromFile(pInFile);				// m_nMappingType 
+		pObjTexture->m_nBlendMode = ::ReadIntegerFromFile(pInFile);					// m_nBlendMode 
 
-	pTexture->m_fDefaultAlpha = ::ReadFloatFromFile(pInFile);				// m_fDefaultAlpha
+		pObjTexture->m_fDefaultAlpha = ::ReadFloatFromFile(pInFile);				// m_fDefaultAlpha
 
-	pTexture->m_nMaterialUse = ::ReadIntegerFromFile(pInFile);				// m_nMaterialUse 
-	pTexture->m_nTextureUse = ::ReadIntegerFromFile(pInFile);				// m_nTextureUse 
+		pObjTexture->m_nMaterialUse = ::ReadIntegerFromFile(pInFile);				// m_nMaterialUse 
+		pObjTexture->m_nTextureUse = ::ReadIntegerFromFile(pInFile);				// m_nTextureUse 
+
+		delete[] wideStr;
+
+		return pObjTexture;
+	}
 }
 
 void CTexture::LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex)
@@ -343,7 +366,9 @@ void CMaterial::LoadTexturePropersFromFile(ID3D12Device* pd3dDevice, ID3D12Graph
 		::ReadStringFromFile(pInFile, pstrToken); // Property Name ex)DiffuseColor, Diffuse Factor..
 		if (strcmp(pstrToken, "Null"))
 		{
-			v_TexProperties.emplace_back(pd3dDevice, pd3dCommandList, pInFile, pstrToken);
+			CTextureProperty pros;
+			pros.LoadCTextureProperty(pd3dDevice, pd3dCommandList, pInFile, pstrToken);
+			v_TexProperties.emplace_back(pros);
 		}
 	}
 }
@@ -379,7 +404,7 @@ void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList)
 //	
 //}
 
-CTextureProperty::CTextureProperty(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile, const std::string& pszFileName)
+void CTextureProperty::LoadCTextureProperty(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile, const std::string& pszFileName)
 {
 	char pstrToken[64] = { '\0' };
 	::ReadStringFromFile(pInFile, pstrToken);
@@ -393,14 +418,16 @@ void CTextureProperty::LoadTexturePropertyFromFile(ID3D12Device* pd3dDevice, ID3
 	v_Textures.reserve(nTextures);
 	for (int i = 0; i < nTextures; i++)
 	{
-		v_Textures.emplace_back(pd3dDevice, pd3dCommandList, pInFile);
+		CTexture texture;
+		CTexture* pTexture = texture.LoadTextureInfoFromFile(pd3dDevice, pd3dCommandList, pInFile);
+		v_Textures.emplace_back(pTexture);
 	}
 }
 
 void CTextureProperty::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int nParameterIndex, int nTextureIndex)
 {
-	for (auto& Textures : v_Textures)
-		Textures.UpdateShaderVariable(pd3dCommandList, nParameterIndex, nTextureIndex);
+	for (auto Textures : v_Textures)
+		Textures->UpdateShaderVariable(pd3dCommandList, nParameterIndex, nTextureIndex);
 }
 
 void CTextureProperty::ReleaseUploadBuffers()
