@@ -57,7 +57,6 @@ protected:
 
 protected:
 	XMFLOAT3*								m_pxmf3Positions = NULL;
-	XMFLOAT2*								m_pxmf2UVs = NULL;
 
 	ID3D12Resource*							m_pd3dPositionBuffer = NULL;
 	ID3D12Resource*							m_pd3dPositionUploadBuffer = NULL;
@@ -65,7 +64,6 @@ protected:
 
 	int										m_nSubMeshes = 0;
 	int*									m_pnSubSetIndices = NULL;
-	UINT**									m_ppnSubSetIndices = NULL;
 
 	ID3D12Resource**						m_ppd3dSubSetIndexBuffers = NULL;
 	ID3D12Resource**						m_ppd3dSubSetIndexUploadBuffers = NULL;
@@ -97,8 +95,8 @@ public:
 	virtual void ReleaseUploadBuffers();
 
 	virtual void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
-	virtual void OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int Subset);
+	//virtual void OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList);
 
 	void LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 
