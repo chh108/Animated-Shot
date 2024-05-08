@@ -372,9 +372,9 @@ CSkinnedMesh::~CSkinnedMesh()
 
 void CSkinnedMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
-	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[3] = { m_d3dVertexBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView };
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 3, pVertexBufferViews);
-	//pd3dCommandList->IASetVertexBuffers(m_nSlot, m_vd3dInputBufferViews.size(), m_vd3dInputBufferViews.data());
+	//D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[3] = { m_d3dVertexBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView };
+	//pd3dCommandList->IASetVertexBuffers(m_nSlot, 3, pVertexBufferViews);
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, m_vd3dInputBufferViews.size(), m_vd3dInputBufferViews.data());
 }
 
 void CSkinnedMesh::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)

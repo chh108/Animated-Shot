@@ -1279,8 +1279,8 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 
 			pGameObject->SetMesh(pSkinnedMesh);
 
-			pGameObject->SetSkinnedAnimationWireFrameShader();
-			//pGameObject->SetPlayerShader();
+			//pGameObject->SetSkinnedAnimationWireFrameShader();
+			pGameObject->SetPlayerShader();
 		}
 		else if (!strcmp(pstrToken, "<Children>:")) // Children
 		{

@@ -24,7 +24,7 @@ cbuffer cbBoneTransforms : register(b8)
     float4x4 gpmtxBoneTransforms[SKINNED_ANIMATION_BONES];
 };
 
-Texture2D gTexture : register(t15);
+Texture2D gTexture : register(t6);
 SamplerState gssWrap : register(s0);
 
 struct VS_SKINNED_INPUT
