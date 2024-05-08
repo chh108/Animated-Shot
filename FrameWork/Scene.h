@@ -63,6 +63,8 @@ public:
     void AnimateObjects(float fTimeElapsed);
     void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
+	void InitializeShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+
 	void ReleaseUploadBuffers();
 
 	CPlayer								*m_pPlayer = NULL;

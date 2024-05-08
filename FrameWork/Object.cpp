@@ -35,7 +35,11 @@ CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootPar
 		m_ppd3dTextures = new ID3D12Resource * [m_nTextures];
 		m_pnResourceTypes = new UINT[m_nTextures];
 
-		for (int i = 0; i < m_nTextures; i++) m_ppd3dTextureUploadBuffers[i] = m_ppd3dTextures[i] = NULL;
+		for (int i = 0; i < m_nTextures; i++)
+		{
+			m_ppd3dTextures[i] = NULL;
+			m_ppd3dTextureUploadBuffers[i] = NULL;
+		}
 
 		m_pd3dSrvGpuDescriptorHandles = new D3D12_GPU_DESCRIPTOR_HANDLE[m_nTextures];
 
@@ -125,22 +129,6 @@ void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE/*D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE*/);
 }
 
-void CTexture::LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
-{
-	m_nResourceType = nResourceType;
-	m_nRootParameterIndex = nIndex;
-
-	m_pd3dTexture = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
-}
-
-void CTexture::LoadTextureFromPNGFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex)
-{
-	m_nResourceType = nResourceType;
-	m_nRootParameterIndex = nIndex;
-
-	m_pd3dTexture = ::CreateTextureResourceFromWICFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_GENERIC_READ);
-}
-
 CTexture* CTexture::LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
 {
 	char pstrToken[64] = { '\0' };
@@ -148,7 +136,7 @@ CTexture* CTexture::LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12Grap
 
 	if (!strcmp(pstrToken, "<Texture>:"))
 	{
-		CTexture* pObjTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 1, 1);
+		CTexture* pObjTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
 
 		int nTextureIndex = ::ReadIntegerFromFile(pInFile); // nTextureIndex
 
@@ -176,7 +164,7 @@ CTexture* CTexture::LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12Grap
 		MultiByteToWideChar(CP_UTF8, 0, strName, nLength, wideStr, wcharCount);
 		wideStr[wcharCount] = L'\0'; // 널 종료 문자 추가
 
-		pObjTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wideStr, RESOURCE_TEXTURE2D_ARRAY, 16, PNG);
+		pObjTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wideStr, RESOURCE_TEXTURE2D_ARRAY, 0, PNG);
 
 		pObjTexture->m_xmf2UVScale.x = ::ReadFloatFromFile(pInFile);				// m_fScaleU
 		pObjTexture->m_xmf2UVScale.y = ::ReadFloatFromFile(pInFile);				// m_fScaleV
@@ -1292,7 +1280,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 			pGameObject->SetMesh(pSkinnedMesh);
 
 			pGameObject->SetSkinnedAnimationWireFrameShader();
-			//pGameObject->SetPlayerShader();
+			pGameObject->SetPlayerShader();
 		}
 		else if (!strcmp(pstrToken, "<Children>:")) // Children
 		{

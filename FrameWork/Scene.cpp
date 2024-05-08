@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "Shader.h"
+#include "Object.h"
 
 ID3D12DescriptorHeap* CScene::m_pd3dCbvSrvDescriptorHeap = NULL;
 
@@ -81,6 +82,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 100); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
+	InitializeShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
 	BuildDefaultLightsAndMaterials();
@@ -104,6 +106,10 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
 	pRatoTexture = TextureProperty.GetTextureFromVec(0);
 
+	CScene::CreateShaderResourceViews(pd3dDevice, pRatoTexture, 0, 16);
+
+	CMaterial* pNewMaterial = new CMaterial(1);
+	pNewMaterial->SetTexture(pRatoTexture);
 
 	//if (!CMaterial::v_Materials.empty())
 	//{
@@ -424,6 +430,19 @@ void CScene::ReleaseUploadBuffers()
 	for (int i = 0; i < m_nGameObjects; i++) m_ppGameObjects[i]->ReleaseUploadBuffers();
 }
 
+void CScene::InitializeShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+{
+	m_nShaders = 5;
+	m_ppShaders = new CShader * [m_nShaders];
+
+	for (int i = 0; i < m_nShaders; i++)
+	{
+		m_ppShaders[i] = new CShader();
+		m_ppShaders[i]->SetObjectsShader(pd3dDevice);
+		m_ppShaders[i]->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, SHADER_TYPE(i));
+	}
+}
+
 void CScene::CreateCbvSrvDescriptorHeaps(ID3D12Device* pd3dDevice, int nConstantBufferViews, int nShaderResourceViews)
 {
 	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
@@ -551,6 +570,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 		}
 	}
 
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < m_nShaders; i++) 
+		if (m_ppShaders[i]) 
+			m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 }
-

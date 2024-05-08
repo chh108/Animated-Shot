@@ -46,10 +46,8 @@ private:
 	UINT							m_nTextureType;
 	UINT							m_nRootParameterIndex;
 
-	UINT							m_nResourceType = NULL;
 	UINT*							m_pnResourceTypes = NULL;
 
-	ID3D12Resource*					m_pd3dTexture = NULL;
 	ID3D12Resource*					m_pd3dTextureUploadBuffers;
 
 	ID3D12Resource**				m_ppd3dTextures = NULL;
@@ -97,7 +95,6 @@ public:
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
 	void SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle);
-	void LoadCTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, int nParameterIndex, int nTextureIndex);

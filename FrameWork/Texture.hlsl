@@ -24,7 +24,7 @@ cbuffer cbBoneTransforms : register(b8)
     float4x4 gpmtxBoneTransforms[SKINNED_ANIMATION_BONES];
 };
 
-Texture2D gTexture : register(t0);
+Texture2D gTexture : register(t15);
 SamplerState gssWrap : register(s0);
 
 struct VS_SKINNED_INPUT
@@ -46,14 +46,15 @@ VS_SKINNED_OUTPUT VSSkinnedAnimation(VS_SKINNED_INPUT input)
     VS_SKINNED_OUTPUT output;
 
     float3 positionW = float3(0.0f, 0.0f, 0.0f);
-
+    matrix mtxVertexToBoneWorld;
     for (int i = 0; i < MAX_VERTEX_INFLUENCES; i++)
     {
-        positionW += input.weights[i] * mul(mul(float4(input.position, 1.0f), gpmtxBoneOffsets[input.indices[i]]), gpmtxBoneTransforms[input.indices[i]]);
+        mtxVertexToBoneWorld = mul(gpmtxBoneOffsets[input.indices[i]], gpmtxBoneTransforms[input.indices[i]]);
+        positionW += input.weights[i] * mul(float4(input.position, 1.0f), mtxVertexToBoneWorld).xyz;
     }
 
     output.position = mul(mul(float4(positionW, 1.0f), gmtxView), gmtxProjection);
-    output.uv = input.uv;
+    //output.uv = input.uv;
 
     return(output);
 }

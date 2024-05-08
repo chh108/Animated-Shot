@@ -201,9 +201,8 @@ void CShader::SetObjectsShader(ID3D12Device* pd3dDevice)
 	g_shaderInfo[3].VS = CShader::CompileShaderFromFile(L"Animation.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dAnimation_VS_Blob);
 	g_shaderInfo[3].PS = CShader::CompileShaderFromFile(L"Animation.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dAnimation_PS_Blob);
 
-	//Material 오류 찾아서 해결하기.
-	g_shaderInfo[4].VS = CShader::CompileShaderFromFile(L"Texture.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dTexture_VS_Blob);
-	g_shaderInfo[4].PS = CShader::CompileShaderFromFile(L"Texture.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dTexture_PS_Blob);
+	g_shaderInfo[4].VS = CShader::CompileShaderFromFile(L"Texture.hlsl", "VSSkinnedAnimation", "vs_5_1", &m_pd3dTexture_VS_Blob);
+	g_shaderInfo[4].PS = CShader::CompileShaderFromFile(L"Texture.hlsl", "PSSkinnedAnimation", "ps_5_1", &m_pd3dTexture_PS_Blob);
 }
 
 void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, SHADER_TYPE type) // ENUM으로 셰이더 타입 관리

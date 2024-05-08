@@ -24,6 +24,9 @@ private:
 	int									m_nReferences = 0;
 
 public:
+
+	ShaderInfo							g_shaderInfo[5];
+
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
@@ -72,7 +75,6 @@ protected:
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_d3dPipelineStateDesc;
 
-	ShaderInfo							g_shaderInfo[5];
 	float								m_fElapsedTime = 0.0f;
 };
 
