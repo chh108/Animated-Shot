@@ -54,7 +54,7 @@ VS_SKINNED_OUTPUT VSSkinnedAnimation(VS_SKINNED_INPUT input)
     }
 
     output.position = mul(mul(float4(positionW, 1.0f), gmtxView), gmtxProjection);
-    //output.uv = input.uv;
+    output.uv = input.uv;
 
     return(output);
 }

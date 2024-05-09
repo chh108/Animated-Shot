@@ -101,7 +101,7 @@ void CMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 				m_pxmf3Positions = new XMFLOAT3[m_nVertices];
 				nReads = (UINT)::fread(m_pxmf3Positions, sizeof(XMFLOAT3), m_nVertices, pInFile);
 
-				m_pd3dVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf3Positions, sizeof(XMFLOAT3) * m_nVertices, 
+				m_pd3dVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf3Positions, sizeof(XMFLOAT3) * m_nVertices,
 					D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
 
 				m_d3dVertexBufferView.BufferLocation = m_pd3dVertexBuffer->GetGPUVirtualAddress();
@@ -117,7 +117,7 @@ void CMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 			::ReadStringFromFile(pInFile, pstrToken); // Read "<UV>:"
 			::ReadIntegerFromFile(pInFile); // Read UVIndex
 
-			XMFLOAT2 *pUVs = new XMFLOAT2[m_nVertices];
+			XMFLOAT2* pUVs = new XMFLOAT2[m_nVertices];
 
 			nReads = (UINT)::fread(pUVs, sizeof(XMFLOAT2), m_nVertices, pInFile);
 
@@ -179,9 +179,7 @@ void CMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 		{
 			break;
 		}
-				
 	}
-	CreateInputBufferView();
 }
 
 void CMesh::CreateInputBufferView()
@@ -347,6 +345,11 @@ CSkyBoxMesh::~CSkyBoxMesh()
 {
 }
 
+void CSkyBoxMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
+{
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dPositionBufferView };
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, pVertexBufferViews);
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CSkinnedMesh::CSkinnedMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) : CMesh(pd3dDevice, pd3dCommandList)
@@ -372,9 +375,9 @@ CSkinnedMesh::~CSkinnedMesh()
 
 void CSkinnedMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
-	//D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[3] = { m_d3dVertexBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView };
-	//pd3dCommandList->IASetVertexBuffers(m_nSlot, 3, pVertexBufferViews);
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, m_vd3dInputBufferViews.size(), m_vd3dInputBufferViews.data());
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[4] = { m_d3dVertexBufferView, m_d3dUVBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView };
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, 4, pVertexBufferViews);
+	//pd3dCommandList->IASetVertexBuffers(m_nSlot, m_vd3dInputBufferViews.size(), m_vd3dInputBufferViews.data());
 }
 
 void CSkinnedMesh::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
