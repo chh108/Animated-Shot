@@ -96,20 +96,30 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_nGameObjects = 1;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
 
-	CLoadedModelInfo* pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Rato.bin", NULL);
+	CLoadedModelInfo* pRatoModel = NULL;
 	m_ppGameObjects[0] = new CRatoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRatoModel, 1);
 	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f);
+	m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f); 
 	
-	CTexture* pRatoTexture = NULL;
-	CMaterial* pMaterial = CMaterial::v_Materials[0];
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	pRatoTexture = TextureProperty.GetTextureFromVec(0);
+	pRatoModel->m_pModelRootObject->m_pMesh;
 
-	CScene::CreateShaderResourceViews(pd3dDevice, pRatoTexture, 0, 16);
+	//CTexture* pRatoTexture = NULL;
+	//CMaterial* pMaterial = CMaterial::v_Materials[0];
+	//CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	//pRatoTexture = TextureProperty.GetTextureFromVec(0);
 
-	CMaterial* pNewMaterial = new CMaterial(1);
-	pNewMaterial->SetTexture(pRatoTexture);
+	//CScene::CreateShaderResourceViews(pd3dDevice, pRatoTexture, 0, 16);
+
+	//CShader* pPlayerShader = new CPlayerShader();
+	//pPlayerShader->CreateShader(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, SHADER_TYPE::Texture);
+	//pPlayerShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	//CMaterial* pNewMaterial = new CMaterial(1);
+	//pNewMaterial->SetTexture(pRatoTexture);
+	//pNewMaterial->SetShader(pPlayerShader);
+
+	//m_ppGameObjects[0]->SetMaterial(0, pNewMaterial);
+
 
 	//if (!CMaterial::v_Materials.empty())
 	//{
