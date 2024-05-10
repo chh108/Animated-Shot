@@ -12,7 +12,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
 
-CPlayer::CPlayer()
+CPlayer::CPlayer() : CGameObject(1)
 {
 	m_pCamera = NULL;
 
@@ -286,14 +286,22 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Monster/Cactuso.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	// Animation 넘어갈떄 BoneTransform 확인 해야함 0430 
-	//// PLAYER TEXTURE 적용 작업 시작.
-	//CTexture* pPlayerTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	//pPlayerTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Monster/Cactuso.dds", RESOURCE_TEXTURE2D_ARRAY, 0, DDS);
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	//CScene::CreateShaderResourceViews(pd3dDevice, pPlayerTexture, 0, 15);
+	//CTexture* pTexture = NULL;
+	//CMaterial* pMaterial = CMaterial::v_Materials[1]; // 데이터 가져오기용
+	//CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	//pTexture = TextureProperty.GetTextureFromVec(0);
 
-	//pPlayerModel->m_pModelRootObject->SetPlayerShader();
+	//CShader* pPlayerShader = new CPlayerShader();
+	//pPlayerShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, SHADER_TYPE::Texture);
+	//pPlayerShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	//CMaterial* pNewMaterial = new CMaterial(1);
+	//pNewMaterial->SetTexture(pTexture);
+	//pNewMaterial->SetShader(pPlayerShader);
+
+	//SetMaterial(0, pNewMaterial);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);

@@ -120,9 +120,11 @@ void CTexture::ReleaseUploadBuffers()
 	}
 }
 
-void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex, bool bIsDDSType)
+void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nRootParameters, UINT nIndex, bool bIsDDSType)
 {
 	m_pnResourceTypes[nIndex] = nResourceType;
+	m_nRootParameterIndex = nRootParameters;
+
 	if (bIsDDSType)
 		m_ppd3dTextures[nIndex] = ::CreateTextureResourceFromDDSFile(pd3dDevice, pd3dCommandList, pszFileName, &m_ppd3dTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 	else
@@ -164,7 +166,7 @@ CTexture* CTexture::LoadTextureInfoFromFile(ID3D12Device* pd3dDevice, ID3D12Grap
 		MultiByteToWideChar(CP_UTF8, 0, strName, nLength, wideStr, wcharCount);
 		wideStr[wcharCount] = L'\0'; // 널 종료 문자 추가
 
-		pObjTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wideStr, RESOURCE_TEXTURE2D_ARRAY, 0, PNG);
+		pObjTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wideStr, RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
 
 		pObjTexture->m_xmf2UVScale.x = ::ReadFloatFromFile(pInFile);				// m_fScaleU
 		pObjTexture->m_xmf2UVScale.y = ::ReadFloatFromFile(pInFile);				// m_fScaleV
@@ -1010,7 +1012,22 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 {
 	if (m_bActive)
 	{
-		if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->UpdateShaderVariables(pd3dCommandList);
+		if (m_pSkinnedAnimationController)
+		{
+			m_pSkinnedAnimationController->UpdateShaderVariables(pd3dCommandList);
+
+			if (m_nMaterials > 0)
+			{
+				for (int i = 0; i < m_nMaterials; i++)
+				{
+					if (m_ppMaterials[i])
+					{
+						if (m_ppMaterials[i]->m_pShader) m_ppMaterials[i]->m_pShader->Render(pd3dCommandList, pCamera);
+						m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
+					}
+				}
+			}
+		}
 
 		if (m_pMesh) 
 		{
@@ -1068,9 +1085,11 @@ void CGameObject::SetTrackAnimationPosition(int nAnimationTrack, float fPosition
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->SetTrackPosition(nAnimationTrack, fPosition);
 }
 
-void CGameObject::LoadMaterialFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
+CMaterial* CGameObject::LoadMaterialFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
 {
 	int nMaterials = ReadIntegerFromFile(pInFile);
+
+	CMaterial* pMaterial = new CMaterial();
 
 	CMaterial::v_Materials.reserve(nMaterials);
 
@@ -1084,7 +1103,7 @@ void CGameObject::LoadMaterialFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 		::ReadStringFromFile(pInFile, pstrToken);  // Material Name
 
-		CMaterial* pMaterial = new CMaterial; // nMaterial 텍스처 가지고 있다고 가정함.
+		 // nMaterial 텍스처 가지고 있다고 가정함.
 
 		pMaterial->SetMaterialName(pstrToken);
 
@@ -1094,6 +1113,7 @@ void CGameObject::LoadMaterialFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 		CMaterial::v_Materials.emplace_back(pMaterial);
 	}
+	return(pMaterial);
 }
 
 void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel)
@@ -1237,7 +1257,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 	(*pnFrames)++;
 	int nFrame = ::ReadIntegerFromFile(pInFile);
 
-	CGameObject* pGameObject = new CGameObject();
+	CGameObject* pGameObject = new CGameObject(1);
 	::ReadStringFromFile(pInFile, pGameObject->m_pstrFrameName);
 
 	for (; ; )
@@ -1262,7 +1282,12 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 		}
 		else if (!strcmp(pstrToken, "<Materials>:")) // Materials
 		{
-			pGameObject->LoadMaterialFromFile(pd3dDevice, pd3dCommandList, pInFile);
+			//CMaterial* pMaterial = new CMaterial(1);
+			CMaterial* pMaterial = new CMaterial(1);
+			pMaterial = CGameObject::LoadMaterialFromFile(pd3dDevice, pd3dCommandList, pInFile);
+			pMaterial->SetPlayerShader();
+			pGameObject->SetMaterial(0, pMaterial);
+			//pGameObject->LoadMaterialFromFile(pd3dDevice, pd3dCommandList, pInFile);
 		}
 		else if (!strcmp(pstrToken, "<SkinDeformations>:")) // SkinDeformation
 		{
@@ -1275,12 +1300,12 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 			//pSkinnedMesh->SetType(1);
 
 			::ReadStringFromFile(pInFile, pstrToken); //<Mesh>:
-			if (!strcmp(pstrToken, "<Mesh>:")) pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
+			if (!strcmp(pstrToken, "<Mesh>:")) pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile); // TODO Mesh 행방을 찾아라.
 
-			pGameObject->SetMesh(pSkinnedMesh);
+			pGameObject->SetMesh(pSkinnedMesh);  // Set Mesh For Object
 
 			//pGameObject->SetSkinnedAnimationWireFrameShader();
-			//pGameObject->SetPlayerShader();
+			pGameObject->SetPlayerShader();
 		}
 		else if (!strcmp(pstrToken, "<Children>:")) // Children
 		{
@@ -1329,7 +1354,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 			break;
 		}
 	}
-	return(pGameObject);
+	return(pGameObject);				// pGameObject Have m_pMesh, 
 } 
 
 CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader)
@@ -1793,23 +1818,23 @@ CRatoObject::CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	SetChild(pRatoModel->m_pModelRootObject, true);
 
-	pRatoModel->m_pModelRootObject->m_pMesh;
-	pRatoModel->m_pModelRootObject->m_ppMaterials;
-	pRatoModel->m_pAnimationSets->m_nSkinnedMeshes;
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	CTexture* pRatoTexture = NULL;
 	CMaterial* pMaterial = CMaterial::v_Materials[0]; // 데이터 가져오기용
 	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	pRatoTexture = TextureProperty.GetTextureFromVec(0);CScene::CreateShaderResourceViews(pd3dDevice, pRatoTexture, 0, 16);
+	pRatoTexture = TextureProperty.GetTextureFromVec(0);
 
 	CShader* pPlayerShader = new CPlayerShader();
 	pPlayerShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, SHADER_TYPE::Texture);
 	pPlayerShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
+	CScene::CreateShaderResourceViews(pd3dDevice, pRatoTexture, 0, 15);
+
 	CMaterial* pNewMaterial = new CMaterial(1);
 	pNewMaterial->SetTexture(pRatoTexture);
 	pNewMaterial->SetShader(pPlayerShader);
-	
+
 	SetMaterial(0, pNewMaterial);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pRatoModel);
