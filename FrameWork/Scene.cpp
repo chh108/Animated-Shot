@@ -93,7 +93,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	XMFLOAT4 xmf4Color(1.0f, 1.0f, 0.0f, 0.25f);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 
-	m_nGameObjects = 1;
+	m_nGameObjects = 8;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
 
 	CLoadedModelInfo* pRatoModel = NULL;
@@ -101,77 +101,49 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f); 
 	
-	pRatoModel->m_pModelRootObject->m_pMesh;
-
-	//CTexture* pRatoTexture = NULL;
-	//CMaterial* pMaterial = CMaterial::v_Materials[0];
-	//CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	//pRatoTexture = TextureProperty.GetTextureFromVec(0);
-
-	//CScene::CreateShaderResourceViews(pd3dDevice, pRatoTexture, 0, 16);
-
-	//CShader* pPlayerShader = new CPlayerShader();
-	//pPlayerShader->CreateShader(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, SHADER_TYPE::Texture);
-	//pPlayerShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	//CMaterial* pNewMaterial = new CMaterial(1);
-	//pNewMaterial->SetTexture(pRatoTexture);
-	//pNewMaterial->SetShader(pPlayerShader);
-
-	//m_ppGameObjects[0]->SetMaterial(0, pNewMaterial);
-
-
-	//if (!CMaterial::v_Materials.empty())
-	//{
-	//	int nTexIndex = 0;
-	//	pRatoTexture = CMaterial::v_Materials[nTexIndex].
-	//}
-
 	if (pRatoModel) delete pRatoModel;
 
-	//CLoadedModelInfo* pWormoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Wormo.bin", NULL);
-	//m_ppGameObjects[1] = new CWormoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pWormoModel, 1);
-	//m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	//m_ppGameObjects[1]->SetPosition(380.0f, m_pTerrain->GetHeight(380.0f, 725.0f), 725.0f);
-	//if (pWormoModel) delete pWormoModel;
+	CLoadedModelInfo* pWormoModel = NULL;
+	m_ppGameObjects[1] = new CWormoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pWormoModel, 1);
+	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[1]->SetPosition(380.0f, m_pTerrain->GetHeight(380.0f, 725.0f), 725.0f);
+	if (pWormoModel) delete pWormoModel;
 
-	//CLoadedModelInfo* pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
-	//m_ppGameObjects[2] = new CCactusoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pCactusoModel, 1);
-	//m_ppGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	//m_ppGameObjects[2]->SetPosition(330.0f, m_pTerrain->GetHeight(330.0f, 700.0f), 700.0f);
-	//if (pCactusoModel) delete pCactusoModel;
+	CLoadedModelInfo* pMegaGolemAModel = NULL;
+	m_ppGameObjects[2] = new CMegaGolemAObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemAModel, 1);
+	m_ppGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[2]->SetPosition(300.0f, m_pTerrain->GetHeight(300.0f, 650.0f) + 10.0f, 650.0f);
+	if (pMegaGolemAModel) delete pMegaGolemAModel;
 
-	//CLoadedModelInfo* pMegaGolemAModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Mega_Golem_A.bin", NULL);
-	//m_ppGameObjects[3] = new CMegaGolemAObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemAModel, 1);
-	//m_ppGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	CLoadedModelInfo* pMegaGolemBModel = NULL;
+	m_ppGameObjects[3] = new CMegaGolemBObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemBModel, 1);
+	m_ppGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[3]->SetPosition(230.0f, m_pTerrain->GetHeight(230.0f, 580.0f), 580.0f);
 
-	//m_ppGameObjects[3]->SetPosition(300.0f, m_pTerrain->GetHeight(300.0f, 650.0f) + 10.0f, 650.0f);
-	//if (pMegaGolemAModel) delete pMegaGolemAModel;
+	CLoadedModelInfo* pCactusoModel = NULL;
+	m_ppGameObjects[4] = new CCactusoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pCactusoModel, 1);
+	m_ppGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[4]->SetPosition(330.0f, m_pTerrain->GetHeight(330.0f, 700.0f), 700.0f);
+	if (pCactusoModel) delete pCactusoModel;
 
-	//CLoadedModelInfo* pMegaGolemBModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Mega_Golem_B.bin", NULL);
-	//m_ppGameObjects[4] = new CMegaGolemBObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemBModel, 1);
-	//m_ppGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	//m_ppGameObjects[4]->SetPosition(230.0f, m_pTerrain->GetHeight(230.0f, 580.0f), 580.0f);
+	CLoadedModelInfo* pScorpiontoModel = NULL;
+	m_ppGameObjects[5] = new CScorpiontoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pScorpiontoModel, 1);
+	m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
+	m_ppGameObjects[5]->SetPosition(200.0f, m_pTerrain->GetHeight(200.0f, 620.0f), 620.0f);
+	if (pScorpiontoModel) delete pScorpiontoModel;
 
-	//CLoadedModelInfo* pScorpiontoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Scorpionto.bin", NULL);
-	//m_ppGameObjects[5] = new CScorpiontoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pScorpiontoModel, 1);
-	//m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	//m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
-	//m_ppGameObjects[5]->SetPosition(200.0f, m_pTerrain->GetHeight(200.0f, 620.0f), 620.0f);
-	//if (pScorpiontoModel) delete pScorpiontoModel;
-
-	//CLoadedModelInfo* pAntoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Anto.bin", NULL);
-	//m_ppGameObjects[6] = new CAntoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAntoModel, 1);
-	//m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	//m_ppGameObjects[6]->SetPosition(230.0f, m_pTerrain->GetHeight(230.0f, 700.0f), 700.0f);
-	//if (pAntoModel) delete pAntoModel;
-	// 
-	//CLoadedModelInfo* pGolemChildModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Monster/Golem_Child.bin", NULL);
-	//m_ppGameObjects[7] = new CGolemChildObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGolemChildModel, 1);
-	//m_ppGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	//m_ppGameObjects[7]->SetPosition(350.0f, m_pTerrain->GetHeight(350.0f, 400.0f), 400.0f);
-	//if (pGolemChildModel) delete pGolemChildModel;
-
+	CLoadedModelInfo* pAntoModel = NULL;
+	m_ppGameObjects[6] = new CAntoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAntoModel, 1);
+	m_ppGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[6]->SetPosition(230.0f, m_pTerrain->GetHeight(230.0f, 700.0f), 700.0f);
+	if (pAntoModel) delete pAntoModel;
+	 
+	CLoadedModelInfo* pGolemChildModel = NULL;
+	m_ppGameObjects[7] = new CGolemChildObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGolemChildModel, 1);
+	m_ppGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[7]->SetPosition(350.0f, m_pTerrain->GetHeight(350.0f, 400.0f), 400.0f);
+	if (pGolemChildModel) delete pGolemChildModel;
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 

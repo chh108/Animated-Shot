@@ -29,10 +29,10 @@ CPlayer::CPlayer() : CGameObject(1)
 
 	m_pxmf4x4Trans = new XMFLOAT4X4
 	{
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f,
+		0.91f, 0.0f, 0.0f, 0.0f,
+		0.0f, -0.91f, 0.0f, 0.0f,
+		0.0f, 0.0f, -0.91f, 0.0f,
+		0.07f, 0.0f, 0.0f, 1.0f,
 	};
 
 	m_fPitch = 0.0f;
@@ -282,28 +282,31 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	// Animation이 없이 모델만 있는 파일을 읽어올 때 AnimationSet과 같은 변수들을 따로 만들어서 관리해주는 방식이 필요 0419 fin
 	// Texture, Material 읽어온 DATA 저장해야함. 0424
 
-	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
+	/*CLoadedModelInfo* pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
+		"Monster/Rato.bin", NULL);
+	SetChild(pRatoModel->m_pModelRootObject, true);*/
+
+	CLoadedModelInfo* pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 		"Monster/Cactuso.bin", NULL);
-	SetChild(pPlayerModel->m_pModelRootObject, true);
+	SetChild(pCactusoModel->m_pModelRootObject, true);
 
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	//CTexture* pTexture = NULL;
-	//CMaterial* pMaterial = CMaterial::v_Materials[1]; // 데이터 가져오기용
-	//CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	//pTexture = TextureProperty.GetTextureFromVec(0);
+	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);;
+	CMaterial* pMaterial = CMaterial::v_Materials[4]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	pTexture = TextureProperty.GetTextureFromVec(0);
 
 	//CShader* pPlayerShader = new CPlayerShader();
 	//pPlayerShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, SHADER_TYPE::Texture);
 	//pPlayerShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	//CMaterial* pNewMaterial = new CMaterial(1);
-	//pNewMaterial->SetTexture(pTexture);
-	//pNewMaterial->SetShader(pPlayerShader);
+	CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
 
-	//SetMaterial(0, pNewMaterial);
+	CMaterial* pNewMaterial = new CMaterial(1);
+	pNewMaterial->SetTexture(pTexture);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
+	SetMaterial(0, pNewMaterial);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pCactusoModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
 	m_pSkinnedAnimationController->SetTrackSpeed(PS_IDLE, 1.0f);
 	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_IDLE, 0.0f, 1.0f);
@@ -329,6 +332,38 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);
+//
+//#ifdef _WITH_SOUND_CALLBACK
+//	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK
+//	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 0, 1.3f, _T("Sound/SmallFootstep01.wav"));
+//	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 1, 1.57f, _T("Sound/SmallFootstep01.wav"));
+
+	/*m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pRatoModel);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_IDLE, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_IDLE, 1.3f, 2.25f);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_WALK, PS_WALK);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_WALK, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_WALK, 0.04f, 1.0f);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_ATTACK, PS_ATTACK);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_ATTACK, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_ATTACK, 2.5f, 3.01f);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DAMAGED, PS_DAMAGED);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_DAMAGED, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DAMAGED, 5.04f, 5.8f);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DIE, PS_DIE);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_DIE, 1.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DIE, 5.875, 6.875f);
+
+	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);*/
 
 #ifdef _WITH_SOUND_CALLBACK
 	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK
@@ -342,12 +377,13 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	if (pPlayerModel) delete pPlayerModel;
+	//if (pRatoModel) delete pRatoModel;
+	if (pCactusoModel) delete pCactusoModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
-	SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 595.0f), 595.0f));
+	SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 595.0f) + 10.0f, 595.0f));
 
 	SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
 }
@@ -422,7 +458,7 @@ void CAngrybotPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 	XMFLOAT3 xmf3PlayerPosition = GetPosition();
 	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
-	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 2.0f;
+	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 10.0f;
 	if (xmf3PlayerPosition.y < fHeight)
 	{
 		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();

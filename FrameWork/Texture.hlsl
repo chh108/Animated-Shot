@@ -56,6 +56,8 @@ VS_SKINNED_OUTPUT VSSkinnedAnimation(VS_SKINNED_INPUT input)
     output.position = mul(mul(float4(positionW, 1.0f), gmtxView), gmtxProjection);
     output.uv = input.uv;
 
+    //output.Color = gTexture.Sample(gssWrap, input.uv);
+
     return(output);
 }
 

@@ -1726,46 +1726,76 @@ CEagleObject::~CEagleObject()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 
-CAntoObject::CAntoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CRatoObject::CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
 {
-	CLoadedModelInfo* pAntoModel = pModel;
-	if (!pAntoModel) pAntoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Anto.bin", NULL);
+	CLoadedModelInfo* pRatoModel = pModel;
+	if (!pRatoModel) pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Rato.bin", NULL);
 
-	// 몸체 y축, Leg_L 180도
+	SetChild(pRatoModel->m_pModelRootObject, true);
 
-	SetChild(pAntoModel->m_pModelRootObject, true);
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pAntoModel);
+	m_pRatoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[0]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	m_pRatoTexture = TextureProperty.GetTextureFromVec(0);
 
-	strcpy_s(m_pstrFrameName, "Anto");
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pRatoTexture, 0, 15);
+
+	m_pRatoMaterial = new CMaterial(1);
+	m_pRatoMaterial->SetTexture(m_pRatoTexture);
+
+	SetMaterial(0, m_pRatoMaterial);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pRatoModel);
+
+	strcpy_s(m_pstrFrameName, "Rato");
 
 	Rotate(0.0f, 0.0f, 0.0f);
 	SetScale(0.5f, 0.5f, 0.5f);
 }
 
-CAntoObject::~CAntoObject()
+CRatoObject::~CRatoObject()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CCactusoObject::CCactusoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
+CWormoObject::CWormoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
 {
-	CLoadedModelInfo* pCactusoModel = pModel;
-	if (!pCactusoModel) pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
+	CLoadedModelInfo* pWormoModel = pModel;
+	if (!pWormoModel) pWormoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Wormo.bin", NULL);
 
-	SetChild(pCactusoModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pCactusoModel);
+	SetChild(pWormoModel->m_pModelRootObject, true);
 
-	strcpy_s(m_pstrFrameName, "Cactuso");
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pWormoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[1]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	m_pWormoTexture = TextureProperty.GetTextureFromVec(0);
+
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pWormoTexture, 0, 15);
+
+	m_pWormoMaterial = new CMaterial(1);
+	m_pWormoMaterial->SetTexture(m_pWormoTexture);
+
+	SetMaterial(0, m_pWormoMaterial);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pWormoModel);
+
+	strcpy_s(m_pstrFrameName, "Wormo");
 
 	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(0.3f, 0.3f, 0.3f);
+	SetScale(1.0f, 1.0f, 1.0f);
 }
 
-CCactusoObject::~CCactusoObject()
+CWormoObject::~CWormoObject()
 {
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1776,6 +1806,21 @@ CMegaGolemAObject::CMegaGolemAObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	if (!pMegaGolemAModel) pMegaGolemAModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Mega_Golem_A.bin", NULL);
 
 	SetChild(pMegaGolemAModel->m_pModelRootObject, true);
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pMegaATexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[2]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	m_pMegaATexture = TextureProperty.GetTextureFromVec(0);
+
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pMegaATexture, 0, 15);
+
+	m_pMegaAMaterial = new CMaterial(1);
+	m_pMegaAMaterial->SetTexture(m_pMegaATexture);
+
+	SetMaterial(0, m_pMegaAMaterial);
+
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMegaGolemAModel);
 
 	strcpy_s(m_pstrFrameName, "MegaGolem_A");
@@ -1797,6 +1842,21 @@ CMegaGolemBObject::CMegaGolemBObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	if (!pMegaGolemBModel) pMegaGolemBModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Mega_Golem_B.bin", NULL);
 
 	SetChild(pMegaGolemBModel->m_pModelRootObject, true);
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pMegaBTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[3]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	m_pMegaBTexture = TextureProperty.GetTextureFromVec(0);
+
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pMegaBTexture, 0, 15);
+
+	m_pMegaBMaterial = new CMaterial(1);
+	m_pMegaBMaterial->SetTexture(m_pMegaBTexture);
+
+	SetMaterial(0, m_pMegaBMaterial);
+
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMegaGolemBModel);
 
 	strcpy_s(m_pstrFrameName, "MegaGolem_B");
@@ -1811,41 +1871,36 @@ CMegaGolemBObject::~CMegaGolemBObject()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CRatoObject::CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
+CCactusoObject::CCactusoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
 {
-	CLoadedModelInfo* pRatoModel = pModel;
-	if (!pRatoModel) pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Rato.bin", NULL);
+	CLoadedModelInfo* pCactusoModel = pModel;
+	if (!pCactusoModel) pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
 
-	SetChild(pRatoModel->m_pModelRootObject, true);
+	SetChild(pCactusoModel->m_pModelRootObject, true);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CTexture* pRatoTexture = NULL;
-	CMaterial* pMaterial = CMaterial::v_Materials[0]; // 데이터 가져오기용
+	m_pCactusoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[4]; // 데이터 가져오기용
 	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	pRatoTexture = TextureProperty.GetTextureFromVec(0);
+	m_pCactusoTexture = TextureProperty.GetTextureFromVec(0);
 
-	CShader* pPlayerShader = new CPlayerShader();
-	pPlayerShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, SHADER_TYPE::Texture);
-	pPlayerShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pCactusoTexture, 0, 15);
 
-	CScene::CreateShaderResourceViews(pd3dDevice, pRatoTexture, 0, 15);
+	m_pCactusoMaterial = new CMaterial(1);
+	m_pCactusoMaterial->SetTexture(m_pCactusoTexture);
 
-	CMaterial* pNewMaterial = new CMaterial(1);
-	pNewMaterial->SetTexture(pRatoTexture);
-	pNewMaterial->SetShader(pPlayerShader);
+	SetMaterial(0, m_pCactusoMaterial);
 
-	SetMaterial(0, pNewMaterial);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pCactusoModel);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pRatoModel);
-
-	strcpy_s(m_pstrFrameName, "Rato");
+	strcpy_s(m_pstrFrameName, "Cactuso");
 
 	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(0.5f, 0.5f, 0.5f);
+	SetScale(0.3f, 0.3f, 0.3f);
 }
 
-CRatoObject::~CRatoObject()
+CCactusoObject::~CCactusoObject()
 {
 }
 
@@ -1857,6 +1912,20 @@ CScorpiontoObject::CScorpiontoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	if (!pScorpiontoModel) pScorpiontoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Scorpionto.bin", NULL);
 
 	SetChild(pScorpiontoModel->m_pModelRootObject, true);
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pScorpionTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[5]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	m_pScorpionTexture = TextureProperty.GetTextureFromVec(0);
+
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pScorpionTexture, 0, 15);
+
+	m_pScorpionMaterial = new CMaterial(1);
+	m_pScorpionMaterial->SetTexture(m_pScorpionTexture);
+
+	SetMaterial(0, m_pScorpionMaterial);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pScorpiontoModel);
 
@@ -1870,24 +1939,38 @@ CScorpiontoObject::~CScorpiontoObject()
 {
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CWormoObject::CWormoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
+CAntoObject::CAntoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
 {
-	CLoadedModelInfo* pWormoModel = pModel;
-	if (!pWormoModel) pWormoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Wormo.bin", NULL);
+	CLoadedModelInfo* pAntoModel = pModel;
+	if (!pAntoModel) pAntoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Anto.bin", NULL);
 
-	SetChild(pWormoModel->m_pModelRootObject, true);
+	// 몸체 y축, Leg_L 180도
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pWormoModel);
+	SetChild(pAntoModel->m_pModelRootObject, true);
 
-	strcpy_s(m_pstrFrameName, "Wormo");
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pAntoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[6]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	m_pAntoTexture = TextureProperty.GetTextureFromVec(0);
+
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pAntoTexture, 0, 15);
+
+	m_pAntoMaterial = new CMaterial(1);
+	m_pAntoMaterial->SetTexture(m_pAntoTexture);
+
+	SetMaterial(0, m_pAntoMaterial);
+
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pAntoModel);
+
+	strcpy_s(m_pstrFrameName, "Anto");
 
 	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(1.0f, 1.0f, 1.0f);
+	SetScale(0.5f, 0.5f, 0.5f);
 }
 
-CWormoObject::~CWormoObject()
+CAntoObject::~CAntoObject()
 {
 }
 
@@ -1899,6 +1982,20 @@ CGolemChildObject::CGolemChildObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	if (!pGolemChildModel) pGolemChildModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Golem_Child.bin", NULL);
 
 	SetChild(pGolemChildModel->m_pModelRootObject, true);
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pGolemChildTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[7]; // 데이터 가져오기용
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	m_pGolemChildTexture = TextureProperty.GetTextureFromVec(0);
+
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pGolemChildTexture, 0, 15);
+
+	m_pGolemChildMaterial = new CMaterial(1);
+	m_pGolemChildMaterial->SetTexture(m_pGolemChildTexture);
+
+	SetMaterial(0, m_pGolemChildMaterial);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pGolemChildModel);
 

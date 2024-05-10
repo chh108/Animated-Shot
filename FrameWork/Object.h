@@ -133,7 +133,7 @@ public:
 
 class CTextureProperty
 {
-private:
+public:
 	std::string m_strPropertyName;
 	std::vector<CTexture*> v_Textures;
 
@@ -634,6 +634,9 @@ public:
 //
 class CCactusoObject : public CGameObject
 {
+private:
+	CTexture* m_pCactusoTexture;
+	CMaterial* m_pCactusoMaterial;
 public:
 	CCactusoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CCactusoObject();
@@ -643,6 +646,9 @@ public:
 //
 class CMegaGolemAObject : public CGameObject
 {
+private:
+	CTexture* m_pMegaATexture;
+	CMaterial* m_pMegaAMaterial;
 public:
 	CMegaGolemAObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CMegaGolemAObject();
@@ -652,6 +658,9 @@ public:
 //
 class CMegaGolemBObject : public CGameObject
 {
+private:
+	CTexture* m_pMegaBTexture;
+	CMaterial* m_pMegaBMaterial;
 public:
 	CMegaGolemBObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CMegaGolemBObject();
@@ -659,6 +668,9 @@ public:
 
 class CRatoObject : public CGameObject
 {
+private:
+	CTexture* m_pRatoTexture;
+	CMaterial* m_pRatoMaterial;
 public:
 	CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CRatoObject();
@@ -666,6 +678,9 @@ public:
 
 class CScorpiontoObject : public CGameObject
 {
+private:
+	CTexture* m_pScorpionTexture;
+	CMaterial* m_pScorpionMaterial;
 public:
 	CScorpiontoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CScorpiontoObject();
@@ -673,6 +688,9 @@ public:
 
 class CWormoObject : public CGameObject
 {
+private:
+	CTexture* m_pWormoTexture;
+	CMaterial* m_pWormoMaterial;
 public:
 	CWormoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CWormoObject();
@@ -682,6 +700,9 @@ public:
 //
 class CAntoObject : public CGameObject
 {
+private:
+	CTexture* m_pAntoTexture;
+	CMaterial* m_pAntoMaterial;
 public:
 	CAntoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CAntoObject();
@@ -691,6 +712,9 @@ public:
 //
 class CGolemChildObject : public CGameObject
 {
+private:
+	CTexture* m_pGolemChildTexture;
+	CMaterial* m_pGolemChildMaterial;
 public:
 	CGolemChildObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
 	virtual ~CGolemChildObject();
