@@ -33,6 +33,17 @@ using namespace std;
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
 
+#include "PrimitiveBatch.h"
+#include "VertexTypes.h"
+#include "DirectXHelpers.h"
+
+// 다른 필요한 DirectXTK 헤더 파일
+#include "CommonStates.h"
+#include "Effects.h"
+#include "SimpleMath.h"
+#include "wrl/client.h"
+
+
 #include <Mmsystem.h>
 
 #ifdef _DEBUG

@@ -6,6 +6,9 @@
 #include "GameFramework.h"
 #include "Shader.h"
 #include "Object.h"
+#include "N_Header.h"
+#include "Network.h"
+#include "PlayerManager.h"
 
 CGameFramework::CGameFramework()
 {
@@ -47,6 +50,12 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 {
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
+	WSADATA wsadata;
+	WSAStartup(MAKEWORD(2, 2), &wsadata);
+
+	CNetwork::Get_Instance()->SetSocket();
+	CNetwork::Get_Instance()->SocketInit();
+	CNetwork::Get_Instance()->ConnectSocket();
 
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
@@ -410,8 +419,12 @@ void CGameFramework::BuildObjects()
 	pShader->SetObjectsShader(m_pd3dDevice);*/
 
 	CAngrybotPlayer* pPlayer = new CAngrybotPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+	CAngrybotParty1* pParty1 = new CAngrybotParty1(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+	CAngrybotParty2* pParty2 = new CAngrybotParty2(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+	m_pScene->m_pParty1 = m_pParty1 = pParty1;
+	m_pScene->m_pParty2 = m_pParty2 = pParty2;
 
 	//m_pPlayer->SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_pCamera = m_pPlayer->GetCamera();
@@ -424,6 +437,8 @@ void CGameFramework::BuildObjects()
 
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
+	if (m_pParty1) m_pParty1->ReleaseUploadBuffers();
+	//if (m_pParty2) m_pParty2->ReleaseUploadBuffers();
 
 	m_GameTimer.Reset();
 }
@@ -456,6 +471,10 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+		
+		
+		CPlayerManager::Get_Instance()->Set_MoveKey(dwDirection);			//HY
+		CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
 
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
@@ -481,6 +500,8 @@ void CGameFramework::ProcessInput()
 		}
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
+	m_pParty1->Update(m_GameTimer.GetTimeElapsed());
+	m_pParty2->Update(m_GameTimer.GetTimeElapsed());
 }
 
 void CGameFramework::AnimateObjects()
@@ -490,6 +511,8 @@ void CGameFramework::AnimateObjects()
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed);
+	m_pParty1->Animate(fTimeElapsed);
+	m_pParty2->Animate(fTimeElapsed);
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -560,6 +583,10 @@ void CGameFramework::FrameAdvance()
 #endif
 	if (m_pPlayer)
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+	if (m_pParty1) 
+		m_pParty1->Render(m_pd3dCommandList, m_pCamera);
+	if (m_pParty2) 
+		m_pParty2->Render(m_pd3dCommandList, m_pCamera);
 
 	d3dResourceBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	d3dResourceBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;

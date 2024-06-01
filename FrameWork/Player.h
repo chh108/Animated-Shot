@@ -36,6 +36,8 @@ protected:
 
 	CCamera						*m_pCamera = NULL;
 
+	int							m_iTpye = 0; // 0 - 공격 1 - 방어 2 - 힐러
+
 public:
 	int							m_iCurrentState = PS_IDLE;
 

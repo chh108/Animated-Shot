@@ -73,20 +73,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(LibraryPath)</LibraryPath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\sec\Desktop\GraduationProject\FrameWork\FBX SDK\2020.3.2\lib\vs2019\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\sec\Desktop\GraduationProject\FrameWork\FBX SDK\2020.3.2\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\USER\Desktop\공부\졸작\Graduation_Project\FBX SDK\2020.3.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\USER\Desktop\공부\졸작\Graduation_Project\FBX SDK\2020.3.2\lib\vs2019\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\USER\Desktop\공부\졸작\Graduation_Project\FBX SDK\2020.3.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\USER\Desktop\공부\졸작\Graduation_Project\FBX SDK\2020.3.2\lib\vs2019\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.2\lib\vs2019\x64\release;$(LibraryPath)</LibraryPath>
-    <OutDir>C:\Users\pc\OneDrive\바탕 화면\학기자료\졸작\Animated-Shot\FrameWork</OutDir>
+    <IncludePath>C:\Users\pc\OneDrive\바탕 화면\학기자료\졸작\Animated-Shot\FBX SDK\2020.3.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\pc\OneDrive\바탕 화면\학기자료\졸작\Animated-Shot\FBX SDK\2020.3.2\lib\vs2019\x64\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -96,15 +99,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\sec\Desktop\GraduationProject\FrameWork\DirectXTK-main\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);Winmm.lib;libfbxsdk-md.lib;zlib-md.lib;libxml2-md.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.2\lib\vs2019\x64\debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;DirectXTKd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);Winmm.lib;libfbxsdk-md.lib;zlib-md.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\sec\Desktop\GraduationProject\FrameWork\FBX SDK\2020.3.2\lib\vs2019\x64\debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -119,6 +121,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\USER\Desktop\공부\졸작\Graduation_Project\FBX SDK\2020.3.2\lib\vs2019\x64\debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,6 +140,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\USER\Desktop\공부\졸작\Graduation_Project\FBX SDK\2020.3.2\lib\vs2019\x64\debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,21 +153,46 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\ym\Desktop\FBX SDK\2020.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\pc\OneDrive\바탕 화면\학기자료\졸작\Animated-Shot\DirectXTK-main\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);Winmm.lib;libfbxsdk-md.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\ym\Desktop\FBX SDK\2020.3.2\lib\vs2019\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;DirectXTKd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Winmm.lib;libfbxsdk-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\USER\Desktop\HyeYeon\Graduation_Project\FrameWork\FBX SDK\2020.3.2\lib\vs2019\x64\release</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\DirectXTK-main\Inc\PrimitiveBatch.h" />
+    <ClInclude Include="..\Server_Framework\protocol.h" />
+    <ClInclude Include="AABB.h" />
+    <ClInclude Include="Base.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="CAntoObject.h" />
+    <ClInclude Include="CBeezObject.h" />
+    <ClInclude Include="CCatusoObject.h" />
+    <ClInclude Include="CDevilTreeObject.h" />
+    <ClInclude Include="CDryadObject.h" />
+    <ClInclude Include="CGolemChildObject.h" />
     <ClInclude Include="Client_Defines.h" />
+    <ClInclude Include="CMegaGolemAObject.h" />
+    <ClInclude Include="CMegaGolemBObject.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="CPlantaObject.h" />
+    <ClInclude Include="CRabbyObject.h" />
+    <ClInclude Include="CRatoObject.h" />
+    <ClInclude Include="CScorpiontoObject.h" />
+    <ClInclude Include="CTurnipaObject.h" />
+    <ClInclude Include="CWormoObject.h" />
     <ClInclude Include="DDSTextureLoader12.h" />
+    <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="DoranSword.h" />
+    <ClInclude Include="Function.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -176,22 +205,55 @@
     <ClInclude Include="AnimatedShot.h" />
     <ClInclude Include="Mathmatics.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Network.h" />
+    <ClInclude Include="N_Header.h" />
+    <ClInclude Include="OBB.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Party1.h" />
+    <ClInclude Include="Party2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="PartyManager.h" />
+    <ClInclude Include="Picking.h" />
+    <ClInclude Include="PipeLine.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="WICTextureLoader12.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Base.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="CAntoObject.cpp" />
+    <ClCompile Include="CBeezObject.cpp" />
+    <ClCompile Include="CCatusoObject.cpp" />
+    <ClCompile Include="CDevilTreeObject.cpp" />
+    <ClCompile Include="CDryadObject.cpp" />
+    <ClCompile Include="CGolemChildObject.cpp" />
+    <ClCompile Include="CMegaGolemAObject.cpp" />
+    <ClCompile Include="CMegaGolemBObject.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="CPlantaObject.cpp" />
+    <ClCompile Include="CRabbyObject.cpp" />
+    <ClCompile Include="CRatoObject.cpp" />
+    <ClCompile Include="CScorpiontoObject.cpp" />
+    <ClCompile Include="CTurnipaObject.cpp" />
+    <ClCompile Include="CWormoObject.cpp" />
     <ClCompile Include="DDSTextureLoader12.cpp" />
+    <ClCompile Include="DebugDraw.cpp" />
+    <ClCompile Include="DoranSword.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -202,12 +264,23 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="AnimatedShot.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Network.cpp" />
+    <ClCompile Include="OBB.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Party1.cpp" />
+    <ClCompile Include="Party2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="PartyManager.cpp" />
+    <ClCompile Include="Picking.cpp" />
+    <ClCompile Include="PipeLine.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
+    <ClCompile Include="PrimitiveBatch.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -216,6 +289,7 @@
     </ClCompile>
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="WICTextureLoader12.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +320,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Texture.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="UI.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

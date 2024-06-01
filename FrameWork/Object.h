@@ -6,9 +6,9 @@
 
 #include "Mesh.h"
 #include "Camera.h"
-#include <cstddef>  // For Define NULL
 #include "stdafx.h"
 #include <vector>
+#include <cstddef>  // For Define NULL
 
 #define DIR_FORWARD					0x01
 #define DIR_BACKWARD				0x02
@@ -46,19 +46,19 @@ private:
 	UINT							m_nTextureType;
 	UINT							m_nRootParameterIndex;
 
-	UINT*							m_pnResourceTypes = NULL;
+	UINT* m_pnResourceTypes = NULL;
 
-	ID3D12Resource*					m_pd3dTextureUploadBuffers;
+	ID3D12Resource* m_pd3dTextureUploadBuffers;
 
-	ID3D12Resource**				m_ppd3dTextures = NULL;
-	ID3D12Resource**				m_ppd3dTextureUploadBuffers;
+	ID3D12Resource** m_ppd3dTextures = NULL;
+	ID3D12Resource** m_ppd3dTextureUploadBuffers;
 
 	int								m_nRootParameters = 0;
-	UINT*							m_pnRootParameterIndices = NULL;
+	UINT* m_pnRootParameterIndices = NULL;
 
 	int m_nSamplers = 0;
-	D3D12_GPU_DESCRIPTOR_HANDLE*	m_pd3dSamplerGpuDescriptorHandles = NULL;
-	D3D12_GPU_DESCRIPTOR_HANDLE*	m_pd3dSrvGpuDescriptorHandles = NULL;
+	D3D12_GPU_DESCRIPTOR_HANDLE* m_pd3dSamplerGpuDescriptorHandles = NULL;
+	D3D12_GPU_DESCRIPTOR_HANDLE* m_pd3dSrvGpuDescriptorHandles = NULL;
 
 	DXGI_FORMAT* m_pdxgiBufferFormats = NULL;
 	int* m_pnBufferElements = NULL;
@@ -451,7 +451,13 @@ public:
 
 public:
     float 							m_fTime = 0.0f;
+	float							m_fCurrentTime = 0.0f;
+
 	bool							m_bApplyRootMotion = false;
+	bool							m_bAnimationFin = false;
+
+	int								m_nCurrentTrack = 0;
+	int								m_nPrevTrack = -1;
 
 	int 							m_nAnimationTracks = 0;
 	CAnimationTrack 				*m_pAnimationTracks = NULL;
@@ -480,7 +486,8 @@ public:
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	void SetAnimationBlend();
 
-
+	void SetAnimationChange(int nTarget);
+	bool IsAnimationDone(int nAnimationTrack);
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -514,6 +521,10 @@ public:
 	XMFLOAT4X4						m_xmf4x4ToParent;
 	XMFLOAT4X4  					m_xmf4x4World;
 	XMFLOAT4X4						*m_pxmf4x4Trans;
+	XMFLOAT4X4						m_xmf4x4Change = { 1.0f, 0.0f, 0.0f, 0.0f,
+													  0.0f, -1.0f, 0.0f, 0.0f,
+													  0.0f, 0.0f, -1.0f, 0.0f,
+													  0.0f, 0.0f, 0.0f, 1.0f };
 
 	XMFLOAT3						m_xmf3Scale;
 	XMFLOAT3						m_xmf3Rotation;
@@ -537,6 +548,8 @@ public:
 
 	void SetChild(CGameObject* pChild, bool bReferenceUpdate = false);
 	//void UpdateBonesTransform(CGameObject* pGameObject, XMFLOAT4X4* pxmf4x4Parent);
+
+	virtual void Update();
 
 	virtual void BuildMaterials(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList) { }
 
@@ -630,92 +643,3 @@ public:
 	virtual ~CEagleObject();
 };
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CCactusoObject : public CGameObject
-{
-private:
-	CTexture* m_pCactusoTexture;
-	CMaterial* m_pCactusoMaterial;
-public:
-	CCactusoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CCactusoObject();
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CMegaGolemAObject : public CGameObject
-{
-private:
-	CTexture* m_pMegaATexture;
-	CMaterial* m_pMegaAMaterial;
-public:
-	CMegaGolemAObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CMegaGolemAObject();
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CMegaGolemBObject : public CGameObject
-{
-private:
-	CTexture* m_pMegaBTexture;
-	CMaterial* m_pMegaBMaterial;
-public:
-	CMegaGolemBObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CMegaGolemBObject();
-};
-
-class CRatoObject : public CGameObject
-{
-private:
-	CTexture* m_pRatoTexture;
-	CMaterial* m_pRatoMaterial;
-public:
-	CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CRatoObject();
-};
-
-class CScorpiontoObject : public CGameObject
-{
-private:
-	CTexture* m_pScorpionTexture;
-	CMaterial* m_pScorpionMaterial;
-public:
-	CScorpiontoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CScorpiontoObject();
-};
-
-class CWormoObject : public CGameObject
-{
-private:
-	CTexture* m_pWormoTexture;
-	CMaterial* m_pWormoMaterial;
-public:
-	CWormoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CWormoObject();
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CAntoObject : public CGameObject
-{
-private:
-	CTexture* m_pAntoTexture;
-	CMaterial* m_pAntoMaterial;
-public:
-	CAntoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CAntoObject();
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CGolemChildObject : public CGameObject
-{
-private:
-	CTexture* m_pGolemChildTexture;
-	CMaterial* m_pGolemChildMaterial;
-public:
-	CGolemChildObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
-	virtual ~CGolemChildObject();
-};

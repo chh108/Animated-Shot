@@ -8,6 +8,8 @@
 #include "SkyBox.h"
 #include "Terrain.h"
 #include "Scene.h"
+#include "Network.h"
+#include "PlayerManager.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -27,13 +29,13 @@ CPlayer::CPlayer() : CGameObject(1)
 	m_fMaxVelocityY = 0.0f;
 	m_fFriction = 0.0f;
 
-	m_pxmf4x4Trans = new XMFLOAT4X4
-	{
-		0.91f, 0.0f, 0.0f, 0.0f,
-		0.0f, -0.91f, 0.0f, 0.0f,
-		0.0f, 0.0f, -0.91f, 0.0f,
-		0.07f, 0.0f, 0.0f, 1.0f,
-	};
+	//m_pxmf4x4Trans = new XMFLOAT4X4
+	//{
+	//	1.0f, 0.0f, 0.0f, 0.0f,
+	//	0.0f, 1.0f, 0.0f, 0.0f,
+	//	0.0f, 0.0f, 1.0f, 0.0f,
+	//	0.0f, 0.0f, 0.0f, 1.0f,
+	//};
 
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
@@ -50,12 +52,12 @@ CPlayer::~CPlayer()
 	if (m_pCamera) delete m_pCamera;
 }
 
-void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
+void CPlayer::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	if (m_pCamera) m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
-void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
+void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 }
 
@@ -86,19 +88,26 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		xmf3Shift = Vector3::ScalarProduct(xmf3Shift, SetSpeed, false);
 
 		Move(xmf3Shift, bUpdateVelocity);
+
+		CPlayerManager::Get_Instance()->Set_xmf3Look(m_xmf3Look);
+		CPlayerManager::Get_Instance()->Set_xmf3Up(m_xmf3Up);
+		CPlayerManager::Get_Instance()->Set_xmf3Right(m_xmf3Right);
 	}
 }
 
 void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 {
+	// 일정한 속도로 이동하도록 수정
+	XMFLOAT3 constantVelocity = xmf3Shift; // 여기서 일정한 속도로 설정
+
 	if (bUpdateVelocity)
 	{
-		m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, xmf3Shift);
+		m_xmf3Velocity = { constantVelocity.x * 10.f, constantVelocity.y * 10.f, constantVelocity.z * 10.f }; // 일정한 속도로 고정
 	}
 	else
 	{
-		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
-		m_pCamera->Move(xmf3Shift);
+		m_xmf3Position = Vector3::Add(m_xmf3Position, constantVelocity);
+		m_pCamera->Move(constantVelocity);
 	}
 }
 
@@ -190,25 +199,26 @@ void CPlayer::Update(float fTimeElapsed)
 	m_pCamera->RegenerateViewMatrix();
 
 	fLength = Vector3::Length(m_xmf3Velocity);
-	float fDeceleration = (m_fFriction * fTimeElapsed);
+	float fDeceleration = (m_fFriction * fTimeElapsed);	
 	if (fDeceleration > fLength) fDeceleration = fLength;
-	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));
+	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));		// false
+
 }
 
-CCamera *CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
+CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
 {
-	CCamera *pNewCamera = NULL;
+	CCamera* pNewCamera = NULL;
 	switch (nNewCameraMode)
 	{
-		case FIRST_PERSON_CAMERA:
-			pNewCamera = new CFirstPersonCamera(m_pCamera);
-			break;
-		case THIRD_PERSON_CAMERA:
-			pNewCamera = new CThirdPersonCamera(m_pCamera);
-			break;
-		case SPACESHIP_CAMERA:
-			pNewCamera = new CSpaceShipCamera(m_pCamera);
-			break;
+	case FIRST_PERSON_CAMERA:
+		pNewCamera = new CFirstPersonCamera(m_pCamera);
+		break;
+	case THIRD_PERSON_CAMERA:
+		pNewCamera = new CThirdPersonCamera(m_pCamera);
+		break;
+	case SPACESHIP_CAMERA:
+		pNewCamera = new CSpaceShipCamera(m_pCamera);
+		break;
 	}
 	if (nCurrentCameraMode == SPACESHIP_CAMERA)
 	{
@@ -247,7 +257,7 @@ void CPlayer::OnPrepareRender()
 	m_xmf4x4ToParent._41 = m_xmf3Position.x; m_xmf4x4ToParent._42 = m_xmf3Position.y; m_xmf4x4ToParent._43 = m_xmf3Position.z;
 }
 
-void CPlayer::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
 	if (nCameraMode == THIRD_PERSON_CAMERA) CGameObject::Render(pd3dCommandList, pCamera);
@@ -282,22 +292,18 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	// Animation이 없이 모델만 있는 파일을 읽어올 때 AnimationSet과 같은 변수들을 따로 만들어서 관리해주는 방식이 필요 0419 fin
 	// Texture, Material 읽어온 DATA 저장해야함. 0424
 
-	/*CLoadedModelInfo* pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, 
+	/*CLoadedModelInfo* pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 		"Monster/Rato.bin", NULL);
 	SetChild(pRatoModel->m_pModelRootObject, true);*/
 
-	CLoadedModelInfo* pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		"Monster/Cactuso.bin", NULL);
-	SetChild(pCactusoModel->m_pModelRootObject, true);
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+		"Monster/Rabby_Queen.bin", NULL);
+	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);;
-	CMaterial* pMaterial = CMaterial::v_Materials[4]; // 데이터 가져오기용
+	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[16];
 	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
 	pTexture = TextureProperty.GetTextureFromVec(0);
-
-	//CShader* pPlayerShader = new CPlayerShader();
-	//pPlayerShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, SHADER_TYPE::Texture);
-	//pPlayerShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
 
@@ -306,64 +312,64 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 
 	SetMaterial(0, pNewMaterial);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pCactusoModel);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
 	m_pSkinnedAnimationController->SetTrackSpeed(PS_IDLE, 1.0f);
 	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_IDLE, 0.0f, 1.0f);
 
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_WALK, PS_WALK);
-	m_pSkinnedAnimationController->SetTrackSpeed(PS_WALK, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_WALK, 1.3f, 1.875f);
+	m_pSkinnedAnimationController->SetTrackSpeed(PS_WALK, 0.7f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_WALK, 2.125f, 2.7f);
 
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_ATTACK, PS_ATTACK);
 	m_pSkinnedAnimationController->SetTrackSpeed(PS_ATTACK, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_ATTACK, 6.3f, 6.875f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_ATTACK, 1.29f, 1.875f);
 
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DAMAGED, PS_DAMAGED);
 	m_pSkinnedAnimationController->SetTrackSpeed(PS_DAMAGED, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DAMAGED, 3.375f, 4.0f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DAMAGED, 2.95f, 3.4f);
 
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DIE, PS_DIE);
 	m_pSkinnedAnimationController->SetTrackSpeed(PS_DIE, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DIE, 4.2f, 5.4f);
+	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DIE, 3.8f, 4.6f);
 
-	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
+	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, true);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
 	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);
-//
-//#ifdef _WITH_SOUND_CALLBACK
-//	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK
-//	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 0, 1.3f, _T("Sound/SmallFootstep01.wav"));
-//	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 1, 1.57f, _T("Sound/SmallFootstep01.wav"));
+	//
+	//#ifdef _WITH_SOUND_CALLBACK
+	//	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK
+	//	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 0, 1.3f, _T("Sound/SmallFootstep01.wav"));
+	//	m_pSkinnedAnimationController->SetCallbackKey(PS_WALK, 1, 1.57f, _T("Sound/SmallFootstep01.wav"));
 
-	/*m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pRatoModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
-	m_pSkinnedAnimationController->SetTrackSpeed(PS_IDLE, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_IDLE, 1.3f, 2.25f);
+		/*m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pRatoModel);
+		m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
+		m_pSkinnedAnimationController->SetTrackSpeed(PS_IDLE, 1.0f);
+		m_pSkinnedAnimationController->SetTrackStartEndTime(PS_IDLE, 1.3f, 2.25f);
 
-	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_WALK, PS_WALK);
-	m_pSkinnedAnimationController->SetTrackSpeed(PS_WALK, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_WALK, 0.04f, 1.0f);
+		m_pSkinnedAnimationController->SetTrackAnimationSet(PS_WALK, PS_WALK);
+		m_pSkinnedAnimationController->SetTrackSpeed(PS_WALK, 1.0f);
+		m_pSkinnedAnimationController->SetTrackStartEndTime(PS_WALK, 0.04f, 1.0f);
 
-	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_ATTACK, PS_ATTACK);
-	m_pSkinnedAnimationController->SetTrackSpeed(PS_ATTACK, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_ATTACK, 2.5f, 3.01f);
+		m_pSkinnedAnimationController->SetTrackAnimationSet(PS_ATTACK, PS_ATTACK);
+		m_pSkinnedAnimationController->SetTrackSpeed(PS_ATTACK, 1.0f);
+		m_pSkinnedAnimationController->SetTrackStartEndTime(PS_ATTACK, 2.5f, 3.01f);
 
-	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DAMAGED, PS_DAMAGED);
-	m_pSkinnedAnimationController->SetTrackSpeed(PS_DAMAGED, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DAMAGED, 5.04f, 5.8f);
+		m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DAMAGED, PS_DAMAGED);
+		m_pSkinnedAnimationController->SetTrackSpeed(PS_DAMAGED, 1.0f);
+		m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DAMAGED, 5.04f, 5.8f);
 
-	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DIE, PS_DIE);
-	m_pSkinnedAnimationController->SetTrackSpeed(PS_DIE, 1.0f);
-	m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DIE, 5.875, 6.875f);
+		m_pSkinnedAnimationController->SetTrackAnimationSet(PS_DIE, PS_DIE);
+		m_pSkinnedAnimationController->SetTrackSpeed(PS_DIE, 1.0f);
+		m_pSkinnedAnimationController->SetTrackStartEndTime(PS_DIE, 5.875, 6.875f);
 
-	m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
-	m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
-	m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
-	m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
-	m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);*/
+		m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
+		m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
+		m_pSkinnedAnimationController->SetTrackEnable(PS_ATTACK, false);
+		m_pSkinnedAnimationController->SetTrackEnable(PS_DAMAGED, false);
+		m_pSkinnedAnimationController->SetTrackEnable(PS_DIE, false);*/
 
 #ifdef _WITH_SOUND_CALLBACK
 	m_pSkinnedAnimationController->SetCallbackKeys(PS_WALK, 2);   // SOUND CALLBACK
@@ -378,14 +384,17 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	SetCameraUpdatedContext(pContext);
 
 	//if (pRatoModel) delete pRatoModel;
-	if (pCactusoModel) delete pCactusoModel;
+	if (pPlayerModel) delete pPlayerModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
-	SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 595.0f) + 10.0f, 595.0f));
-
-	SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
+	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)pContext;
+	//SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 595.0f) + 10.0f, 595.0f));
+	//SetScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	m_iTpye = CPlayerManager::Get_Instance()->Get_Type();
+	SetPosition(CPlayerManager::Get_Instance()->Get_Pos());
+	SetScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	CPlayerManager::Get_Instance()->Set_Pos(GetPosition());
 }
 
 CAngrybotPlayer::~CAngrybotPlayer()
@@ -397,7 +406,7 @@ void CAngrybotPlayer::OnPrepareRender()
 	CPlayer::OnPrepareRender();
 
 	m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixScaling(m_xmf3Scale.x, m_xmf3Scale.y, m_xmf3Scale.z), m_xmf4x4ToParent);
-	m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationX(-90.0f), m_xmf4x4ToParent);
+	//m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationX(-90.0f), m_xmf4x4ToParent);
 }
 
 CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
@@ -503,17 +512,37 @@ void CAngrybotPlayer::Update(float fTimeElapsed)
 
 	if (m_pSkinnedAnimationController)
 	{
+		bool IsAnimationDone = false;
+
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 
 		float fWALKWweight = fLength;
-
-		float fIDLEWeight = 1.2f - fWALKWweight;
+		float fIDLEWeight = 1.0f - fWALKWweight;
 
 		m_pSkinnedAnimationController->SetTrackWeight(PS_IDLE, fIDLEWeight);
 		m_pSkinnedAnimationController->SetTrackWeight(PS_WALK, fWALKWweight);
 
-		m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, ::IsZero(fLength));
-		m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, !::IsZero(fLength));
+		switch (m_pSkinnedAnimationController->m_nCurrentTrack)
+		{
+		case PS_IDLE:
+			if (!::IsZero(fLength)) {
+				m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
+				m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, true);
+			}
+			break;
+		case PS_WALK:
+			if (::IsZero(fLength))
+			{
+				float fCurrent = m_pSkinnedAnimationController->m_fTime * 0.5f;
+				float fDuration = m_pSkinnedAnimationController->m_pAnimationTracks[PS_WALK].m_fLength;
+
+				if (fCurrent >= fDuration) {
+					m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, true);
+					m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
+				}
+			}
+			break;
+		}
 	}
 }
 #endif

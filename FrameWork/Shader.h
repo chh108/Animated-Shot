@@ -24,9 +24,6 @@ private:
 	int									m_nReferences = 0;
 
 public:
-
-	ShaderInfo							g_shaderInfo[5];
-
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
@@ -68,13 +65,16 @@ protected:
 	ID3DBlob							*m_pd3dWireFrame_PS_Blob = NULL;
 	ID3DBlob							*m_pd3dAnimation_VS_Blob = NULL;
 	ID3DBlob							*m_pd3dAnimation_PS_Blob = NULL;
-	ID3DBlob							*m_pd3dTexture_VS_Blob = NULL;
-	ID3DBlob							*m_pd3dTexture_PS_Blob = NULL;
+	ID3DBlob							*m_pd3dUI_VS_Blob = NULL;
+	ID3DBlob							*m_pd3dUI_PS_Blob = NULL;
+	ID3DBlob                            *m_pd3dTexture_VS_Blob = NULL;
+	ID3DBlob                            *m_pd3dTexture_PS_Blob = NULL;
 
 	ID3D12PipelineState					*m_pd3dPipelineState = NULL;
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_d3dPipelineStateDesc;
 
+	ShaderInfo							g_shaderInfo[6];
 	float								m_fElapsedTime = 0.0f;
 };
 
@@ -109,14 +109,15 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class CPlayerShader : public CShader
+class CUIShader : public CShader
 {
 public:
-	CPlayerShader();
-	virtual ~CPlayerShader();
+	CUIShader();
+	virtual ~CUIShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
-	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
+	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +150,17 @@ public:
 	//virtual D3D12_SHADER_BYTECODE CreatePixelShader();
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CPlayerShader : public CShader
+{
+public:
+	CPlayerShader();
+	~CPlayerShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
+};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class CSkinnedAnimationObjectsWireFrameShader : public CSkinnedAnimationWireFrameShader

@@ -6,6 +6,20 @@
 #include "Scene.h"
 #include "Shader.h"
 #include "Object.h"
+#include "CCatusoObject.h"
+#include "CRatoObject.h"
+#include "CWormoObject.h"
+#include "CMegaGolemAObject.h"
+#include "CMegaGolemBObject.h"
+#include "CScorpiontoObject.h"
+#include "CAntoObject.h"
+#include "CGolemChildObject.h"
+#include "CBeezObject.h"
+#include "CDevilTreeObject.h"
+#include "CDryadObject.h"
+#include "CPlantaObject.h"
+#include "CRabbyObject.h"
+#include "CTurnipaObject.h"
 
 ID3D12DescriptorHeap* CScene::m_pd3dCbvSrvDescriptorHeap = NULL;
 
@@ -80,57 +94,58 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 100); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
+	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 60); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
 	InitializeShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
 	BuildDefaultLightsAndMaterials();
 
+	m_pDoranSword = new CDoranSword(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
 	XMFLOAT3 xmf3Scale(8.0f, 2.0f, 8.0f);
 	XMFLOAT4 xmf4Color(1.0f, 1.0f, 0.0f, 0.25f);
-	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
+	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/HeightMap3.raw"), 257, 257, xmf3Scale, xmf4Color);
 
-	m_nGameObjects = 8;
+	m_nGameObjects = 12;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
 
+	// Rato, Wormo, MegaGolemA, MegaGolemB, Cactuso, Scorpionto, Anto, GolemChild(5), Beez, Tree, Turnipa, Rabby 
 	CLoadedModelInfo* pRatoModel = NULL;
 	m_ppGameObjects[0] = new CRatoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRatoModel, 1);
 	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	m_ppGameObjects[0]->SetPosition(240.0f, m_pTerrain->GetHeight(240.0f, 640.0f), 640.0f); 
-	
+	m_ppGameObjects[0]->SetPosition(900.0f, m_pTerrain->GetHeight(900.0f, 180.f), 180.f);
 	if (pRatoModel) delete pRatoModel;
 
 	CLoadedModelInfo* pWormoModel = NULL;
 	m_ppGameObjects[1] = new CWormoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pWormoModel, 1);
 	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	m_ppGameObjects[1]->SetPosition(380.0f, m_pTerrain->GetHeight(380.0f, 725.0f), 725.0f);
+	m_ppGameObjects[1]->SetPosition(1200.0f, m_pTerrain->GetHeight(1200.0f, 180.f), 180.f);
 	if (pWormoModel) delete pWormoModel;
 
 	CLoadedModelInfo* pMegaGolemAModel = NULL;
 	m_ppGameObjects[2] = new CMegaGolemAObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemAModel, 1);
 	m_ppGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	m_ppGameObjects[2]->SetPosition(300.0f, m_pTerrain->GetHeight(300.0f, 650.0f) + 10.0f, 650.0f);
+	m_ppGameObjects[2]->SetPosition(900.0f, m_pTerrain->GetHeight(900.0f, 250.0f) + 10.0f, 450.0f);
 	if (pMegaGolemAModel) delete pMegaGolemAModel;
 
 	CLoadedModelInfo* pMegaGolemBModel = NULL;
 	m_ppGameObjects[3] = new CMegaGolemBObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pMegaGolemBModel, 1);
 	m_ppGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	m_ppGameObjects[3]->SetPosition(230.0f, m_pTerrain->GetHeight(230.0f, 580.0f), 580.0f);
+	m_ppGameObjects[3]->SetPosition(1200.0f, m_pTerrain->GetHeight(1200.0f, 250.0f), 450.0f);
 
 	CLoadedModelInfo* pCactusoModel = NULL;
 	m_ppGameObjects[4] = new CCactusoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pCactusoModel, 1);
 	m_ppGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	m_ppGameObjects[4]->SetPosition(330.0f, m_pTerrain->GetHeight(330.0f, 700.0f), 700.0f);
+	m_ppGameObjects[4]->SetPosition(900.0f, m_pTerrain->GetHeight(900.0f, 700.0f), 700.0f);
 	if (pCactusoModel) delete pCactusoModel;
 
 	CLoadedModelInfo* pScorpiontoModel = NULL;
 	m_ppGameObjects[5] = new CScorpiontoObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pScorpiontoModel, 1);
 	m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
 	m_ppGameObjects[5]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
-	m_ppGameObjects[5]->SetPosition(200.0f, m_pTerrain->GetHeight(200.0f, 620.0f), 620.0f);
+	m_ppGameObjects[5]->SetPosition(1200.0f, m_pTerrain->GetHeight(1200.0f, 620.0f), 700.0f);
 	if (pScorpiontoModel) delete pScorpiontoModel;
 
 	CLoadedModelInfo* pAntoModel = NULL;
@@ -142,8 +157,40 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	CLoadedModelInfo* pGolemChildModel = NULL;
 	m_ppGameObjects[7] = new CGolemChildObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGolemChildModel, 1);
 	m_ppGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
-	m_ppGameObjects[7]->SetPosition(350.0f, m_pTerrain->GetHeight(350.0f, 400.0f), 400.0f);
+	m_ppGameObjects[7]->SetPosition(1000.0f, m_pTerrain->GetHeight(1000.0f, 1000.0f), 1000.0f);
 	if (pGolemChildModel) delete pGolemChildModel;
+
+	CLoadedModelInfo* pBeezModel = NULL;
+	m_ppGameObjects[8] = new CBeezObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pBeezModel, 1);
+	m_ppGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_DIE);
+	m_ppGameObjects[8]->SetPosition(50.0f, m_pTerrain->GetHeight(50.0f, 50.0f), 50.0f);
+	if (pBeezModel) delete pBeezModel;
+
+	CLoadedModelInfo* pDevilTreeModel = NULL;
+	m_ppGameObjects[9] = new CDevilTreeObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pDevilTreeModel, 1);
+	m_ppGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_ATTACK);
+	m_ppGameObjects[9]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
+	m_ppGameObjects[9]->SetPosition(80.0f, m_pTerrain->GetHeight(80.0f, 10.0f), 80.0f);
+	if (pDevilTreeModel) delete pDevilTreeModel;
+
+	CLoadedModelInfo* pTurnipaModel = NULL;
+	m_ppGameObjects[10] = new CTurnipaObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pTurnipaModel, 1);
+	m_ppGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_IDLE);
+	m_ppGameObjects[10]->SetPosition(150.0f, m_pTerrain->GetHeight(150.0f, 150.0f), 150.0f);
+	if (pTurnipaModel) delete pTurnipaModel;
+
+	CLoadedModelInfo* pRabbyModel = NULL;
+	m_ppGameObjects[11] = new CRabbyObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRabbyModel, 1);
+	m_ppGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_DAMAGE);
+	m_ppGameObjects[9]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
+	m_ppGameObjects[11]->SetPosition(150.0f, m_pTerrain->GetHeight(150.0f, 200.0f), 200.0f);
+	if (pRabbyModel) delete pRabbyModel;
+
+	for (int i = 0; i < m_nGameObjects; i++)
+	{
+		m_ppGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(0, true);
+	}
+		
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -407,6 +454,7 @@ void CScene::ReleaseUploadBuffers()
 {
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
+	if (m_pDoranSword) m_pDoranSword->ReleaseUploadBuffers();
 
 	for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
 	for (int i = 0; i < m_nGameObjects; i++) m_ppGameObjects[i]->ReleaseUploadBuffers();
@@ -542,6 +590,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
+
 	for (int i = 0; i < m_nGameObjects; i++)
 	{
 		if (m_ppGameObjects[i])
@@ -555,4 +604,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	for (int i = 0; i < m_nShaders; i++) 
 		if (m_ppShaders[i]) 
 			m_ppShaders[i]->Render(pd3dCommandList, pCamera);
+
+
+	if (m_pDoranSword) m_pDoranSword->Render(pd3dCommandList, pCamera);
 }

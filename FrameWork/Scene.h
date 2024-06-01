@@ -6,8 +6,11 @@
 
 #include "Shader.h"
 #include "Player.h"
+#include "Party1.h"
+#include "Party2.h"
 #include "SkyBox.h"
 #include "Terrain.h"
+#include "DoranSword.h"
 
 #define MAX_LIGHTS						16 
 
@@ -62,12 +65,13 @@ public:
 	bool ProcessInput(UCHAR *pKeysBuffer);
     void AnimateObjects(float fTimeElapsed);
     void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
-
 	void InitializeShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 
 	void ReleaseUploadBuffers();
 
 	CPlayer								*m_pPlayer = NULL;
+	CParty1								*m_pParty1 = NULL;
+	CParty2								*m_pParty2 = NULL;
 
 protected:
 	ID3D12RootSignature* m_pd3dGraphicsRootSignature = NULL;
@@ -119,4 +123,5 @@ public:
 
 	ID3D12Resource						*m_pd3dcbLights = NULL;
 	LIGHTS								*m_pcbMappedLights = NULL;
+	CDoranSword*						m_pDoranSword = NULL;
 };

@@ -56,37 +56,37 @@ protected:
 	UINT									m_nStrides = 0;
 
 protected:
-	XMFLOAT3*								m_pxmf3Positions = NULL;
+	XMFLOAT3* m_pxmf3Positions = NULL;
 
-	ID3D12Resource*							m_pd3dPositionBuffer = NULL;
-	ID3D12Resource*							m_pd3dPositionUploadBuffer = NULL;
+	ID3D12Resource* m_pd3dPositionBuffer = NULL;
+	ID3D12Resource* m_pd3dPositionUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW				m_d3dPositionBufferView;
 
 	int										m_nSubMeshes = 0;
-	int*									m_pnSubSetIndices = NULL;
+	int* m_pnSubSetIndices = NULL;
 
-	ID3D12Resource**						m_ppd3dSubSetIndexBuffers = NULL;
-	ID3D12Resource**						m_ppd3dSubSetIndexUploadBuffers = NULL;
-	D3D12_INDEX_BUFFER_VIEW*				m_pd3dSubSetIndexBufferViews = NULL;
+	ID3D12Resource** m_ppd3dSubSetIndexBuffers = NULL;
+	ID3D12Resource** m_ppd3dSubSetIndexUploadBuffers = NULL;
+	D3D12_INDEX_BUFFER_VIEW* m_pd3dSubSetIndexBufferViews = NULL;
 
-	ID3D12Resource*							m_pd3dVertexBuffer = NULL;
-	ID3D12Resource*							m_pd3dVertexUploadBuffer = NULL;
+	ID3D12Resource* m_pd3dVertexBuffer = NULL;
+	ID3D12Resource* m_pd3dVertexUploadBuffer = NULL;
 
-	ID3D12Resource*							m_pd3dUVBuffer = NULL;
-	ID3D12Resource*							m_pd3dUVUploadBuffer = NULL;
+	ID3D12Resource* m_pd3dUVBuffer = NULL;
+	ID3D12Resource* m_pd3dUVUploadBuffer = NULL;
 
-	ID3D12Resource**						m_ppd3dIndexBuffer = NULL;
-	ID3D12Resource**						m_ppd3dIndexUploadBuffer = NULL;
+	ID3D12Resource** m_ppd3dIndexBuffer = NULL;
+	ID3D12Resource** m_ppd3dIndexUploadBuffer = NULL;
 
 	D3D12_VERTEX_BUFFER_VIEW				m_d3dVertexBufferView;
 	D3D12_VERTEX_BUFFER_VIEW				m_d3dUVBufferView;
-	D3D12_INDEX_BUFFER_VIEW*				m_pd3dIndexBufferViews;
+	D3D12_INDEX_BUFFER_VIEW* m_pd3dIndexBufferViews;
 
 	std::vector<D3D12_VERTEX_BUFFER_VIEW>   m_vd3dInputBufferViews;
 
 public:
 	UINT GetType() { return(m_nType); }
-	void SetType(const int& nType)  { m_nType = nType; }
+	void SetType(const int& nType) { m_nType = nType; }
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) { }
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) { }
@@ -99,8 +99,40 @@ public:
 	//virtual void OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList);
 
 	void LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
+};
 
-	virtual void CreateInputBufferView();
+class C2DUIMesh : public CMesh {
+public:
+	C2DUIMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth, float fHeight) : CMesh(pd3dDevice, pd3dCommandList) {
+		m_nVertices = 4;
+		m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+
+		m_pxmf3Positions = new XMFLOAT3[m_nVertices];
+
+		float fx = fWidth * 2.f;
+		float fy = fHeight * 2.f;
+
+		// 정점 위치 설정 (스크린 좌표)
+		m_pxmf3Positions[0] = XMFLOAT3(-fx, +fy, 0.0f); // 좌상
+		m_pxmf3Positions[1] = XMFLOAT3(+fx, +fy, 0.0f); // 우상
+		m_pxmf3Positions[2] = XMFLOAT3(-fx, -fy, 0.0f); // 좌하
+		m_pxmf3Positions[3] = XMFLOAT3(+fx, -fy, 0.0f); // 우하
+
+		// GPU에 버퍼 생성
+		m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf3Positions, sizeof(XMFLOAT3) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
+
+		m_d3dPositionBufferView.BufferLocation = m_pd3dPositionBuffer->GetGPUVirtualAddress();
+		m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
+		m_d3dPositionBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
+	}
+
+	virtual ~C2DUIMesh() {
+		if (m_pxmf3Positions) delete[] m_pxmf3Positions;
+		if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Release();
+		if (m_pd3dPositionUploadBuffer) m_pd3dPositionUploadBuffer->Release();
+	}
+
+	virtual void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,16 +148,16 @@ public:
 protected:
 	int								m_nBonesPerVertex = 4;
 
-	XMINT4*							m_pxmn4BoneIndices = NULL;
+	XMINT4* m_pxmn4BoneIndices = NULL;
 
-	ID3D12Resource*					m_pd3dBoneIndexBuffer = NULL;
-	ID3D12Resource*					m_pd3dBoneIndexUploadBuffer = NULL;
+	ID3D12Resource* m_pd3dBoneIndexBuffer = NULL;
+	ID3D12Resource* m_pd3dBoneIndexUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dBoneIndexBufferView;
 
-	XMFLOAT4*						m_pxmf4BoneWeights = NULL;
+	XMFLOAT4* m_pxmf4BoneWeights = NULL;
 
-	ID3D12Resource*					m_pd3dBoneWeightBuffer = NULL;
-	ID3D12Resource*					m_pd3dBoneWeightUploadBuffer = NULL;
+	ID3D12Resource* m_pd3dBoneWeightBuffer = NULL;
+	ID3D12Resource* m_pd3dBoneWeightUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dBoneWeightBufferView;
 
 public:
@@ -160,7 +192,7 @@ public:
 class CHeightMapImage
 {
 private:
-	BYTE							*m_pHeightMapPixels;
+	BYTE* m_pHeightMapPixels;
 
 	int								m_nWidth;
 	int								m_nLength;
@@ -187,20 +219,20 @@ protected:
 	XMFLOAT3						m_xmf3Scale;
 
 protected:
-	XMFLOAT4						*m_pxmf4Colors = NULL;
-	XMFLOAT2						*m_pxmf2TextureCoords0 = NULL;
-	XMFLOAT2						*m_pxmf2TextureCoords1 = NULL;
+	XMFLOAT4* m_pxmf4Colors = NULL;
+	XMFLOAT2* m_pxmf2TextureCoords0 = NULL;
+	XMFLOAT2* m_pxmf2TextureCoords1 = NULL;
 
-	ID3D12Resource					*m_pd3dColorBuffer = NULL;
-	ID3D12Resource					*m_pd3dColorUploadBuffer = NULL;
+	ID3D12Resource* m_pd3dColorBuffer = NULL;
+	ID3D12Resource* m_pd3dColorUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dColorBufferView;
 
-	ID3D12Resource					*m_pd3dTextureCoord0Buffer = NULL;
-	ID3D12Resource					*m_pd3dTextureCoord0UploadBuffer = NULL;
+	ID3D12Resource* m_pd3dTextureCoord0Buffer = NULL;
+	ID3D12Resource* m_pd3dTextureCoord0UploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord0BufferView;
 
-	ID3D12Resource					*m_pd3dTextureCoord1Buffer = NULL;
-	ID3D12Resource					*m_pd3dTextureCoord1UploadBuffer = NULL;
+	ID3D12Resource* m_pd3dTextureCoord1Buffer = NULL;
+	ID3D12Resource* m_pd3dTextureCoord1UploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord1BufferView;
 
 public:
@@ -227,5 +259,5 @@ public:
 	CSkyBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth = 20.0f, float fHeight = 20.0f, float fDepth = 20.0f);
 	virtual ~CSkyBoxMesh();
 
-	virtual void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
+	virtual void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext); //0509 SkyBoxRender
 };

@@ -3,7 +3,8 @@
 // 다음에서 사용 LabProject08-8-6(Fbx Animation).rc
 
 #define IDS_APP_TITLE			103
-
+#define IDC_EDIT_USER_ID		1001
+#define IDC_BUTTON_LOGIN		1002
 #define IDR_MAINFRAME			128
 #define IDD_LABPROJECTANIMATEDSHOT_DIALOG	102
 #define IDD_ABOUTBOX			103

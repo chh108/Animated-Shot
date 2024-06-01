@@ -201,8 +201,11 @@ void CShader::SetObjectsShader(ID3D12Device* pd3dDevice)
 	g_shaderInfo[3].VS = CShader::CompileShaderFromFile(L"Animation.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dAnimation_VS_Blob);
 	g_shaderInfo[3].PS = CShader::CompileShaderFromFile(L"Animation.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dAnimation_PS_Blob);
 
-	g_shaderInfo[4].VS = CShader::CompileShaderFromFile(L"Texture.hlsl", "VSSkinnedAnimation", "vs_5_1", &m_pd3dTexture_VS_Blob);
-	g_shaderInfo[4].PS = CShader::CompileShaderFromFile(L"Texture.hlsl", "PSSkinnedAnimation", "ps_5_1", &m_pd3dTexture_PS_Blob);
+	g_shaderInfo[4].VS = CShader::CompileShaderFromFile(L"SkyBox.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dUI_VS_Blob);
+	g_shaderInfo[4].PS = CShader::CompileShaderFromFile(L"SkyBox.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dUI_PS_Blob);
+
+	g_shaderInfo[5].VS = CShader::CompileShaderFromFile(L"Texture.hlsl", "VSSkinnedAnimation", "vs_5_1", &m_pd3dTexture_VS_Blob);
+	g_shaderInfo[5].PS = CShader::CompileShaderFromFile(L"Texture.hlsl", "PSSkinnedAnimation", "ps_5_1", &m_pd3dTexture_PS_Blob);
 }
 
 void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, SHADER_TYPE type) // ENUM으로 셰이더 타입 관리
@@ -213,6 +216,10 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	SetObjectsShader(pd3dDevice);
 
 	switch (type) {
+	case SHADER_TYPE::UI:
+		m_d3dPipelineStateDesc.VS = g_shaderInfo[4].VS;
+		m_d3dPipelineStateDesc.PS = g_shaderInfo[4].PS;
+		break;
 	case SHADER_TYPE::Terrain:
 		m_d3dPipelineStateDesc.VS = g_shaderInfo[0].VS;
 		m_d3dPipelineStateDesc.PS = g_shaderInfo[0].PS;
@@ -230,8 +237,9 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 		m_d3dPipelineStateDesc.PS = g_shaderInfo[3].PS;
 		break;
 	case SHADER_TYPE::Texture:
-		m_d3dPipelineStateDesc.VS = g_shaderInfo[4].VS;
-		m_d3dPipelineStateDesc.PS = g_shaderInfo[4].PS;
+		m_d3dPipelineStateDesc.VS = g_shaderInfo[5].VS;
+		m_d3dPipelineStateDesc.PS = g_shaderInfo[5].PS;
+		break;
 	default:
 		// Handle Error.
 		break;
@@ -249,6 +257,11 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	m_d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
+
+	if (m_pd3dUI_VS_Blob)
+		m_pd3dUI_VS_Blob->Release();
+	if (m_pd3dUI_PS_Blob)
+		m_pd3dUI_PS_Blob->Release();
 
 	if (m_pd3dTerrain_VS_Blob)			
 		m_pd3dTerrain_VS_Blob->Release();
@@ -324,6 +337,39 @@ D3D12_INPUT_LAYOUT_DESC CTerrainShader::CreateInputLayout()
 //{
 //	return(CShader::CompileShaderFromFile(L"Terrain.hlsl", "PSTerrain", "ps_5_1", &m_pd3dPixelShaderBlob));
 //}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CUIShader::CUIShader()
+{
+}
+
+CUIShader::~CUIShader()
+{
+}
+
+D3D12_INPUT_LAYOUT_DESC CUIShader::CreateInputLayout()
+{
+	UINT nInputElementDescs = 2;
+	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
+
+	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+
+	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
+	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
+	d3dInputLayoutDesc.NumElements = nInputElementDescs;
+
+	return(d3dInputLayoutDesc);
+}
+
+
+D3D12_DEPTH_STENCIL_DESC CUIShader::CreateDepthStencilState()
+{
+	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc = CShader::CreateDepthStencilState();
+	d3dDepthStencilDesc.DepthEnable = FALSE;
+	d3dDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	return d3dDepthStencilDesc;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -499,6 +545,57 @@ D3D12_RASTERIZER_DESC CSkinnedAnimationWireFrameShader::CreateRasterizerState()
 // 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+CPlayerShader::CPlayerShader()
+{
+}
+
+CPlayerShader::~CPlayerShader()
+{
+}
+
+D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
+{
+	UINT nInputElementDescs = 4;
+	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
+
+	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[2] = { "BONEINDEX", 0, DXGI_FORMAT_R32G32B32A32_SINT, 2, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[3] = { "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 3, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+
+	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
+	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
+	d3dInputLayoutDesc.NumElements = nInputElementDescs;
+
+	return(d3dInputLayoutDesc);
+}
+
+D3D12_RASTERIZER_DESC CPlayerShader::CreateRasterizerState()
+{
+	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
+	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
+	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	//	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+#ifdef _WITH_LEFT_HAND_COORDINATES
+	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
+#else
+	d3dRasterizerDesc.FrontCounterClockwise = TRUE;
+#endif
+	d3dRasterizerDesc.DepthBias = 0;
+	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
+	d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	d3dRasterizerDesc.DepthClipEnable = TRUE;
+	d3dRasterizerDesc.MultisampleEnable = FALSE;
+	d3dRasterizerDesc.AntialiasedLineEnable = FALSE;
+	d3dRasterizerDesc.ForcedSampleCount = 0;
+	d3dRasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+	return(d3dRasterizerDesc);
+}
+
 CSkinnedAnimationObjectsWireFrameShader::CSkinnedAnimationObjectsWireFrameShader()
 {
 }
@@ -542,57 +639,6 @@ void CSkinnedAnimationObjectsWireFrameShader::Render(ID3D12GraphicsCommandList* 
 			m_ppObjects[j]->Render(pd3dCommandList, pCamera);
 		}
 	}
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////
-
-CPlayerShader::CPlayerShader()
-{
-}
-
-CPlayerShader::~CPlayerShader()
-{
-}
-
-D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
-{
-	UINT nInputElementDescs = 4;
-
-	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
-
-	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[2] = { "BONEINDEX", 0, DXGI_FORMAT_R32G32B32A32_SINT, 2, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[3] = { "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 3, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-
-	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
-	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
-	d3dInputLayoutDesc.NumElements = nInputElementDescs;
-
-	return(d3dInputLayoutDesc);
-}
-
-D3D12_RASTERIZER_DESC CPlayerShader::CreateRasterizerState()
-{
-	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
-	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
-	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // 와이어프레임이 아닌 폴리곤을 채워줍니다.
-	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-#ifdef _WITH_LEFT_HAND_COORDINATES
-	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
-#else
-	d3dRasterizerDesc.FrontCounterClockwise = TRUE;
-#endif
-	d3dRasterizerDesc.DepthBias = 0;
-	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
-	d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;
-	d3dRasterizerDesc.DepthClipEnable = TRUE;
-	d3dRasterizerDesc.MultisampleEnable = FALSE;
-	d3dRasterizerDesc.AntialiasedLineEnable = FALSE;
-	d3dRasterizerDesc.ForcedSampleCount = 0;
-	d3dRasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-
-	return d3dRasterizerDesc;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -641,3 +687,4 @@ void CAngrybotObjectsShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphi
 
 	if (!pModel && pAngrybotModel) delete pAngrybotModel;
 }
+

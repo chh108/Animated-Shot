@@ -181,14 +181,14 @@ void CMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 		}
 	}
 }
-
-void CMesh::CreateInputBufferView()
-{
-	if (m_pd3dVertexBuffer)
-  		m_vd3dInputBufferViews.emplace_back(m_d3dVertexBufferView);
-	if (m_pd3dUVBuffer)
-		m_vd3dInputBufferViews.emplace_back(m_d3dUVBufferView);
-}
+//
+//void CMesh::CreateInputBufferView()
+//{
+//	if (m_pd3dVertexBuffer)
+//  		m_vd3dInputBufferViews.emplace_back(m_d3dVertexBufferView);
+//	if (m_pd3dUVBuffer)
+//		m_vd3dInputBufferViews.emplace_back(m_d3dUVBufferView);
+//}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -350,6 +350,15 @@ void CSkyBoxMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* 
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dPositionBufferView };
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, pVertexBufferViews);
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
+void C2DUIMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
+{
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dPositionBufferView };
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, pVertexBufferViews);
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CSkinnedMesh::CSkinnedMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) : CMesh(pd3dDevice, pd3dCommandList)

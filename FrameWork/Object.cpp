@@ -7,14 +7,13 @@
 #include "Shader.h"
 #include "Scene.h"
 #include "Client_Defines.h"
-#include <vector>
-////////// wchar_t 문자열 변환용 헤더 추가 0508
+#include <vector>            ////////// wchar_t 문자열 변환용 헤더 추가 0508
 #include <Windows.h>
+
+// OBJECT, TEXTURE LOAD, MATERIAL LOAD 수정
 
 std::vector<CMaterial*> CMaterial::v_Materials;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 CTexture::CTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
 {
 	char pstrToken[64] = { '\0' };
@@ -568,11 +567,14 @@ void CAnimationSet::Animate(float fElapsedTime, float fTrackWeight, float fTrack
 		for (int j = 0; j < m_pAnimationLayers[i].m_nAnimatedBoneFrames; j++)
 		{
 			CGameObject* pBoneFrameCache = m_pAnimationLayers[i].m_ppAnimatedBoneFrameCaches[j];
-			m_ppxmf3Scales[i][j] = pBoneFrameCache->m_xmf3Scale;
-			m_ppxmf3Rotations[i][j] = pBoneFrameCache->m_xmf3Rotation;
-			m_ppxmf3Translations[i][j] = pBoneFrameCache->m_xmf3Translation;
+			if (pBoneFrameCache != NULL) // ADD BONE CHECKING
+			{
+				m_ppxmf3Scales[i][j] = pBoneFrameCache->m_xmf3Scale;
+				m_ppxmf3Rotations[i][j] = pBoneFrameCache->m_xmf3Rotation;
+				m_ppxmf3Translations[i][j] = pBoneFrameCache->m_xmf3Translation;
 
-			m_pAnimationLayers[i].GetSRT(j, fPosition, m_ppxmf3Scales[i], m_ppxmf3Rotations[i], m_ppxmf3Translations[i]);
+				m_pAnimationLayers[i].GetSRT(j, fPosition, m_ppxmf3Scales[i], m_ppxmf3Rotations[i], m_ppxmf3Translations[i]);
+			}		
 		}
 	}
 
@@ -584,19 +586,28 @@ void CAnimationSet::Animate(float fElapsedTime, float fTrackWeight, float fTrack
 			switch (m_pAnimationLayers[i].m_nBlendMode)
 			{
 			case 0: //Additive
-				pBoneFrameCache->m_xmf3ScaleLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3ScaleLayerBlending, m_ppxmf3Scales[i][j]);
-				pBoneFrameCache->m_xmf3RotationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3RotationLayerBlending, m_ppxmf3Rotations[i][j]);
-				pBoneFrameCache->m_xmf3TranslationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3TranslationLayerBlending, m_ppxmf3Translations[i][j]);
+				if (pBoneFrameCache != NULL) // BONE CHECKING
+				{
+					pBoneFrameCache->m_xmf3ScaleLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3ScaleLayerBlending, m_ppxmf3Scales[i][j]);
+					pBoneFrameCache->m_xmf3RotationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3RotationLayerBlending, m_ppxmf3Rotations[i][j]);
+					pBoneFrameCache->m_xmf3TranslationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3TranslationLayerBlending, m_ppxmf3Translations[i][j]);
+				}			
 				break;
 			case 1: //Override
-				pBoneFrameCache->m_xmf3ScaleLayerBlending = m_ppxmf3Scales[i][j];
-				pBoneFrameCache->m_xmf3RotationLayerBlending = m_ppxmf3Rotations[i][j];
-				pBoneFrameCache->m_xmf3TranslationLayerBlending = m_ppxmf3Translations[i][j];
+				if (pBoneFrameCache != NULL) // BONE CHECKING
+				{
+					pBoneFrameCache->m_xmf3ScaleLayerBlending = m_ppxmf3Scales[i][j];
+					pBoneFrameCache->m_xmf3RotationLayerBlending = m_ppxmf3Rotations[i][j];
+					pBoneFrameCache->m_xmf3TranslationLayerBlending = m_ppxmf3Translations[i][j];
+				}
 				break;
 			case 2: //Override-Passthrough
-				pBoneFrameCache->m_xmf3ScaleLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3ScaleLayerBlending, m_ppxmf3Scales[i][j], m_pAnimationLayers[i].m_fWeight);
-				pBoneFrameCache->m_xmf3RotationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3RotationLayerBlending, m_ppxmf3Rotations[i][j], m_pAnimationLayers[i].m_fWeight);
-				pBoneFrameCache->m_xmf3TranslationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3TranslationLayerBlending, m_ppxmf3Translations[i][j], m_pAnimationLayers[i].m_fWeight);
+				if (pBoneFrameCache != NULL) // BONE CHECKING
+				{
+					pBoneFrameCache->m_xmf3ScaleLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3ScaleLayerBlending, m_ppxmf3Scales[i][j], m_pAnimationLayers[i].m_fWeight);
+					pBoneFrameCache->m_xmf3RotationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3RotationLayerBlending, m_ppxmf3Rotations[i][j], m_pAnimationLayers[i].m_fWeight);
+					pBoneFrameCache->m_xmf3TranslationLayerBlending = Vector3::Add(pBoneFrameCache->m_xmf3TranslationLayerBlending, m_ppxmf3Translations[i][j], m_pAnimationLayers[i].m_fWeight);
+				}			
 				break;
 			}
 		}
@@ -778,7 +789,7 @@ void CAnimationController::SetAnimationCallbackHandler(int nAnimationSet, CAnima
 	if (m_pAnimationSets) m_pAnimationSets->m_ppAnimationSets[nAnimationSet]->SetAnimationCallbackHandler(pCallbackHandler);
 }
 
-void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGameObject)
+void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGameObject) // Enable false 모델 정상 -> animation enable 부분에서 뼈에 문제 생김.
 {
 	m_fTime += fTimeElapsed;
 	int nEnabledAnimationTracks = 0;
@@ -802,16 +813,20 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 		{
 			if (m_pAnimationTracks[i].m_bEnable)
 			{
+				m_nCurrentTrack = i; // Animation Track Playing.
 				CAnimationSet* pAnimationSet = m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[i].m_nAnimationSet];
 				for (int i = 0; i < pAnimationSet->m_nAnimationLayers; i++)
 				{
 					for (int j = 0; j < pAnimationSet->m_pAnimationLayers[i].m_nAnimatedBoneFrames; j++)
 					{
 						CGameObject* pBoneFrameCache = pAnimationSet->m_pAnimationLayers[i].m_ppAnimatedBoneFrameCaches[j];
-						XMMATRIX S = XMMatrixScaling(pBoneFrameCache->m_xmf3ScaleLayerBlending.x, pBoneFrameCache->m_xmf3ScaleLayerBlending.y, pBoneFrameCache->m_xmf3ScaleLayerBlending.z);
-						XMMATRIX R = XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(pBoneFrameCache->m_xmf3RotationLayerBlending.x), XMMatrixRotationY(pBoneFrameCache->m_xmf3RotationLayerBlending.y)), XMMatrixRotationZ(pBoneFrameCache->m_xmf3RotationLayerBlending.z));
-						XMMATRIX T = XMMatrixTranslation(pBoneFrameCache->m_xmf3TranslationLayerBlending.x, pBoneFrameCache->m_xmf3TranslationLayerBlending.y, pBoneFrameCache->m_xmf3TranslationLayerBlending.z);
-						XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply (S, R), T));
+						if (pBoneFrameCache != NULL) // BONE CHECKING
+						{
+							XMMATRIX S = XMMatrixScaling(pBoneFrameCache->m_xmf3ScaleLayerBlending.x, pBoneFrameCache->m_xmf3ScaleLayerBlending.y, pBoneFrameCache->m_xmf3ScaleLayerBlending.z);
+							XMMATRIX R = XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(pBoneFrameCache->m_xmf3RotationLayerBlending.x), XMMatrixRotationY(pBoneFrameCache->m_xmf3RotationLayerBlending.y)), XMMatrixRotationZ(pBoneFrameCache->m_xmf3RotationLayerBlending.z));
+							XMMATRIX T = XMMatrixTranslation(pBoneFrameCache->m_xmf3TranslationLayerBlending.x, pBoneFrameCache->m_xmf3TranslationLayerBlending.y, pBoneFrameCache->m_xmf3TranslationLayerBlending.z);
+							XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply(S, R), T));
+						}
 					}
 				}
 			}
@@ -823,16 +838,20 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 		{
 			if (m_pAnimationTracks[i].m_bEnable)
 			{
+				m_nCurrentTrack = i;
 				CAnimationSet* pAnimationSet = m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[i].m_nAnimationSet];
 				for (int i = 0; i < pAnimationSet->m_nAnimationLayers; i++)
 				{
 					for (int j = 0; j < pAnimationSet->m_pAnimationLayers[i].m_nAnimatedBoneFrames; j++)
 					{
 						CGameObject* pBoneFrameCache = pAnimationSet->m_pAnimationLayers[i].m_ppAnimatedBoneFrameCaches[j];
-						XMMATRIX S = XMMatrixScaling(pBoneFrameCache->m_xmf3ScaleLayerBlending.x, pBoneFrameCache->m_xmf3ScaleLayerBlending.y, pBoneFrameCache->m_xmf3ScaleLayerBlending.z);
-						XMMATRIX R = XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(pBoneFrameCache->m_xmf3RotationLayerBlending.x), XMMatrixRotationY(pBoneFrameCache->m_xmf3RotationLayerBlending.y)), XMMatrixRotationZ(pBoneFrameCache->m_xmf3RotationLayerBlending.z));
-						XMMATRIX T = XMMatrixTranslation(pBoneFrameCache->m_xmf3TranslationLayerBlending.x, pBoneFrameCache->m_xmf3TranslationLayerBlending.y, pBoneFrameCache->m_xmf3TranslationLayerBlending.z);
-						XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply(S, R), T));
+						if (pBoneFrameCache != NULL)
+						{
+							XMMATRIX S = XMMatrixScaling(pBoneFrameCache->m_xmf3ScaleLayerBlending.x, pBoneFrameCache->m_xmf3ScaleLayerBlending.y, pBoneFrameCache->m_xmf3ScaleLayerBlending.z);
+							XMMATRIX R = XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(pBoneFrameCache->m_xmf3RotationLayerBlending.x), XMMatrixRotationY(pBoneFrameCache->m_xmf3RotationLayerBlending.y)), XMMatrixRotationZ(pBoneFrameCache->m_xmf3RotationLayerBlending.z));
+							XMMATRIX T = XMMatrixTranslation(pBoneFrameCache->m_xmf3TranslationLayerBlending.x, pBoneFrameCache->m_xmf3TranslationLayerBlending.y, pBoneFrameCache->m_xmf3TranslationLayerBlending.z);
+							XMStoreFloat4x4(&pBoneFrameCache->m_xmf4x4ToParent, XMMatrixMultiply(XMMatrixMultiply(S, R), T));
+						}
 					}
 				}
 			}
@@ -859,9 +878,29 @@ void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3d
 }
 // ChangeAnimationState PLAYERSTATE 에 따른 Animation 변경 작업 04 28
 
-void CAnimationController::SetAnimationBlend()
+void CAnimationController::SetAnimationChange(int nTarget)
 {
+	if (m_nCurrentTrack != nTarget)  // 현재 애니메이션이 목표 애니메이션이 아니면
+	{
+		m_nPrevTrack = m_nCurrentTrack;       // 이전 트랙은 현재 트랙
+		m_nCurrentTrack = nTarget;            // 현재 트랙을 타겟으로 변환
+		m_fCurrentTime = 0.0f;
 
+		//SetTrackPosition(m_nPrevTrack, 0.0f);  // 이전 트랙 리셋 -> 처음부터 재생하도록.
+		SetTrackEnable(m_nPrevTrack, false);   // 트랙 비활성화
+		SetTrackEnable(m_nCurrentTrack, true);  // 트랙 활성화.
+	}
+}
+
+bool CAnimationController::IsAnimationDone(int nAnimationTrack)
+{
+	if (m_pAnimationTracks)
+	{
+		float fStart = m_pAnimationTracks[nAnimationTrack].m_fPosition;  // Animation POSITION?
+		float fEnd = m_pAnimationTracks[nAnimationTrack].m_fLength;      // Animation Length
+
+		return (fStart >= fEnd);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -912,6 +951,12 @@ void CGameObject::Release()
 	if (m_pChild) m_pChild->Release();
 
 	if (--m_nReferences <= 0) delete this; 
+}
+
+void CGameObject::Update()
+{
+	if (m_pChild)
+		m_pChild->Update();
 }
 
 void CGameObject::SetMesh(CMesh* pMesh)
@@ -1111,6 +1156,34 @@ CMaterial* CGameObject::LoadMaterialFromFile(ID3D12Device* pd3dDevice, ID3D12Gra
 
 		pMaterial->LoadTexturePropersFromFile(pd3dDevice, pd3dCommandList, pInFile);
 
+		if (nMaterials > 1) //Materials more than one. Read ShadingModel Data.
+		{
+			::ReadStringFromFile(pInFile, pstrToken); // </TextureProperties>
+			::ReadStringFromFile(pInFile, pstrToken); // <ShadingModel>:
+			::ReadStringFromFile(pInFile, pstrToken); // Lambert or unknown
+			if (!strcmp(pstrToken, "Lambert"))
+			{
+				::ReadStringFromFile(pInFile, pstrToken); // <Lambert>:
+
+				::ReadFloatFromFile(pInFile);   // AmbientColor
+				::ReadFloatFromFile(pInFile);   // DiffuseColor
+				::ReadFloatFromFile(pInFile);   // SpecularColor
+
+				::ReadFloatFromFile(pInFile);   // AmbientIntensity
+				::ReadFloatFromFile(pInFile);   // DiffuseIntensity
+				::ReadFloatFromFile(pInFile);   // apecularIntensity
+
+				::ReadFloatFromFile(pInFile);   // AmbientEffect
+				::ReadFloatFromFile(pInFile);	// DiffuseEffect
+				::ReadFloatFromFile(pInFile);	// SpecularEffect
+
+				::ReadFloatFromFile(pInFile);	// ReflectionFactor
+			}
+			else
+			{
+				::ReadStringFromFile(pInFile, pstrToken);
+			}
+		}
 		CMaterial::v_Materials.emplace_back(pMaterial);
 	}
 	return(pMaterial);
@@ -1362,7 +1435,7 @@ CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd
 	FILE* pInFile = NULL;
 	::fopen_s(&pInFile, pstrFileName, "rb");
 	::rewind(pInFile);
-
+	 
 	CLoadedModelInfo* pLoadedModel = new CLoadedModelInfo();
 	pLoadedModel->m_pModelRootObject = new CGameObject();
 	strcpy_s(pLoadedModel->m_pModelRootObject->m_pstrFrameName, "RootNode");
@@ -1720,291 +1793,5 @@ CEagleObject::CEagleObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 }
 
 CEagleObject::~CEagleObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CRatoObject::CRatoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	CLoadedModelInfo* pRatoModel = pModel;
-	if (!pRatoModel) pRatoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Rato.bin", NULL);
-
-	SetChild(pRatoModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pRatoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[0]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pRatoTexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pRatoTexture, 0, 15);
-
-	m_pRatoMaterial = new CMaterial(1);
-	m_pRatoMaterial->SetTexture(m_pRatoTexture);
-
-	SetMaterial(0, m_pRatoMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pRatoModel);
-
-	strcpy_s(m_pstrFrameName, "Rato");
-
-	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(0.5f, 0.5f, 0.5f);
-}
-
-CRatoObject::~CRatoObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CWormoObject::CWormoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	CLoadedModelInfo* pWormoModel = pModel;
-	if (!pWormoModel) pWormoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Wormo.bin", NULL);
-
-	SetChild(pWormoModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pWormoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[1]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pWormoTexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pWormoTexture, 0, 15);
-
-	m_pWormoMaterial = new CMaterial(1);
-	m_pWormoMaterial->SetTexture(m_pWormoTexture);
-
-	SetMaterial(0, m_pWormoMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pWormoModel);
-
-	strcpy_s(m_pstrFrameName, "Wormo");
-
-	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(1.0f, 1.0f, 1.0f);
-}
-
-CWormoObject::~CWormoObject()
-{
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CMegaGolemAObject::CMegaGolemAObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	// 다리 제대로 돌려줘야 함.
-	CLoadedModelInfo* pMegaGolemAModel = pModel;
-	if (!pMegaGolemAModel) pMegaGolemAModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Mega_Golem_A.bin", NULL);
-
-	SetChild(pMegaGolemAModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pMegaATexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[2]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pMegaATexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pMegaATexture, 0, 15);
-
-	m_pMegaAMaterial = new CMaterial(1);
-	m_pMegaAMaterial->SetTexture(m_pMegaATexture);
-
-	SetMaterial(0, m_pMegaAMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMegaGolemAModel);
-
-	strcpy_s(m_pstrFrameName, "MegaGolem_A");
-
-	Rotate(0.0f, 90.0f, 0.0f);
-	SetScale(1.5f, 1.5f, 1.5f);
-}
-
-CMegaGolemAObject::~CMegaGolemAObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CMegaGolemBObject::CMegaGolemBObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	// 다리 제대로 돌려줘야 함.
-	CLoadedModelInfo* pMegaGolemBModel = pModel;
-	if (!pMegaGolemBModel) pMegaGolemBModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Mega_Golem_B.bin", NULL);
-
-	SetChild(pMegaGolemBModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pMegaBTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[3]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pMegaBTexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pMegaBTexture, 0, 15);
-
-	m_pMegaBMaterial = new CMaterial(1);
-	m_pMegaBMaterial->SetTexture(m_pMegaBTexture);
-
-	SetMaterial(0, m_pMegaBMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMegaGolemBModel);
-
-	strcpy_s(m_pstrFrameName, "MegaGolem_B");
-
-	Rotate(0.0f, 90.0f, 0.0f);
-	SetScale(1.5f, 1.5f, 1.5f);
-}
-
-CMegaGolemBObject::~CMegaGolemBObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CCactusoObject::CCactusoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	CLoadedModelInfo* pCactusoModel = pModel;
-	if (!pCactusoModel) pCactusoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
-
-	SetChild(pCactusoModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pCactusoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[4]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pCactusoTexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pCactusoTexture, 0, 15);
-
-	m_pCactusoMaterial = new CMaterial(1);
-	m_pCactusoMaterial->SetTexture(m_pCactusoTexture);
-
-	SetMaterial(0, m_pCactusoMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pCactusoModel);
-
-	strcpy_s(m_pstrFrameName, "Cactuso");
-
-	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(0.3f, 0.3f, 0.3f);
-}
-
-CCactusoObject::~CCactusoObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CScorpiontoObject::CScorpiontoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	CLoadedModelInfo* pScorpiontoModel = pModel;
-	if (!pScorpiontoModel) pScorpiontoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Scorpionto.bin", NULL);
-
-	SetChild(pScorpiontoModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pScorpionTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[5]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pScorpionTexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pScorpionTexture, 0, 15);
-
-	m_pScorpionMaterial = new CMaterial(1);
-	m_pScorpionMaterial->SetTexture(m_pScorpionTexture);
-
-	SetMaterial(0, m_pScorpionMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pScorpiontoModel);
-
-	strcpy_s(m_pstrFrameName, "Scorpionto");
-
-	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(1.5f, 1.5f, 1.5f);
-}
-
-CScorpiontoObject::~CScorpiontoObject()
-{
-}
-
-CAntoObject::CAntoObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	CLoadedModelInfo* pAntoModel = pModel;
-	if (!pAntoModel) pAntoModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Anto.bin", NULL);
-
-	// 몸체 y축, Leg_L 180도
-
-	SetChild(pAntoModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pAntoTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[6]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pAntoTexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pAntoTexture, 0, 15);
-
-	m_pAntoMaterial = new CMaterial(1);
-	m_pAntoMaterial->SetTexture(m_pAntoTexture);
-
-	SetMaterial(0, m_pAntoMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pAntoModel);
-
-	strcpy_s(m_pstrFrameName, "Anto");
-
-	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(0.5f, 0.5f, 0.5f);
-}
-
-CAntoObject::~CAntoObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CGolemChildObject::CGolemChildObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks) : CGameObject(1)
-{
-	CLoadedModelInfo* pGolemChildModel = pModel;
-	if (!pGolemChildModel) pGolemChildModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Golem_Child.bin", NULL);
-
-	SetChild(pGolemChildModel->m_pModelRootObject, true);
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	m_pGolemChildTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[7]; // 데이터 가져오기용
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	m_pGolemChildTexture = TextureProperty.GetTextureFromVec(0);
-
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pGolemChildTexture, 0, 15);
-
-	m_pGolemChildMaterial = new CMaterial(1);
-	m_pGolemChildMaterial->SetTexture(m_pGolemChildTexture);
-
-	SetMaterial(0, m_pGolemChildMaterial);
-
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pGolemChildModel);
-
-	strcpy_s(m_pstrFrameName, "GolemChild");
-
-	Rotate(0.0f, 0.0f, 0.0f);
-	SetScale(0.5f, 0.5f, 0.5f);
-}
-
-CGolemChildObject::~CGolemChildObject()
 {
 }

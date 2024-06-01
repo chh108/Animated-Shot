@@ -5,6 +5,8 @@
 
 #include "Timer.h"
 #include "Player.h"
+#include "Party1.h"
+#include "Party2.h"
 #include "Scene.h"
 
 class CGameFramework
@@ -82,6 +84,8 @@ private:
 
 	CScene						*m_pScene = NULL;
 	CPlayer						*m_pPlayer = NULL;
+	CParty1						*m_pParty1 = NULL;
+	CParty2						*m_pParty2 = NULL;
 	CCamera						*m_pCamera = NULL;
 
 	POINT						m_ptOldCursorPos;
