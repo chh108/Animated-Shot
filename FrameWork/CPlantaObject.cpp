@@ -60,7 +60,7 @@ CPlantaObject::CPlantaObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	strcpy_s(m_pstrFrameName, "Planta");
 
-	Rotate(0.0f, 0.0f, 0.0f);
+	Rotate(-90.0f, 0.0f, 0.0f);
 	SetScale(0.5f, 0.5f, 0.5f);
 }
 

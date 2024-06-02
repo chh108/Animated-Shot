@@ -90,7 +90,7 @@ public:
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
 
-	void PlayerStateChange(int nState1, int nState2);
+	virtual void SetTextureByType(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nType, void* pArg);
 };
 
 class CSoundCallbackHandler : public CAnimationCallbackHandler

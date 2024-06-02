@@ -263,6 +263,33 @@ void CPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamer
 	if (nCameraMode == THIRD_PERSON_CAMERA) CGameObject::Render(pd3dCommandList, pCamera);
 }
 
+void CPlayer::SetTextureByType(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nType, void* pArg)
+{
+	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+
+	switch (nType) {
+	case 1:
+		pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rabby_01.png", RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
+		break;
+	case 2:
+		pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rabby_02.png", RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
+		break;
+	case 3:
+		pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rabby_03.png", RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
+		break;
+	default:
+		pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rabby_01.png", RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
+		break;
+	}
+
+	CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
+
+	CMaterial* pNewMaterial = new CMaterial(1);
+	pNewMaterial->SetTexture(pTexture);
+
+	SetMaterial(0, pNewMaterial);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
 //#define _WITH_DEBUG_CALLBACK_DATA
@@ -300,17 +327,20 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Monster/Rabby_Queen.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	CMaterial* pMaterial = CMaterial::v_Materials[16];
-	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	pTexture = TextureProperty.GetTextureFromVec(0);
+	//CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	//CMaterial* pMaterial = CMaterial::v_Materials[16];
+	//CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	//pTexture = TextureProperty.GetTextureFromVec(0);
 
-	CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
+	//CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	//pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rabby_01.png", RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
 
-	CMaterial* pNewMaterial = new CMaterial(1);
-	pNewMaterial->SetTexture(pTexture);
+	//CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
 
-	SetMaterial(0, pNewMaterial);
+	//CMaterial* pNewMaterial = new CMaterial(1);
+	//pNewMaterial->SetTexture(pTexture);
+
+	//SetMaterial(0, pNewMaterial);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);

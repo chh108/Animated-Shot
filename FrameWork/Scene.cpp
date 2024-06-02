@@ -182,7 +182,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	CLoadedModelInfo* pRabbyModel = NULL;
 	m_ppGameObjects[11] = new CRabbyObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRabbyModel, 1);
 	m_ppGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_DAMAGE);
-	m_ppGameObjects[9]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
+	m_ppGameObjects[11]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
 	m_ppGameObjects[11]->SetPosition(150.0f, m_pTerrain->GetHeight(150.0f, 200.0f), 200.0f);
 	if (pRabbyModel) delete pRabbyModel;
 

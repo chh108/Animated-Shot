@@ -9,6 +9,7 @@
 #include "N_Header.h"
 #include "Network.h"
 #include "PlayerManager.h"
+#include "PartyManager.h"
 
 CGameFramework::CGameFramework()
 {
@@ -422,9 +423,9 @@ void CGameFramework::BuildObjects()
 	CAngrybotParty1* pParty1 = new CAngrybotParty1(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 	CAngrybotParty2* pParty2 = new CAngrybotParty2(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
-	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-	m_pScene->m_pParty1 = m_pParty1 = pParty1;
-	m_pScene->m_pParty2 = m_pParty2 = pParty2;
+	m_pScene->m_pPlayer = m_pPlayer = pPlayer; // 나
+	m_pScene->m_pParty1 = m_pParty1 = pParty1; // 파티1
+	m_pScene->m_pParty2 = m_pParty2 = pParty2; // 파티2
 
 	//m_pPlayer->SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_pCamera = m_pPlayer->GetCamera();
@@ -581,11 +582,23 @@ void CGameFramework::FrameAdvance()
 #ifdef _WITH_PLAYER_TOP
 	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif
+
 	if (m_pPlayer)
+		m_pPlayer->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPlayerManager::Get_Instance()->Get_Type()), NULL);
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
-	if (m_pParty1) 
+	if (m_pParty1)
+		if (CNetwork::Get_Instance()->GetAddParty1Packet())
+		{
+			m_pParty1->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPartyManager::Get_Instance()->Get_Party1Type()), NULL);
+			CNetwork::Get_Instance()->SetAddParty1Packet(false);
+		}
 		m_pParty1->Render(m_pd3dCommandList, m_pCamera);
-	if (m_pParty2) 
+	if (m_pParty2)
+		if (CNetwork::Get_Instance()->GetAddParty2Packet())
+		{
+			m_pParty2->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPartyManager::Get_Instance()->Get_Party2Type()), NULL);
+			CNetwork::Get_Instance()->SetAddParty2Packet(false);
+		}
 		m_pParty2->Render(m_pd3dCommandList, m_pCamera);
 
 	d3dResourceBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
