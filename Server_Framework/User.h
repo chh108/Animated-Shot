@@ -13,6 +13,9 @@ public:
 	void send_login_info_packet();
 	void send_add_player_packet(int c_id, CUser& cl);
 	void send_move_packet(int c_id, CUser& cl);
+	void send_camera_packet(int c_id, CUser& cl);
+	void send_animation_packet(int c_id, CUser& cl);
+	void send_remove_packet(int c_id, CUser& cl);
 
 public:
 	char				m_cName[NAME_SIZE];
@@ -21,6 +24,11 @@ public:
 	int					m_iExp;
 	int					m_iLevel;
 	S_STATE				m_eState;
-	CHARACTER_TYPE		m_eType;
+	int					m_eType;
+	char				m_animation;
+
+	DirectX::XMFLOAT3	m_f3Right;
+	DirectX::XMFLOAT3	m_f3Look;
+	DirectX::XMFLOAT3	m_f3Up;
 };
 

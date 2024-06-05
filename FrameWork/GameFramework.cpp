@@ -584,7 +584,11 @@ void CGameFramework::FrameAdvance()
 #endif
 
 	if (m_pPlayer)
-		m_pPlayer->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPlayerManager::Get_Instance()->Get_Type()), NULL);
+		if (CNetwork::Get_Instance()->GetLoginPacket())
+		{
+			m_pPlayer->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPlayerManager::Get_Instance()->Get_Type()), NULL);
+			CNetwork::Get_Instance()->SetLoginPacket(false);
+		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 	if (m_pParty1)
 		if (CNetwork::Get_Instance()->GetAddParty1Packet())

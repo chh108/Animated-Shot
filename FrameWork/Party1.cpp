@@ -8,11 +8,12 @@
 #include "SkyBox.h"
 #include "Terrain.h"
 #include "PartyManager.h"
-#include "Scene.h"
 #include "Network.h"
+#include "Scene.h"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
- 
+
 CParty1::CParty1() : CGameObject(1)
 {
 	m_pCamera = NULL;
@@ -29,12 +30,12 @@ CParty1::CParty1() : CGameObject(1)
 	m_fFriction = 0.0f;
 
 	//m_pxmf4x4Trans = new XMFLOAT4X4
-	//{
-	//	1.0f, 0.0f, 0.0f, 0.0f,
-	//	0.0f, -1.0f, 0.0f, 0.0f,
-	//	0.0f, 0.0f, 1.0f, 0.0f,
-	//	0.0f, 0.0f, 0.0f, 1.0f,
-	//};
+	/*{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f,
+	};*/
 
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
@@ -167,10 +168,16 @@ void CParty1::Rotate(float x, float y, float z)
 
 void CParty1::Update(float fTimeElapsed)
 {
-	if (CNetwork::Get_Instance()->GetAddParty1Packet())
-	{
-		CPartyManager::Get_Instance()->Get_Party1Type();	//HH
-	}
+	SetPosition(CPartyManager::Get_Instance()->Get_Party1Pos());
+	SetLookVector(CPartyManager::Get_Instance()->Get_P1Look());
+	SetUpVector(CPartyManager::Get_Instance()->Get_P1Up());
+	SetRightVector(CPartyManager::Get_Instance()->Get_P1Right());
+
+	//if (CNetwork::Get_Instance()->GetAddParty1Packet())
+	//{
+	//	if (CPartyManager::Get_Instance()->Get_Party1Type() == 1)	//HH
+	//		;
+	//}
 
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, m_xmf3Gravity);
 	float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
@@ -208,7 +215,6 @@ void CParty1::Update(float fTimeElapsed)
 	//SetType(CPartyManager::Get_Instance()->Get_Party1Type());
 	////m_bState = true;
 	//}
-
 }
 
 //CCamera * CParty1::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
@@ -329,7 +335,7 @@ CAngrybotParty1::CAngrybotParty1(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Monster/Rabby_Queen.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	/*CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
 	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rabby_02.png", RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
 
 	CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
@@ -337,7 +343,7 @@ CAngrybotParty1::CAngrybotParty1(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	CMaterial* pNewMaterial = new CMaterial(1);
 	pNewMaterial->SetTexture(pTexture);
 
-	SetMaterial(0, pNewMaterial);
+	SetMaterial(0, pNewMaterial);*/
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, PS_IDLE);
@@ -385,7 +391,7 @@ CAngrybotParty1::CAngrybotParty1(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
+	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)pContext;
 	SetPosition(XMFLOAT3(410.0f, pTerrain->GetHeight(350.0f, 595.0f), 595.0f));
 	SetScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 }
@@ -505,37 +511,55 @@ void CAngrybotParty1::Update(float fTimeElapsed)
 
 	if (m_pSkinnedAnimationController)
 	{
-		bool IsAnimationDone = false;
+		//bool IsAnimationDone = false;
+		bool Moving = false;
+		//float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 
-		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
+		//float fWALKWweight = fLength;
+		//float fIDLEWeight = 1.0f - fWALKWweight;
 
-		float fWALKWweight = fLength;
-		float fIDLEWeight = 1.0f - fWALKWweight;
-
-		m_pSkinnedAnimationController->SetTrackWeight(PS_IDLE, fIDLEWeight);
-		m_pSkinnedAnimationController->SetTrackWeight(PS_WALK, fWALKWweight);
-
-		switch (m_pSkinnedAnimationController->m_nCurrentTrack)
+		//m_pSkinnedAnimationController->SetTrackWeight(PS_IDLE, fIDLEWeight);
+		//m_pSkinnedAnimationController->SetTrackWeight(PS_WALK, fWALKWweight);
+		/*if (m_pSkinnedAnimationController->m_nCurrentTrack != CPartyManager::Get_Instance()->Get_P1Animation())
 		{
-		case PS_IDLE:
-			if (!::IsZero(fLength)) {
-				m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
-				m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, true);
-			}
-			break;
-		case PS_WALK:
-			if (::IsZero(fLength))
+			switch (CPartyManager::Get_Instance()->Get_P1Animation())
 			{
-				float fCurrent = m_pSkinnedAnimationController->m_fTime * 0.5f;
-				float fDuration = m_pSkinnedAnimationController->m_pAnimationTracks[PS_WALK].m_fLength;
-
-				if (fCurrent >= fDuration) {
-					m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, true);
-					m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
-				}
+			case PS_IDLE:
+				CPartyManager::Get_Instance()->Set_P1IsMoving(false);
+				break;
+			case PS_WALK:
+				CPartyManager::Get_Instance()->Set_P1IsMoving(true);
+				break;
 			}
-			break;
-		}
+			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nCurrentTrack, false);
+			m_pSkinnedAnimationController->SetTrackEnable(CPartyManager::Get_Instance()->Get_P1Animation(), true);
+			m_pSkinnedAnimationController->m_nCurrentTrack = CPartyManager::Get_Instance()->Get_P1Animation();
+			Moving = CPartyManager::Get_Instance()->Get_P1IsMoving();
+		}*/
+		if (m_pSkinnedAnimationController->m_nCurrentTrack != CPartyManager::Get_Instance()->Get_P1Animation())
+			m_pSkinnedAnimationController->SetAnimationChange(CPartyManager::Get_Instance()->Get_P1Animation());
+		
+		//switch (m_pSkinnedAnimationController->m_nCurrentTrack)
+		//{
+		//case PS_IDLE:
+		//	//if (!::IsZero(fLength)) {
+		//		m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
+		//		m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, true);
+		//	//}
+		//	break;
+		//case PS_WALK:
+		//	//if (::IsZero(fLength))
+		//	//{
+		//		// fCurrent = m_pSkinnedAnimationController->m_fTime * 0.5f;
+		//	//	float fDuration = m_pSkinnedAnimationController->m_pAnimationTracks[PS_WALK].m_fLength;
+
+		//		//if (fCurrent >= fDuration) {
+		//			m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, Moving);
+		//			m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, !Moving);
+		//		//}
+		//	//}
+		//	break;
+		//}
 	}
 }
 #endif

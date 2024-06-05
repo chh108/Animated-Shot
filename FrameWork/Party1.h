@@ -57,6 +57,10 @@ public:
 	void SetPosition(const XMFLOAT3& xmf3Position) { Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false); }
 	void SetType(const int _iType) { m_iType = _iType; }
 	void SetScale(const XMFLOAT3& xmf3Scale) { m_xmf3Scale = xmf3Scale; }
+	void SetLookVector(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
+	void SetUpVector(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }
+	void SetRightVector(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
+
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }
 	float GetYaw() const { return(m_fYaw); }

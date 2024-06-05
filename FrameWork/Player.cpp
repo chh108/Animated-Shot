@@ -189,7 +189,6 @@ void CPlayer::Update(float fTimeElapsed)
 
 	XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(m_xmf3Velocity, fTimeElapsed, false);
 	Move(xmf3Velocity, false);
-
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
@@ -203,6 +202,29 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fDeceleration > fLength) fDeceleration = fLength;
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));		// false
 
+	if (GetPosition().x != CPlayerManager::Get_Instance()->Get_Pos().x||
+		GetPosition().y != CPlayerManager::Get_Instance()->Get_Pos().y || 
+		GetPosition().z != CPlayerManager::Get_Instance()->Get_Pos().z)
+	{
+		CPlayerManager::Get_Instance()->Set_Pos(GetPosition());        //유월이일
+		CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
+	}
+
+	if (GetLookVector().x != CPlayerManager::Get_Instance()->Get_xmf3Look().x ||
+		GetLookVector().y != CPlayerManager::Get_Instance()->Get_xmf3Look().y ||
+		GetLookVector().z != CPlayerManager::Get_Instance()->Get_xmf3Look().z ||
+		GetUpVector().x != CPlayerManager::Get_Instance()->Get_xmf3Up().x ||
+		GetUpVector().y != CPlayerManager::Get_Instance()->Get_xmf3Up().y ||
+		GetUpVector().z != CPlayerManager::Get_Instance()->Get_xmf3Up().z || 
+		GetRightVector().x != CPlayerManager::Get_Instance()->Get_xmf3Right().x ||
+		GetRightVector().y != CPlayerManager::Get_Instance()->Get_xmf3Right().y ||
+		GetRightVector().z != CPlayerManager::Get_Instance()->Get_xmf3Right().z )
+	{
+		CPlayerManager::Get_Instance()->Set_xmf3Look(GetLookVector());        //유월이일
+		CPlayerManager::Get_Instance()->Set_xmf3Up(GetUpVector());        //유월이일
+		CPlayerManager::Get_Instance()->Set_xmf3Right(GetRightVector());        //유월이일
+		CNetwork::Get_Instance()->SetSendPacket(CS_CAMERA);					//HY
+	}
 }
 
 CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
@@ -327,20 +349,17 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Monster/Rabby_Queen.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	//CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	//CMaterial* pMaterial = CMaterial::v_Materials[16];
-	//CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
-	//pTexture = TextureProperty.GetTextureFromVec(0);
+	/*CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
+	CMaterial* pMaterial = CMaterial::v_Materials[16];
+	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
+	pTexture = TextureProperty.GetTextureFromVec(0);
 
-	//CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
-	//pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/T_Rabby_01.png", RESOURCE_TEXTURE2D_ARRAY, 15, 0, PNG);
+	CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
 
-	//CScene::CreateShaderResourceViews(pd3dDevice, pTexture, 0, 15);
+	CMaterial* pNewMaterial = new CMaterial(1);
+	pNewMaterial->SetTexture(pTexture);
 
-	//CMaterial* pNewMaterial = new CMaterial(1);
-	//pNewMaterial->SetTexture(pTexture);
-
-	//SetMaterial(0, pNewMaterial);
+	SetMaterial(0, pNewMaterial);*/
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pPlayerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(PS_IDLE, PS_IDLE);
@@ -573,6 +592,13 @@ void CAngrybotPlayer::Update(float fTimeElapsed)
 			}
 			break;
 		}
+
+		if (CPlayerManager::Get_Instance()->Get_Animation() != m_pSkinnedAnimationController->m_nCurrentTrack)
+		{
+			CPlayerManager::Get_Instance()->Set_Animation(m_pSkinnedAnimationController->m_nCurrentTrack);
+			CNetwork::Get_Instance()->SetSendPacket(CS_ANIMATION);
+		}
+		//HY
 	}
 }
 #endif

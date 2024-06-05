@@ -154,35 +154,49 @@ void CDBConnection::PrintInfo(int num)
 
 bool CDBConnection::Login(TCHAR* Name, CUser& user)
 {
+	std::lock_guard<std::mutex> lock(user.m_p_lock);
 	m_retcode = SQLExecDirect(m_hstmt, (SQLWCHAR*)L"SELECT user_id, user_name, user_type, user_level, user_hp, user_exp, user_posX, user_posY, user_posZ FROM [Animated_Shot].[dbo].[user_table]", SQL_NTS);
 	//m_retcode = SQLExecDirect(m_hstmt, 
 		//(SQLWCHAR*)L"SELECT user_id, user_name, user_type, user_level, user_hp, user_exp, user_posX, user_posY, user_posZ, user_collisionX, user_collisionY, user_collisionZ, user_collisiontype FROM user_table", SQL_NTS);
 	if (m_retcode != SQL_SUCCESS && m_retcode != SQL_SUCCESS_WITH_INFO)
 		return false;
+	/*BindCol();*/
+
 	while ((m_retcode = SQLFetch(m_hstmt)) != SQL_NO_DATA)
 	{
+		bool nameMatch = true;
 		for (int i = 0; i < NAME_SIZE; ++i)
 		{
+			//std::wcout << szName[i] << ", " <<Name[i] << std::endl;
 			if (szName[i] == Name[i])
 				continue;
 			else
 			{
-				if (szName[i] = ' ')
+				if (szName[i] == ' ')
 					continue;
 				else
-					return false;
+				{
+					nameMatch = false;
+					break; // for 문을 빠져나감
+				}
 			}
 		}
-		user.m_iHp = dHp;
-		user.m_iExp = dExp;
-		user.x = dPosX;
-		user.y = 314;
-		user.z = dPosZ;
-		user.m_eType = static_cast<CHARACTER_TYPE>(dType);
-		user.m_iLevel = dLevel;
-		SQLFreeStmt(m_hstmt, SQL_CLOSE);
-		return true;
+
+		if (nameMatch)
+		{
+			user.m_eType = dType;
+			std::wcout << dType << std::endl;
+			std::cout << user.m_eType << std::endl;
+			user.m_iHp = dHp;
+			user.m_iExp = dExp;
+			user.x = dPosX;
+			user.y = 314;
+			user.z = dPosZ;
+			user.m_iLevel = dLevel;
+			SQLFreeStmt(m_hstmt, SQL_CLOSE);
+			return true;
+		}
 	}
 	SQLFreeStmt(m_hstmt, SQL_CLOSE);
-	return false;
+	return true;
 }

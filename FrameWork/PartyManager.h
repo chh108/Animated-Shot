@@ -55,9 +55,44 @@ public:
 	char* Get_Party2Name();
 	void Set_Party2Name(char* Paty2Name);
 
+	XMFLOAT3 Get_P1Look() { return m_P1f3Look; };
+	void Set_P1Look(XMFLOAT3 xmf3Look) { m_P1f3Look = xmf3Look; };
+
+	XMFLOAT3 Get_P1Right() { return m_P1f3Right; };
+	void Set_P1Right(XMFLOAT3 xmf3Right) { m_P1f3Right = xmf3Right; };
+
+	XMFLOAT3 Get_P1Up() { return m_P1f3Up; };
+	void Set_P1Up(XMFLOAT3 xmf3Up) { m_P1f3Up = xmf3Up; };
+
+	XMFLOAT3 Get_P2Look() { return m_P2f3Look; };
+	void Set_P2Look(XMFLOAT3 xmf3Look) { m_P2f3Look = xmf3Look; };
+
+	XMFLOAT3 Get_P2Right() { return m_P2f3Right; };
+	void Set_P2Right(XMFLOAT3 xmf3Right) { m_P2f3Right = xmf3Right; };
+
+	XMFLOAT3 Get_P2Up() { return m_P2f3Up; };
+	void Set_P2Up(XMFLOAT3 xmf3Up) { m_P2f3Up = xmf3Up; };	
+
+	char Get_P1Animation() { return m_Party1Animation; };
+	void Set_P1Animation(char Animation) { m_Party1Animation = Animation; };
+
+	char Get_P2Animation() { return m_Party2Animation; };
+	void Set_P2Animation(char Animation) { m_Party2Animation = Animation; };
+
+	char Get_P1State() { return m_Party1State; };
+	void Set_P1State(char Party1State) { m_Party1State = Party1State; };
+
+	char Get_P2State() { return m_Party2State; };
+	void Set_P2State(char Party2State) { m_Party2State = Party2State; };
+
+	bool Get_P1IsMoving() { return m_P1IsMoving; };
+	void Set_P1IsMoving(bool P1IsMoving) { m_P1IsMoving = P1IsMoving; };
+
+	bool Get_P2IsMoving() { return m_P2IsMoving; };
+	void Set_P2IsMoving(bool P2IsMoving) { m_P2IsMoving = P2IsMoving; };
+
 private:
 	static CPartyManager* m_pInstance;
-
 
 private:
 	XMFLOAT3	m_fPlayerPos;
@@ -75,4 +110,21 @@ private:
 
 	char*		m_cParty1Name;
 	char*		m_cParty2Name;
+
+	XMFLOAT3	m_P1f3Right;
+	XMFLOAT3	m_P1f3Up;
+	XMFLOAT3	m_P1f3Look;
+
+	XMFLOAT3	m_P2f3Right;
+	XMFLOAT3	m_P2f3Up;
+	XMFLOAT3	m_P2f3Look;
+
+	char		m_Party1Animation;
+	char		m_Party2Animation;
+
+	bool		m_Party1State = false;
+	bool		m_Party2State = false;
+
+	bool		m_P1IsMoving = false;
+	bool		m_P2IsMoving = false;
 };

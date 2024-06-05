@@ -19,7 +19,7 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		std::wcout << p->name << std::endl;
 		//if (DB->Login(p->name, clients[c_id]))
-		{
+		//{
 			std::cout << "로그인 성공" << std::endl;
 			/*strcpy_s(clients[c_id].m_cName, p->name);*/
 			clients[c_id].send_login_info_packet();
@@ -35,10 +35,11 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 				}
 				if (pl.m_cId == c_id) continue;
 				pl.send_add_player_packet(c_id, clients[c_id]);
+				std::this_thread::sleep_for(std::chrono::seconds(1));
 				clients[c_id].send_add_player_packet(pl.m_cId, pl);
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 			}
-		}
+		//}
 		/*else
 		{
 			std::cout << "로그인 실패" << std::endl;
@@ -47,10 +48,11 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 		break;
 	}
 	case CS_MOVE:
+	{
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 
-		std::lock_guard<std::mutex> ll{ clients[c_id].m_p_lock };
-		if (p->direction)
+		//std::lock_guard<std::mutex> ll{ clients[c_id].m_p_lock };
+	/*	if (p->direction)
 		{
 			float SetSpeed = 0.3f;
 			float fDistance = 22.5f;
@@ -78,12 +80,12 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 			clients[c_id].x += xmf3Shift.x;
 			clients[c_id].y += xmf3Shift.y;
 			clients[c_id].z += xmf3Shift.z;
-		}
+		}*/
 
-		std::wcout << c_id << ", " <<
-			p->f3Look[0] << ", " <<
-			p->f3Look[1] << ", " <<
-			p->f3Look[2] << std::endl;
+		clients[c_id].x = p->x;
+		clients[c_id].y = p->y;
+		clients[c_id].z = p->z;
+
 
 		for (auto& pl : clients) {
 			{
@@ -92,6 +94,39 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 			}
 			if (pl.m_cId == c_id)continue;
 			pl.send_move_packet(c_id, clients[c_id]);
+		}
+		break;
+	}
+	case CS_CAMERA:
+	{
+		CS_CAMERA_PACKET* p = reinterpret_cast<CS_CAMERA_PACKET*>(packet);
+
+		clients[c_id].m_f3Right = p->f3Right;
+		clients[c_id].m_f3Look = p->f3Look;
+		clients[c_id].m_f3Up = p->f3Up;
+
+		for (auto& pl : clients) {
+			{
+				std::lock_guard<std::mutex> ll{ pl.m_s_lock };
+				if (pl.m_eState != ST_INGAME)continue;
+			}
+			if (pl.m_cId == c_id)continue;
+			pl.send_camera_packet(c_id, clients[c_id]);
+		}
+		break;
+	}
+	case CS_ANIMATION:
+		CS_ANIMATION_PACKET* p = reinterpret_cast<CS_ANIMATION_PACKET*>(packet);
+
+		clients[c_id].m_animation = p->animation;
+
+		for (auto& pl : clients) {
+			{
+				std::lock_guard<std::mutex> ll{ pl.m_s_lock };
+				if (pl.m_eState != ST_INGAME)continue;
+			}
+			if (pl.m_cId == c_id)continue;
+			pl.send_animation_packet(c_id, clients[c_id]);
 		}
 		break;
 	}

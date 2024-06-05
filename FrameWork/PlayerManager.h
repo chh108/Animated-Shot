@@ -51,6 +51,12 @@ public:
 	XMFLOAT3 Get_xmf3Up() { return m_xmf3Up; };
 	void Set_xmf3Up(XMFLOAT3 xmf3Up) { m_xmf3Up = xmf3Up; };
 
+	char Get_Animation() { return m_cAnimation; };
+	void Set_Animation(char Animation) { m_cAnimation = Animation; };
+
+	char Get_Login() { return m_bLogin; };
+	void Set_Login(char Login) { m_bLogin = Login; };
+
 private:
 	static CPlayerManager* m_pInstance;
 
@@ -59,6 +65,8 @@ private:
 	XMFLOAT3	m_fShiftPos;
 	char		m_cType;
 	DWORD		m_wMoveKey;
+	char		m_cAnimation = -1;
+	bool		m_bLogin = false;
 
 	XMFLOAT3 m_xmf3Look, m_xmf3Right, m_xmf3Up;
 };

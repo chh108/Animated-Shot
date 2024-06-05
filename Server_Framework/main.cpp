@@ -30,6 +30,14 @@ void worker(SOCKET server)
 			else
 			{
 				std::cout << "GQCS Error on client " << key << "\n";
+				for (auto& pl : clients) {
+					{
+						std::lock_guard<std::mutex> ll{ pl.m_s_lock };
+						if (pl.m_eState != ST_INGAME)continue;
+					}
+					if (pl.m_cId == key)continue;
+					pl.send_remove_packet(key, clients[key]);
+				}
 				CGameServer::DisConnect(static_cast<int>(key));
 				if (ex_over->m_eop == C_SEND) delete ex_over;
 				return;
@@ -101,10 +109,10 @@ void worker(SOCKET server)
 
 int main()
 {
-	/*if (g_DB->Connect()) {
-		g_DB->BindCol();
-		g_DB->Fetch();
-	}*/
+	//if (g_DB->Connect()) {
+	//	g_DB->BindCol();
+	//	g_DB->Fetch();
+	//}
 	CGameServer::Init();
 	SOCKET sv_socket = CGameServer::CreateSocket();
 	CGameServer::BindAnyAddress(sv_socket);
