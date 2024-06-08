@@ -1527,6 +1527,12 @@ void CGameObject::SetActive(char* pstrFrameName, bool bActive)
 	if (pFrameObject) pFrameObject->m_bActive = bActive;
 }
 
+void CGameObject::UpdateBoundingBox() // 0608
+{
+	m_xmOOBB_Parent.Transform(m_xmOOBB_Object, XMLoadFloat4x4(&m_xmf4x4World));
+	XMStoreFloat4(&m_xmOOBB_Object.Orientation, XMQuaternionNormalize(XMLoadFloat4(&m_xmOOBB_Object.Orientation)));
+}
+
 void CGameObject::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
 }

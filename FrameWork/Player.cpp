@@ -43,6 +43,9 @@ CPlayer::CPlayer() : CGameObject(1)
 
 	m_pPlayerUpdatedContext = NULL;
 	m_pCameraUpdatedContext = NULL;
+
+	m_xmOOBB_Parent = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_xmOOBB_Object = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)); // Player Scale Get 해서 넘겨주기.
 }
 
 CPlayer::~CPlayer()
@@ -283,6 +286,10 @@ void CPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamer
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
 	if (nCameraMode == THIRD_PERSON_CAMERA) CGameObject::Render(pd3dCommandList, pCamera);
+
+	for (int i = 0; i < BULLET; i++)
+		if (m_ppBullets[i]->m_bActive)
+			m_ppBullets[i]->Render(pd3dCommandList, pCamera);
 }
 
 void CPlayer::SetTextureByType(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nType, void* pArg)
@@ -312,6 +319,21 @@ void CPlayer::SetTextureByType(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetMaterial(0, pNewMaterial);
 }
 
+void CPlayer::FireBullet()
+{
+	for (int i = 0; i < BULLET; i++)
+	{
+		if (!m_ppBullets[i]->m_bActive)
+		{
+			m_ppBullets[i]->SetPosition(GetPosition());
+			m_ppBullets[i]->UpdateTransform();
+			m_ppBullets[i]->UpdateBoundingBox();
+			m_ppBullets[i]->m_xmf3MovingDir = XMFLOAT3(GetLook().x, GetLook().y, GetLook().z);
+			m_ppBullets[i]->m_bActive = true;
+			break;
+		}
+	}
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
 //#define _WITH_DEBUG_CALLBACK_DATA

@@ -538,6 +538,11 @@ public:
 	CGameObject*					m_pChild = NULL;
 	CGameObject*					m_pSibling = NULL;
 
+	// ADD BOUNDING BOX
+	BoundingOrientedBox m_xmOOBB_Parent = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	BoundingOrientedBox m_xmOOBB_Object = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	// XMFLOAT 3 -> Center of the box. XMFLOAT3 -> Distance from the center to each side. XMFLOAT4 -> Unit quaternion representing rotation (box -> world).
+
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);
 	void SetShader(int nMaterial, CShader* pShader);
@@ -596,6 +601,8 @@ public:
 	void SetActive(char *pstrFrameName, bool bActive);
 
 	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0x00); }
+
+	void UpdateBoundingBox(); // 0608
 
 public:
 	CAnimationController *m_pSkinnedAnimationController = NULL;

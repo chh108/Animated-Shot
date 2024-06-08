@@ -10,6 +10,7 @@
 #include "Object.h"
 #include "Camera.h"
 #include "Client_Defines.h"
+#include "Bullet.h"
 
 class CPlayer : public CGameObject
 {
@@ -44,6 +45,10 @@ public:
 public:
 	CPlayer();
 	virtual ~CPlayer();
+
+	CBullet*					m_ppBullets[BULLET]{};
+
+	void FireBullet();
 
 	XMFLOAT3 GetPosition() { return(m_xmf3Position); }
 	XMFLOAT3 GetLookVector() { return(m_xmf3Look); }
