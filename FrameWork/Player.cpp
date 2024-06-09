@@ -29,6 +29,13 @@ CPlayer::CPlayer() : CGameObject(1)
 	m_fMaxVelocityY = 0.0f;
 	m_fFriction = 0.0f;
 
+	CBullet* pBullet = NULL;
+	for (int i = 0; i < BULLET; i++)
+	{
+		m_ppBullets[i] = pBullet;
+		m_ppBullets[i]->m_bActive = false;
+	}
+
 	//m_pxmf4x4Trans = new XMFLOAT4X4
 	//{
 	//	1.0f, 0.0f, 0.0f, 0.0f,

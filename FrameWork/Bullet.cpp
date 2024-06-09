@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Bullet.h"
 // 0608
+
 CBullet::CBullet()
 {
 	m_xmOOBB_Object = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -30,7 +31,7 @@ void CBullet::AnimateBullet(float fElapsedTime)
 		}
 	}
 	UpdateTransform();
-	//UpdateBoundingBox(); 수정 중
+	UpdateBoundingBox(); // 0608 수정 중
 }
 
 void CBullet::Reset()
