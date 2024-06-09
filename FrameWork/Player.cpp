@@ -30,10 +30,18 @@ CPlayer::CPlayer() : CGameObject(1)
 	m_fFriction = 0.0f;
 
 	CBullet* pBullet = NULL;
+
 	for (int i = 0; i < BULLET; i++)
 	{
+		pBullet = new CBullet();
+		pBullet->SetPosition(0.0f, 0.0f, 0.0f);
+		pBullet->SetScale(1.0f, 1.0f, 1.0f);
+		pBullet->Rotate(0.0f, 0.0f, 0.0f);
+		pBullet->m_xmf3MovingDir = GetLook();
+		pBullet->m_fDuringTime = 2.5f;
+
 		m_ppBullets[i] = pBullet;
-		m_ppBullets[i]->m_bActive = false;
+		m_ppBullets[i]->m_bActive = false; // MAKE BULLET FOR PLAYER
 	}
 
 	//m_pxmf4x4Trans = new XMFLOAT4X4

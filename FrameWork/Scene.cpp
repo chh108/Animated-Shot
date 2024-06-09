@@ -604,8 +604,10 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	for (int i = 0; i < m_nGameObjects; i++) // Render Bullet 0606
 	{
 		for (int j = 0; j < BULLET; j++)
-			if (((CPlayer*)m_ppGameObjects[i])->m_ppBullets[j]->m_bActive)
-				((CPlayer*)m_ppGameObjects[i])->m_ppBullets[j]->Render(pd3dCommandList, pCamera);
+			if (m_pPlayer->m_ppBullets[j]->m_bActive)
+			{
+				m_pPlayer->m_ppBullets[j]->Render(pd3dCommandList, pCamera);
+			}
 	}
 
 	for (int i = 0; i < m_nShaders; i++) 
