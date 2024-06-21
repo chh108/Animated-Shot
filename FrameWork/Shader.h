@@ -6,6 +6,13 @@
 
 #include "Object.h"
 #include "Camera.h"
+#include "Client_Defines.h"
+
+struct ShaderInfo  // 셰이더의 정보를 받아오기 위함.
+{
+	D3D12_SHADER_BYTECODE VS;
+	D3D12_SHADER_BYTECODE PS;
+};
 
 class CShader
 {
@@ -31,13 +38,14 @@ public:
 	D3D12_SHADER_BYTECODE CompileShaderFromFile(WCHAR *pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob **ppd3dShaderBlob);
 	D3D12_SHADER_BYTECODE ReadCompiledShaderFromFile(WCHAR *pszFileName, ID3DBlob **ppd3dShaderBlob=NULL);
 
-	virtual void CreateShader(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
+	virtual void CreateShader(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, SHADER_TYPE type);
 
+	virtual void SetObjectsShader(ID3D12Device* pd3dDevice);
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList) { }
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList) { }
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList) { } 
 	virtual void ReleaseShaderVariables() { }
 
-	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList, FbxAMatrix *pfbxf4x4World) { }
+	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World) { }
 
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nPipelineState=0);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera);
@@ -49,43 +57,138 @@ public:
 	virtual void ReleaseObjects() { }
 
 protected:
-	ID3DBlob							*m_pd3dVertexShaderBlob = NULL;
-	ID3DBlob							*m_pd3dPixelShaderBlob = NULL;
+	ID3DBlob							*m_pd3dTerrain_VS_Blob = NULL;
+	ID3DBlob							*m_pd3dTerrain_PS_Blob = NULL;
+	ID3DBlob							*m_pd3dSkyBox_VS_Blob = NULL;
+	ID3DBlob							*m_pd3dSkyBox_PS_Blob = NULL;
+	ID3DBlob							*m_pd3dWireFrame_VS_Blob = NULL;
+	ID3DBlob							*m_pd3dWireFrame_PS_Blob = NULL;
+	ID3DBlob							*m_pd3dAnimation_VS_Blob = NULL;
+	ID3DBlob							*m_pd3dAnimation_PS_Blob = NULL;
+	ID3DBlob							*m_pd3dUI_VS_Blob = NULL;
+	ID3DBlob							*m_pd3dUI_PS_Blob = NULL;
+	ID3DBlob                            *m_pd3dTexture_VS_Blob = NULL;
+	ID3DBlob                            *m_pd3dTexture_PS_Blob = NULL;
 
 	ID3D12PipelineState					*m_pd3dPipelineState = NULL;
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_d3dPipelineStateDesc;
 
+	ShaderInfo							g_shaderInfo[6];
 	float								m_fElapsedTime = 0.0f;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class CFbxModelShader : public CShader
+class CTerrainShader : public CShader
 {
 public:
-	CFbxModelShader();
-	virtual ~CFbxModelShader();
+	CTerrainShader();
+	virtual ~CTerrainShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
-	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
 
-	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
-	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+	//virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	//virtual D3D12_SHADER_BYTECODE CreatePixelShader();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class CFbxSkinnedModelShader : public CShader
+class CSkyBoxShader : public CShader
 {
 public:
-	CFbxSkinnedModelShader();
-	virtual ~CFbxSkinnedModelShader();
+	CSkyBoxShader();
+	virtual ~CSkyBoxShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
+
+	//virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	//virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CUIShader : public CShader
+{
+public:
+	CUIShader();
+	virtual ~CUIShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
+
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CWireFrameShader : public CShader
+{
+public:
+	CWireFrameShader();
+	virtual ~CWireFrameShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
 
-	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
-	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+	//virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	//virtual D3D12_SHADER_BYTECODE CreatePixelShader();
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CSkinnedAnimationWireFrameShader : public CShader
+{
+public:
+	CSkinnedAnimationWireFrameShader();
+	virtual ~CSkinnedAnimationWireFrameShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
+
+	//virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	//virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CPlayerShader : public CShader
+{
+public:
+	CPlayerShader();
+	~CPlayerShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CSkinnedAnimationObjectsWireFrameShader : public CSkinnedAnimationWireFrameShader
+{
+public:
+	CSkinnedAnimationObjectsWireFrameShader();
+	virtual ~CSkinnedAnimationObjectsWireFrameShader();
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, void* pContext = NULL);
+	virtual void AnimateObjects(float fTimeElapsed);
+	virtual void ReleaseObjects();
+
+	virtual void ReleaseUploadBuffers();
+
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+
+protected:
+	CGameObject						**m_ppObjects = 0;
+	int								m_nObjects = 0;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CAngrybotObjectsShader : public CSkinnedAnimationObjectsWireFrameShader
+{
+public:
+	CAngrybotObjectsShader();
+	virtual ~CAngrybotObjectsShader();
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, void* pContext = NULL);
+};

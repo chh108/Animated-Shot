@@ -49,6 +49,105 @@
     <Filter Include="02.GameObjects\Terrain">
       <UniqueIdentifier>{ffc1d762-3e25-4fd6-b743-04ca07383c50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\BaseAim">
+      <UniqueIdentifier>{8dfcd9ae-b226-45af-9bcd-3df8ceb09627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Party">
+      <UniqueIdentifier>{961be6cd-7977-419a-a662-afa62eaf202c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Party\Party1">
+      <UniqueIdentifier>{adad1478-b0e2-4ce7-8329-4a6716d8f795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Party\Party2">
+      <UniqueIdentifier>{4f5d73e0-4c77-414a-bb95-2f1d489fe198}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Network">
+      <UniqueIdentifier>{7a1816b6-3ee7-44f1-81d2-92104026fdc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster">
+      <UniqueIdentifier>{0c5e09d3-a105-433e-8010-dbe905235b70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal">
+      <UniqueIdentifier>{f563c9c3-50e0-4560-ab66-82a69e01fc53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Catuso">
+      <UniqueIdentifier>{52b1761b-25e5-488d-8de4-4d90cc73a4ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\MegaGolemA">
+      <UniqueIdentifier>{a1b00e67-c695-4c1e-ad01-0e40a5eafb39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\MegaGolemB">
+      <UniqueIdentifier>{f2757c13-45cd-41ec-ba58-951de9c2cce6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Rato">
+      <UniqueIdentifier>{8bd13e0b-164b-4f54-a42e-f95ac74380d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Scorpionto">
+      <UniqueIdentifier>{65fa02b3-a54e-4be3-a2d4-1d716a608bd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\CWormo">
+      <UniqueIdentifier>{85ddeba9-0cef-422c-b22c-c15a8f23794f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Anto">
+      <UniqueIdentifier>{ccc0bb9f-68d0-43eb-97f6-46c065e6e74a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\CGolemChild">
+      <UniqueIdentifier>{ab16348d-c8a5-45f4-ad31-0350dd579622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.Component">
+      <UniqueIdentifier>{fed16ee7-275e-4cee-a61e-8fd05cc0c7e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Collider">
+      <UniqueIdentifier>{7fe85e2b-d18b-4275-b433-ef9f7f5ebe66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Collider\AABB">
+      <UniqueIdentifier>{869c9ac7-d222-4dd2-8bcd-6017ea4555c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Collider\OBB">
+      <UniqueIdentifier>{aa6db55c-2a59-483e-85b8-73685f242e39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Collider\Sphere">
+      <UniqueIdentifier>{4c1938eb-251b-4566-a8f1-2606fa9ad169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\Camera">
+      <UniqueIdentifier>{c0716442-5d30-4b0e-8711-387c5045c3ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\Party">
+      <UniqueIdentifier>{7d1f3271-0a16-4d4d-be90-cf4bece75170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\PipeLine">
+      <UniqueIdentifier>{1f5b3c85-d7db-4221-a7cd-3e73ba2408d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\Player">
+      <UniqueIdentifier>{ec76bce2-7c43-486d-9977-4163add5a699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\Funtion">
+      <UniqueIdentifier>{b18c1d74-e02a-427f-a13e-1741050e88ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Ray">
+      <UniqueIdentifier>{7467c8e4-6fa0-4053-818c-e1a83d239aa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Ray\Transform">
+      <UniqueIdentifier>{6d792925-6583-4999-8168-c2019a661826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Beez">
+      <UniqueIdentifier>{285e449f-a07c-4c03-a87f-b83bc31dbeb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\DevilTree">
+      <UniqueIdentifier>{a20de712-01b3-48f3-a04a-543d4acf9eb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\FlowerDryad">
+      <UniqueIdentifier>{9efefa8c-2d8f-46e2-8786-31c76a586b33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Rabbys">
+      <UniqueIdentifier>{92f36b0b-5d5a-4428-a078-f31fe0634a6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Plantas">
+      <UniqueIdentifier>{19b211c0-b3e6-4195-bc5f-503d718bd72e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Normal\Turnipa">
+      <UniqueIdentifier>{ef66074c-2d63-4b92-97d9-14d5e1b0ab95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -75,7 +174,7 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>00.imgui</Filter>
     </ClInclude>
-    <ClInclude Include="LabProject08-8-6(Fbx Animation).h">
+    <ClInclude Include="AnimatedShot.h">
       <Filter>00.MainApp</Filter>
     </ClInclude>
     <ClInclude Include="GameFramework.h">
@@ -99,9 +198,6 @@
     <ClInclude Include="DDSTextureLoader12.h">
       <Filter>98.Default</Filter>
     </ClInclude>
-    <ClInclude Include="FbxSceneContext.h">
-      <Filter>98.Default</Filter>
-    </ClInclude>
     <ClInclude Include="WICTextureLoader12.h">
       <Filter>98.Default</Filter>
     </ClInclude>
@@ -123,8 +219,117 @@
     <ClInclude Include="Timer.h">
       <Filter>02.GameObjects\Timer</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="Mathmatics.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="DoranSword.h">
+      <Filter>02.GameObjects\UI\BaseAim</Filter>
+    </ClInclude>
+    <ClInclude Include="Party1.h">
+      <Filter>02.GameObjects\Party\Party1</Filter>
+    </ClInclude>
+    <ClInclude Include="Party2.h">
+      <Filter>02.GameObjects\Party\Party2</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>04.Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server_Framework\protocol.h">
+      <Filter>04.Network</Filter>
+    </ClInclude>
+    <ClInclude Include="N_Header.h">
+      <Filter>04.Network</Filter>
+    </ClInclude>
+    <ClInclude Include="CCatusoObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Catuso</Filter>
+    </ClInclude>
+    <ClInclude Include="CMegaGolemAObject.h">
+      <Filter>02.GameObjects\Monster\Normal\MegaGolemA</Filter>
+    </ClInclude>
+    <ClInclude Include="CMegaGolemBObject.h">
+      <Filter>02.GameObjects\Monster\Normal\MegaGolemB</Filter>
+    </ClInclude>
+    <ClInclude Include="CRatoObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Rato</Filter>
+    </ClInclude>
+    <ClInclude Include="CScorpiontoObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Scorpionto</Filter>
+    </ClInclude>
+    <ClInclude Include="CWormoObject.h">
+      <Filter>02.GameObjects\Monster\Normal\CWormo</Filter>
+    </ClInclude>
+    <ClInclude Include="CAntoObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Anto</Filter>
+    </ClInclude>
+    <ClInclude Include="CGolemChildObject.h">
+      <Filter>02.GameObjects\Monster\Normal\CGolemChild</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>97.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Base.h">
+      <Filter>97.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>05.Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>05.Collider\AABB</Filter>
+    </ClInclude>
+    <ClInclude Include="OBB.h">
+      <Filter>05.Collider\OBB</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>05.Collider\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugDraw.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>03.Manager\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="PartyManager.h">
+      <Filter>03.Manager\Party</Filter>
+    </ClInclude>
+    <ClInclude Include="PipeLine.h">
+      <Filter>03.Manager\PipeLine</Filter>
+    </ClInclude>
     <ClInclude Include="PlayerManager.h">
-      <Filter>03.Manager</Filter>
+      <Filter>03.Manager\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>99.Defines\Funtion</Filter>
+    </ClInclude>
+    <ClInclude Include="Picking.h">
+      <Filter>02.GameObjects\Ray</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>02.GameObjects\Ray\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DirectXTK-main\Inc\PrimitiveBatch.h" />
+    <ClInclude Include="CBeezObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Beez</Filter>
+    </ClInclude>
+    <ClInclude Include="CDevilTreeObject.h">
+      <Filter>02.GameObjects\Monster\Normal\DevilTree</Filter>
+    </ClInclude>
+    <ClInclude Include="CDryadObject.h">
+      <Filter>02.GameObjects\Monster\Normal\FlowerDryad</Filter>
+    </ClInclude>
+    <ClInclude Include="CTurnipaObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Turnipa</Filter>
+    </ClInclude>
+    <ClInclude Include="CRabbyObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Rabbys</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlantaObject.h">
+      <Filter>02.GameObjects\Monster\Normal\Plantas</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,7 +354,7 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>00.imgui</Filter>
     </ClCompile>
-    <ClCompile Include="LabProject08-8-6(Fbx Animation).cpp">
+    <ClCompile Include="AnimatedShot.cpp">
       <Filter>00.MainApp</Filter>
     </ClCompile>
     <ClCompile Include="GameFramework.cpp">
@@ -165,9 +370,6 @@
       <Filter>98.Default</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader12.cpp">
-      <Filter>98.Default</Filter>
-    </ClCompile>
-    <ClCompile Include="FbxSceneContext.cpp">
       <Filter>98.Default</Filter>
     </ClCompile>
     <ClCompile Include="WICTextureLoader12.cpp">
@@ -188,8 +390,105 @@
     <ClCompile Include="Timer.cpp">
       <Filter>02.GameObjects\Timer</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="DoranSword.cpp">
+      <Filter>02.GameObjects\UI\BaseAim</Filter>
+    </ClCompile>
+    <ClCompile Include="Party1.cpp">
+      <Filter>02.GameObjects\Party\Party1</Filter>
+    </ClCompile>
+    <ClCompile Include="Party2.cpp">
+      <Filter>02.GameObjects\Party\Party2</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>04.Network</Filter>
+    </ClCompile>
+    <ClCompile Include="CCatusoObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Catuso</Filter>
+    </ClCompile>
+    <ClCompile Include="CMegaGolemAObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\MegaGolemA</Filter>
+    </ClCompile>
+    <ClCompile Include="CMegaGolemBObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\MegaGolemB</Filter>
+    </ClCompile>
+    <ClCompile Include="CRatoObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Rato</Filter>
+    </ClCompile>
+    <ClCompile Include="CScorpiontoObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Scorpionto</Filter>
+    </ClCompile>
+    <ClCompile Include="CWormoObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\CWormo</Filter>
+    </ClCompile>
+    <ClCompile Include="CAntoObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Anto</Filter>
+    </ClCompile>
+    <ClCompile Include="CGolemChildObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\CGolemChild</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>97.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Base.cpp">
+      <Filter>97.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>05.Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="AABB.cpp">
+      <Filter>05.Collider\AABB</Filter>
+    </ClCompile>
+    <ClCompile Include="OBB.cpp">
+      <Filter>05.Collider\OBB</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>05.Collider\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugDraw.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>03.Manager\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="PartyManager.cpp">
+      <Filter>03.Manager\Party</Filter>
+    </ClCompile>
+    <ClCompile Include="PipeLine.cpp">
+      <Filter>03.Manager\PipeLine</Filter>
+    </ClCompile>
     <ClCompile Include="PlayerManager.cpp">
-      <Filter>03.Manager</Filter>
+      <Filter>03.Manager\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Picking.cpp">
+      <Filter>02.GameObjects\Ray</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>02.GameObjects\Ray\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="PrimitiveBatch.cpp" />
+    <ClCompile Include="CBeezObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Beez</Filter>
+    </ClCompile>
+    <ClCompile Include="CDevilTreeObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\DevilTree</Filter>
+    </ClCompile>
+    <ClCompile Include="CDryadObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\FlowerDryad</Filter>
+    </ClCompile>
+    <ClCompile Include="CTurnipaObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Turnipa</Filter>
+    </ClCompile>
+    <ClCompile Include="CRabbyObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Rabbys</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlantaObject.cpp">
+      <Filter>02.GameObjects\Monster\Normal\Plantas</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,7 +505,25 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders.hlsl">
+    <FxCompile Include="Animation.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="Light.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyBox.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="Terrain.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="WireFrame.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="Texture.hlsl">
+      <Filter>97.ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="UI.hlsl">
       <Filter>97.ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

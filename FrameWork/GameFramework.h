@@ -5,6 +5,8 @@
 
 #include "Timer.h"
 #include "Player.h"
+#include "Party1.h"
+#include "Party2.h"
 #include "Scene.h"
 
 class CGameFramework
@@ -40,8 +42,6 @@ public:
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
-
-	void CreateFbxSdkManager();
 
 private:
 	HINSTANCE					m_hInstance;
@@ -84,13 +84,12 @@ private:
 
 	CScene						*m_pScene = NULL;
 	CPlayer						*m_pPlayer = NULL;
+	CParty1						*m_pParty1 = NULL;
+	CParty2						*m_pParty2 = NULL;
 	CCamera						*m_pCamera = NULL;
 
 	POINT						m_ptOldCursorPos;
 
 	_TCHAR						m_pszFrameRate[70];
-
-	FbxManager 					*m_pfbxSdkManager = NULL;
-	FbxScene  					*m_pfbxScene = NULL;
 };
 

@@ -615,7 +615,7 @@ HRESULT DirectX::LoadWICTextureFromMemoryEx(
         return hr;
 
     _Analysis_assume_(*texture != nullptr);
-    SetDebugObjectName(*texture, L"WICTextureLoader");
+   // SetDebugObjectName(*texture, L"WICTextureLoader");
 
     return hr;
 }

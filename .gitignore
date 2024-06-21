@@ -1,32 +1,25 @@
-# Prerequisites
-*.d
+/.vs 
+/FBX SDK
+/DirectXTK-main
+/FrameWork/x64
+/FrameWork/AnimatedShot
+/FrameWork/Model
+/FrameWork/Monster
+/FrameWork/Skybox
+/FrameWork/Sound
+/FrameWork/Terrain
+/Server_Framework/x64
+/Server_Framework/Server_Framework
+*.exe 
+*.ilk 
+*.pdb 
+*.obj 
+*.log 
+*.pch 
+*.idb 
+*.tlog 
+*.ipch
+*.lastbuildstate 
+*.suo 
+*.db 
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app

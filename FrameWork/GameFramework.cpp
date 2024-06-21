@@ -4,6 +4,12 @@
 
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "Shader.h"
+#include "Object.h"
+#include "N_Header.h"
+#include "Network.h"
+#include "PlayerManager.h"
+#include "PartyManager.h"
 
 CGameFramework::CGameFramework()
 {
@@ -39,12 +45,18 @@ CGameFramework::CGameFramework()
 
 CGameFramework::~CGameFramework()
 {
-}
+} 
 
 bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 {
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
+	WSADATA wsadata;
+	WSAStartup(MAKEWORD(2, 2), &wsadata);
+
+	CNetwork::Get_Instance()->SetSocket();
+	CNetwork::Get_Instance()->SocketInit();
+	CNetwork::Get_Instance()->ConnectSocket();
 
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
@@ -124,8 +136,8 @@ void CGameFramework::CreateDirect3DDevice()
 
 	UINT nDXGIFactoryFlags = 0;
 #if defined(_DEBUG)
-	ID3D12Debug *pd3dDebugController = NULL;
-	hResult = D3D12GetDebugInterface(__uuidof(ID3D12Debug), (void **)&pd3dDebugController);
+	ID3D12Debug* pd3dDebugController = NULL;
+	hResult = D3D12GetDebugInterface(__uuidof(ID3D12Debug), (void**)&pd3dDebugController);
 	if (pd3dDebugController)
 	{
 		pd3dDebugController->EnableDebugLayer();
@@ -134,22 +146,22 @@ void CGameFramework::CreateDirect3DDevice()
 	nDXGIFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 
-	hResult = ::CreateDXGIFactory2(nDXGIFactoryFlags, __uuidof(IDXGIFactory4), (void **)&m_pdxgiFactory);
+	hResult = ::CreateDXGIFactory2(nDXGIFactoryFlags, __uuidof(IDXGIFactory4), (void**)&m_pdxgiFactory);
 
-	IDXGIAdapter1 *pd3dAdapter = NULL;
+	IDXGIAdapter1* pd3dAdapter = NULL;
 
 	for (UINT i = 0; DXGI_ERROR_NOT_FOUND != m_pdxgiFactory->EnumAdapters1(i, &pd3dAdapter); i++)
 	{
 		DXGI_ADAPTER_DESC1 dxgiAdapterDesc;
 		pd3dAdapter->GetDesc1(&dxgiAdapterDesc);
 		if (dxgiAdapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;
-		if (SUCCEEDED(D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void **)&m_pd3dDevice))) break;
+		if (SUCCEEDED(D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void**)&m_pd3dDevice))) break;
 	}
 
 	if (!pd3dAdapter)
 	{
-		m_pdxgiFactory->EnumWarpAdapter(_uuidof(IDXGIFactory4), (void **)&pd3dAdapter);
-		hResult = D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void **)&m_pd3dDevice);
+		m_pdxgiFactory->EnumWarpAdapter(_uuidof(IDXGIFactory4), (void**)&pd3dAdapter);
+		hResult = D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void**)&m_pd3dDevice);
 	}
 
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS d3dMsaaQualityLevels;
@@ -161,12 +173,14 @@ void CGameFramework::CreateDirect3DDevice()
 	m_nMsaa4xQualityLevels = d3dMsaaQualityLevels.NumQualityLevels;
 	m_bMsaa4xEnable = (m_nMsaa4xQualityLevels > 1) ? true : false;
 
-	hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void **)&m_pd3dFence);
+	hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)&m_pd3dFence);
 	for (UINT i = 0; i < m_nSwapChainBuffers; i++) m_nFenceValues[i] = 0;
 
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	if (pd3dAdapter) pd3dAdapter->Release();
+	// Get DescriptorIncrementSize
+	::gnCbvSrvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void CGameFramework::CreateCommandQueueAndList()
@@ -395,48 +409,38 @@ void CGameFramework::OnDestroy()
 
 #define _WITH_TERRAIN_PLAYER
 
-void CGameFramework::CreateFbxSdkManager()
-{
-	m_pfbxSdkManager = FbxManager::Create();
-	FbxIOSettings *pfbxIOSettings = FbxIOSettings::Create(m_pfbxSdkManager, IOSROOT);
-	m_pfbxSdkManager->SetIOSettings(pfbxIOSettings);
-	FbxString fbxstrPath = ::FbxGetApplicationDirectory();
-	m_pfbxSdkManager->LoadPluginsDirectory(fbxstrPath.Buffer());
-}
-
 void CGameFramework::BuildObjects()
 {
-	CreateFbxSdkManager();
-
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-#ifdef _WITH_FBX_SCENE_INSTANCING
-	m_pfbxScene = ::LoadFbxSceneFromFile(m_pd3dDevice, m_pd3dCommandList, m_pfbxSdkManager, "Model/Angrybot.fbx");
-#endif
 	m_pScene = new CScene();
-	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pfbxSdkManager, m_pfbxScene);
+	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-#ifdef _WITH_FBX_SCENE_INSTANCING
-	::CreateMeshFromFbxNodeHierarchy(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pfbxScene->GetRootNode());
-#endif
+	/*CShader* pShader = new CShader();
+	pShader->SetObjectsShader(m_pd3dDevice);*/
 
-	CAngrybotPlayer *pPlayer = new CAngrybotPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pfbxSdkManager, m_pfbxScene);
+	CAngrybotPlayer* pPlayer = new CAngrybotPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+	CAngrybotParty1* pParty1 = new CAngrybotParty1(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+	CAngrybotParty2* pParty2 = new CAngrybotParty2(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+	m_pScene->m_pParty1 = m_pParty1 = pParty1;
+	m_pScene->m_pParty2 = m_pParty2 = pParty2;
+
+	//m_pPlayer->SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pd3dCommandList->Close();
-	ID3D12CommandList *ppd3dCommandLists[] = { m_pd3dCommandList };
+	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 	WaitForGpuComplete();
 
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
+	if (m_pParty1) m_pParty1->ReleaseUploadBuffers();
+	//if (m_pParty2) m_pParty2->ReleaseUploadBuffers();
 
-#ifdef _WITH_FBX_SCENE_INSTANCING
-	if (m_pfbxScene) ::ReleaseUploadBufferFromFbxNodeHierarchy(m_pfbxScene->GetRootNode());
-#endif
 	m_GameTimer.Reset();
 }
 
@@ -452,7 +456,6 @@ void CGameFramework::ReleaseObjects()
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
 
-    if (m_pfbxSdkManager) m_pfbxSdkManager->Destroy();
 }
 
 void CGameFramework::ProcessInput()
@@ -469,6 +472,16 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+		
+	/*	if (CPlayerManager::Get_Instance()->Get_MoveKey()!= 0)
+		{
+			if (dwDirection == 0)
+			{
+				CPlayerManager::Get_Instance()->Set_MoveKey(dwDirection);
+				CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);
+			}
+		}*/
+		CPlayerManager::Get_Instance()->Set_MoveKey(dwDirection);
 
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
@@ -490,10 +503,12 @@ void CGameFramework::ProcessInput()
 				else
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
 			}
-			if (dwDirection) m_pPlayer->Move(dwDirection, 20.25f, true);
+			if (dwDirection) m_pPlayer->Move(dwDirection, 22.5f, true);
 		}
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
+	m_pParty1->Update(m_GameTimer.GetTimeElapsed());
+	m_pParty2->Update(m_GameTimer.GetTimeElapsed());
 }
 
 void CGameFramework::AnimateObjects()
@@ -503,6 +518,8 @@ void CGameFramework::AnimateObjects()
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed);
+	m_pParty1->Animate(fTimeElapsed);
+	m_pParty2->Animate(fTimeElapsed);
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -571,8 +588,35 @@ void CGameFramework::FrameAdvance()
 #ifdef _WITH_PLAYER_TOP
 	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif
-	if (m_pPlayer) m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
+	/*if (m_pPlayer)
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+	if (m_pParty1) 
+		m_pParty1->Render(m_pd3dCommandList, m_pCamera);
+	if (m_pParty2) 
+		m_pParty2->Render(m_pd3dCommandList, m_pCamera);*/
+
+	if (m_pPlayer)
+		if (CPlayerManager::Get_Instance()->Get_Login())
+		{
+			m_pPlayer->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, (int)CPlayerManager::Get_Instance()->Get_Type(), NULL);
+			CPlayerManager::Get_Instance()->Set_Login(false);
+		}
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+	if (m_pParty1)
+		if (CNetwork::Get_Instance()->GetAddParty1Packet())
+		{
+			m_pParty1->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, (int)CPartyManager::Get_Instance()->Get_Party1Type(), NULL);
+			CNetwork::Get_Instance()->SetAddParty1Packet(false);
+		}
+	m_pParty1->Render(m_pd3dCommandList, m_pCamera);
+	if (m_pParty2)
+		if (CNetwork::Get_Instance()->GetAddParty2Packet())
+		{
+			m_pParty2->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, (int)CPartyManager::Get_Instance()->Get_Party2Type(), NULL);
+			CNetwork::Get_Instance()->SetAddParty2Packet(false);
+		}
+	m_pParty2->Render(m_pd3dCommandList, m_pCamera);
 	d3dResourceBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	d3dResourceBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	d3dResourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;

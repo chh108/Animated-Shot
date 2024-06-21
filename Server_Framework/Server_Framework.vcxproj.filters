@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\00.Main">
+      <UniqueIdentifier>{938be76c-c9a9-4ea1-9d6d-9238257ce0f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\98.Default">
+      <UniqueIdentifier>{82bbde15-3d44-4b4f-bc62-21d573726194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Main\GameServer">
+      <UniqueIdentifier>{7942be55-3b35-4c0d-aeab-deee0c09b0eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Packet">
+      <UniqueIdentifier>{e5c1800d-3657-4b08-8827-3ca9d144d374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\03.Network">
+      <UniqueIdentifier>{1719601f-2c32-43c7-a763-e82c056ae4d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\03.Network\EXP_OVER">
+      <UniqueIdentifier>{67ad08b3-668c-43b1-8ce3-452950aca7bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\03.Network\Session">
+      <UniqueIdentifier>{693c047b-3c20-4837-bb5b-0bc18a3f6862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.DB">
+      <UniqueIdentifier>{e8b1e166-8278-45dc-abef-24684cc7c18c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02.Object">
+      <UniqueIdentifier>{b823b117-b2c1-4343-b7db-1dbf2afaf464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02.Object\User">
+      <UniqueIdentifier>{db22d19f-b3b8-46bb-9b23-f51eae6490c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02.Object\Monster">
+      <UniqueIdentifier>{ffd63345-d2b2-4cc3-8cf1-adaa615e7dbf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일\00.Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServer.cpp">
+      <Filter>소스 파일\00.Main\GameServer</Filter>
+    </ClCompile>
+    <ClCompile Include="EXP_Over.cpp">
+      <Filter>소스 파일\03.Network\EXP_OVER</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.cpp">
+      <Filter>소스 파일\04.Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>소스 파일\03.Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="DBConnection.cpp">
+      <Filter>소스 파일\05.DB</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>소스 파일\02.Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>소스 파일\02.Object\User</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameServer.h">
+      <Filter>소스 파일\00.Main\GameServer</Filter>
+    </ClInclude>
+    <ClInclude Include="EXP_Over.h">
+      <Filter>소스 파일\03.Network\EXP_OVER</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>소스 파일\98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>소스 파일\04.Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>소스 파일\04.Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>소스 파일\03.Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="DBConnection.h">
+      <Filter>소스 파일\05.DB</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>소스 파일\02.Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>소스 파일\02.Object\User</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

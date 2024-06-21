@@ -44,7 +44,7 @@ void CGameTimer::Tick(float fLockFPS)
 	        ::QueryPerformanceCounter((LARGE_INTEGER *)&m_nCurrentPerformanceCounter);
 	        fTimeElapsed = float((m_nCurrentPerformanceCounter - m_nLastPerformanceCounter) * m_fTimeScale);
         }
-    } 
+    }
 
 	m_nLastPerformanceCounter = m_nCurrentPerformanceCounter;
 

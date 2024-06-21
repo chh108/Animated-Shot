@@ -9,6 +9,7 @@
 
 #include "Object.h"
 #include "Camera.h"
+#include "Client_Defines.h"
 
 class CPlayer : public CGameObject
 {
@@ -34,6 +35,11 @@ protected:
 	LPVOID						m_pCameraUpdatedContext = NULL;
 
 	CCamera						*m_pCamera = NULL;
+
+	int							m_iTpye = 0; // 0 - 공격 1 - 방어 2 - 힐러
+
+public:
+	int							m_iCurrentState = PS_IDLE;
 
 public:
 	CPlayer();
@@ -66,7 +72,7 @@ public:
 	void Move(float fxOffset = 0.0f, float fyOffset = 0.0f, float fzOffset = 0.0f);
 	void Rotate(float x, float y, float z);
 
-	void Update(float fTimeElapsed);
+	virtual void Update(float fTimeElapsed);
 
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed) { }
 	void SetPlayerUpdatedContext(LPVOID pContext) { m_pPlayerUpdatedContext = pContext; }
@@ -83,15 +89,38 @@ public:
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
+
+	virtual void SetTextureByType(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nType, void* pArg);
 };
+
+class CSoundCallbackHandler : public CAnimationCallbackHandler
+{
+public:
+	CSoundCallbackHandler() { }
+	~CSoundCallbackHandler() { }
+
+public:
+	virtual void HandleCallback(void* pCallbackData, float fTrackPosition);
+};
+
+#define _WITH_SOUND_CALLBACK
 
 class CAngrybotPlayer : public CPlayer
 {
 public:
-	CAngrybotPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, FbxManager *pfbxSdkManager, FbxScene *pfbxScene);
+	CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL);
 	virtual ~CAngrybotPlayer();
 
 public:
+	virtual void OnPrepareRender();
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
+
+	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+	virtual void OnCameraUpdateCallback(float fTimeElapsed);
+
+#ifdef _WITH_SOUND_CALLBACK
+	virtual void Move(ULONG nDirection, float fDistance, bool bVelocity = false);
+	virtual void Update(float fTimeElapsed);
+#endif
 };
 

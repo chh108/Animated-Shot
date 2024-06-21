@@ -1432,7 +1432,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
     {
         if (texture != 0 && *texture != 0)
         {
-            SetDebugObjectName(*texture, L"DDSTextureLoader");
+            //SetDebugObjectName(*texture, L"DDSTextureLoader");
         }
 
         if (alphaMode)
