@@ -27,22 +27,7 @@ CPlayer::CPlayer() : CGameObject(1)
 	m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_fMaxVelocityXZ = 0.0f;
 	m_fMaxVelocityY = 0.0f;
-	m_fFriction = 0.0f;
-
-	CBullet* pBullet = NULL;
-
-	for (int i = 0; i < BULLET; i++)
-	{
-		pBullet = new CBullet();
-		pBullet->SetPosition(0.0f, 0.0f, 0.0f);
-		pBullet->SetScale(1.0f, 1.0f, 1.0f);
-		pBullet->Rotate(0.0f, 0.0f, 0.0f);
-		pBullet->m_xmf3MovingDir = GetLook();
-		pBullet->m_fDuringTime = 2.5f;
-
-		m_ppBullets[i] = pBullet;
-		m_ppBullets[i]->m_bActive = false; // MAKE BULLET FOR PLAYER
-	}
+	m_fFriction = 0.0f;	
 
 	//m_pxmf4x4Trans = new XMFLOAT4X4
 	//{
@@ -301,10 +286,6 @@ void CPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamer
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
 	if (nCameraMode == THIRD_PERSON_CAMERA) CGameObject::Render(pd3dCommandList, pCamera);
-
-	for (int i = 0; i < BULLET; i++)
-		if (m_ppBullets[i]->m_bActive)
-			m_ppBullets[i]->Render(pd3dCommandList, pCamera);
 }
 
 void CPlayer::SetTextureByType(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nType, void* pArg)
@@ -334,21 +315,6 @@ void CPlayer::SetTextureByType(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetMaterial(0, pNewMaterial);
 }
 
-void CPlayer::FireBullet()
-{
-	for (int i = 0; i < BULLET; i++)
-	{
-		if (!m_ppBullets[i]->m_bActive)
-		{
-			m_ppBullets[i]->SetPosition(GetPosition());
-			m_ppBullets[i]->UpdateTransform();
-			m_ppBullets[i]->UpdateBoundingBox();
-			m_ppBullets[i]->m_xmf3MovingDir = XMFLOAT3(GetLook().x, GetLook().y, GetLook().z);
-			m_ppBullets[i]->m_bActive = true;
-			break;
-		}
-	}
-}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
 //#define _WITH_DEBUG_CALLBACK_DATA
@@ -385,6 +351,24 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 		"Monster/Rabby_Queen.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
+
+	
+	CLoadedModelInfo* pBulletModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
+	CBullet* pBullet = NULL;
+	// bullet 만들어줘야 함.
+
+	for (int i = 0; i < BULLET; i++)
+	{
+		pBullet = new CBullet();
+		pBullet->SetPosition(0.0f, 0.0f, 0.0f);
+		pBullet->SetScale(1.0f, 1.0f, 1.0f);
+		pBullet->Rotate(0.0f, 0.0f, 0.0f);
+		pBullet->m_xmf3MovingDir = GetLook();
+		pBullet->m_fDuringTime = 2.5f;
+
+		m_ppBullets[i] = pBullet;
+		m_ppBullets[i]->m_bBullet = false; // MAKE BULLET FOR PLAYER
+	}
 
 	/*CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
 	CMaterial* pMaterial = CMaterial::v_Materials[16];
@@ -495,6 +479,31 @@ void CAngrybotPlayer::OnPrepareRender()
 	//m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationX(-90.0f), m_xmf4x4ToParent);
 }
 
+void CAngrybotPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	CPlayer::Render(pd3dCommandList, pCamera);
+
+	for (int i = 0; i < BULLET; i++)
+		if (m_ppBullets[i]->m_bBullet)
+			m_ppBullets[i]->Render(pd3dCommandList, pCamera);
+}
+
+void CAngrybotPlayer::FireBullet()
+{
+	for (int i = 0; i < BULLET; i++)
+	{
+		if (!m_ppBullets[i]->m_bBullet)
+		{
+			m_ppBullets[i]->SetPosition(GetPosition());
+			m_ppBullets[i]->UpdateTransform();
+			m_ppBullets[i]->UpdateBoundingBox();
+			m_ppBullets[i]->m_xmf3MovingDir = XMFLOAT3(GetLook().x, GetLook().y, GetLook().z);
+			m_ppBullets[i]->m_bBullet = true;
+			break;
+		}
+	}
+}
+
 CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 {
 	DWORD nCurrentCameraMode = (m_pCamera) ? m_pCamera->GetMode() : 0x00;
@@ -584,6 +593,18 @@ void CAngrybotPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	}
 }
 
+void CAngrybotPlayer::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
+{
+	for (int i = 0; i < BULLET; i++)
+	{
+		if (m_ppBullets[i]->m_bBullet)
+		{
+			m_ppBullets[i]->Rotate(0.0f, fTimeElapsed, 0.0f);
+			m_ppBullets[i]->Animate(fTimeElapsed);
+		}
+	}
+}
+
 #ifdef _WITH_SOUND_CALLBACK
 void CAngrybotPlayer::Move(ULONG dwDirection, float fDistance, bool bUpdateVelocity)
 {
@@ -637,5 +658,7 @@ void CAngrybotPlayer::Update(float fTimeElapsed)
 		}
 		//HY
 	}
+
 }
 #endif
+

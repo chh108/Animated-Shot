@@ -46,10 +46,6 @@ public:
 	CPlayer();
 	virtual ~CPlayer();
 
-	CBullet*					m_ppBullets[BULLET]{};
-
-	void FireBullet();
-
 	XMFLOAT3 GetPosition() { return(m_xmf3Position); }
 	XMFLOAT3 GetLookVector() { return(m_xmf3Look); }
 	XMFLOAT3 GetUpVector() { return(m_xmf3Up); }
@@ -116,8 +112,11 @@ public:
 	CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL);
 	virtual ~CAngrybotPlayer();
 
+	CBullet*			m_ppBullets[BULLET];
+
 public:
 	virtual void OnPrepareRender();
+	virtual void Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL);
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
 
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
@@ -126,6 +125,10 @@ public:
 #ifdef _WITH_SOUND_CALLBACK
 	virtual void Move(ULONG nDirection, float fDistance, bool bVelocity = false);
 	virtual void Update(float fTimeElapsed);
+
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
+	void FireBullet();
+
 #endif
 };
 
