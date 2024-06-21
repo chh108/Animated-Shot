@@ -601,19 +601,30 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 		}
 	}
 
-	for (int i = 0; i < m_nGameObjects; i++) // Render Bullet 0606
-	{
-		for (int j = 0; j < BULLET; j++)
-			if (m_pPlayer->m_ppBullets[j]->m_bActive)
-			{
-				m_pPlayer->m_ppBullets[j]->Render(pd3dCommandList, pCamera);
-			}
-	}
-
 	for (int i = 0; i < m_nShaders; i++) 
 		if (m_ppShaders[i]) 
 			m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 
 
 	if (m_pDoranSword) m_pDoranSword->Render(pd3dCommandList, pCamera);
+}
+
+void CScene::CheckCollision()
+{
+	CBullet** ppBullets = ((CAngrybotPlayer*)m_pPlayer)->m_ppBullets;
+	for (int i = 0; i < m_nGameObjects; ++i)
+	{
+		if (m_ppGameObjects[i]->m_bActive && !((CGameObject*)m_ppGameObjects[i])->m_bActive)
+		{
+			for (int j = 0; j < BULLET; j++)
+			{
+				if (ppBullets[j]->m_bBullet && m_ppGameObjects[i]->m_xmOOBB_Object.Intersects(ppBullets[j]->m_xmOOBB_Object))
+				{
+					ppBullets[j]->Reset();
+					// m_pPlayer->Score++; // 추후 추가 
+					((CGameObject*)m_ppGameObjects[i])->m_bActive = false; // 추후에 죽는 애니메이션 실행되도록 수정.
+				}
+			}
+		}
+	}
 }
