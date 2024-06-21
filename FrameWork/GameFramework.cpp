@@ -339,7 +339,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 					ChangeSwapChainState();
 					break;
 				case VK_CONTROL:
-					((CPlayer*)m_pPlayer)->FireBullet();
+					((CAngrybotPlayer*)m_pPlayer)->FireBullet();
 				default:
 					break;
 			}

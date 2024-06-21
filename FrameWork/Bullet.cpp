@@ -4,8 +4,8 @@
 
 CBullet::CBullet()
 {
-	m_xmOOBB_Object = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	m_xmOOBB_Parent = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_xmOOBB_Object = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_xmOOBB_Parent = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
 CBullet::~CBullet()
@@ -14,7 +14,7 @@ CBullet::~CBullet()
 
 void CBullet::AnimateBullet(float fElapsedTime)
 {
-	if (m_bActive)
+	if (m_bBullet)
 	{
 		m_fElapsedTime += fElapsedTime;
 		if (m_fDuringTime > m_fElapsedTime)
@@ -38,5 +38,5 @@ void CBullet::Reset()
 {
 	m_fElapsedTime = 0.0f;
 	m_xmf3MovingDir = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_bActive = false;
+	m_bBullet = false;
 }
