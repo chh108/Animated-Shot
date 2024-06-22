@@ -114,6 +114,7 @@ public:
 	int									m_nShaders = 0;
 	CShader								**m_ppShaders = NULL;
 
+	CBullet								*m_pBullet = NULL;
 	CSkyBox								*m_pSkyBox = NULL;
 	CHeightMapTerrain					*m_pTerrain = NULL;
 

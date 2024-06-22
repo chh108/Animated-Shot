@@ -353,13 +353,12 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
 	// 20240622 
-	CCubeMesh* pMesh = new CCubeMesh(pd3dDevice, pd3dCommandList, 1.0f, 1.0f, 1.0f);
+
 	CBullet* pBullet = NULL;
 
 	for (int i = 0; i < BULLET; i++)
 	{
-		pBullet = new CBullet();
-		pBullet->SetMesh(pMesh);
+		pBullet = new CBullet(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 		pBullet->SetPosition(0.0f, 0.0f, 0.0f);
 		pBullet->SetScale(1.0f, 1.0f, 1.0f);
 		pBullet->Rotate(0.0f, 0.0f, 0.0f);
@@ -480,16 +479,16 @@ void CAngrybotPlayer::OnPrepareRender()
 
 void CAngrybotPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	CPlayer::Render(pd3dCommandList, pCamera);
-
-	for (int i = 0; i < BULLET; i++)
+	for (int i = 0; i < BULLET; ++i)
 		if (m_ppBullets[i]->m_bBullet)
 			m_ppBullets[i]->Render(pd3dCommandList, pCamera);
+
+	CPlayer::Render(pd3dCommandList, pCamera);
 }
 
 void CAngrybotPlayer::FireBullet()
 {
-	for (int i = 0; i < BULLET; i++)
+	for (int i = 0; i < BULLET; ++i)
 	{
 		if (!m_ppBullets[i]->m_bBullet)
 		{
@@ -500,6 +499,14 @@ void CAngrybotPlayer::FireBullet()
 			m_ppBullets[i]->m_bBullet = true;
 			break;
 		}
+	}
+}
+
+void CAngrybotPlayer::ResetBullet()
+{
+	for (int i = 0; i < BULLET; ++i)
+	{
+		m_ppBullets[i]->Reset();
 	}
 }
 
