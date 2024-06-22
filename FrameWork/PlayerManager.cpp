@@ -43,4 +43,3 @@ char CPlayerManager::Get_Type()
 {
 	return m_cType;
 }
-

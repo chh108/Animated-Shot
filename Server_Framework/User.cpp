@@ -72,7 +72,11 @@ void CUser::send_move_packet(int c_id, CUser& cl)
 
 void CUser::send_fail_move_packet(int c_id, CUser& cl)
 {
-
+	SC_MOVE_FAIL_PLAYER_PACKET p;
+	p.id = cl.m_cId;
+	p.type = SC_MOVE_FAIL_PLAYER;
+	p.size = sizeof(p);
+	do_send(&p);
 }
 
 void CUser::send_camera_packet(int c_id, CUser& cl)
@@ -112,12 +116,12 @@ void CUser::send_remove_packet(int c_id, CUser& cl)
 
 DirectX::XMFLOAT3 CUser::Compute_Min()
 {
-	return DirectX::XMFLOAT3(x - 0.3f, y - 0.3f, z - 0.3f);
+	return DirectX::XMFLOAT3(x - 3.f, y - 3.f, z - 3.f);
 }
 
 DirectX::XMFLOAT3 CUser::Compute_Max()
 {
-	return DirectX::XMFLOAT3(x + 0.3f, y + 0.3f, z + 0.3f);
+	return DirectX::XMFLOAT3(x + 3.f, y + 3.f, z + 3.f);
 }
 
 bool CUser::Collision_AABB(CUser* pTargetUser)

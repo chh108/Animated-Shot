@@ -60,6 +60,9 @@ public:
 	XMFLOAT3 Get_Scale() { return m_fScale; };
 	void Set_Scale(XMFLOAT3 fScale) { m_fScale = fScale;};
 
+	bool Get_Coll() { return m_bColl; }
+	void Set_Coll(bool Coll) { m_bColl = Coll; }
+
 private:
 	static CPlayerManager* m_pInstance;
 
@@ -70,6 +73,7 @@ private:
 	DWORD		m_wMoveKey;
 	char		m_cAnimation = -1;
 	bool		m_bLogin = false;
+	bool		m_bColl;
 
 	XMFLOAT3	m_xmf3Look, m_xmf3Right, m_xmf3Up;
 	XMFLOAT3	m_fScale;

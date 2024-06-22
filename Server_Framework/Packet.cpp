@@ -43,8 +43,8 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 			std::cout << "로그인 실패" << std::endl;
 			clients[c_id].send_login_fail_packet();
 		}
-		break;
 	}
+	break;
 	case CS_MOVE:
 	{
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
@@ -97,12 +97,12 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 			}
 			else
 			{
-				pl.send_fail_move_packet(c_id, clients[c_id]);
+				pl.send_fail_move_packet(pl.m_cId, pl);
 				std::cout << "colliding!" << std::endl;
 			}
 		}
-		break;
 	}
+	break;
 	case CS_CAMERA:
 	{
 		CS_CAMERA_PACKET* p = reinterpret_cast<CS_CAMERA_PACKET*>(packet);
@@ -119,9 +119,10 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 			if (pl.m_cId == c_id)continue;
 			pl.send_camera_packet(c_id, clients[c_id]);
 		}
-		break;
 	}
+	break;
 	case CS_ANIMATION:
+	{
 		CS_ANIMATION_PACKET* p = reinterpret_cast<CS_ANIMATION_PACKET*>(packet);
 
 		clients[c_id].m_animation = p->animation;
@@ -134,6 +135,7 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 			if (pl.m_cId == c_id)continue;
 			pl.send_animation_packet(c_id, clients[c_id]);
 		}
-		break;
+	}
+	break;
 	}
 }

@@ -224,7 +224,12 @@ void CNetwork::ProcessPacket(char* packet)
 		}
 		break;
 	}
-
+	case SC_MOVE_FAIL_PLAYER:
+	{
+		SC_MOVE_FAIL_PLAYER_PACKET* p = reinterpret_cast<SC_MOVE_FAIL_PLAYER_PACKET*>(packet);
+		CPlayerManager::Get_Instance()->Set_Coll(true);
+		break;
+	}
 	case SC_CAMERA_PLAYER:
 	{
 		SC_CAMERA_PLAYER_PACKET* p = reinterpret_cast<SC_CAMERA_PLAYER_PACKET*>(packet);
@@ -248,11 +253,11 @@ void CNetwork::ProcessPacket(char* packet)
 		SC_ANIMATION_PLAYER_PACKET* p = reinterpret_cast<SC_ANIMATION_PLAYER_PACKET*>(packet);
 		if (p->id == CPartyManager::Get_Instance()->Get_Party1Id())
 		{
-			CPartyManager::Get_Instance()->Set_P1Animation(p->animation);
+			CPartyManager::Get_Instance()->Set_P1Animation((PLAYERSTATE)p->animation);
 		}
 		else if (p->id == CPartyManager::Get_Instance()->Get_Party2Id())
 		{
-			CPartyManager::Get_Instance()->Set_P2Animation(p->animation);
+			CPartyManager::Get_Instance()->Set_P2Animation((PLAYERSTATE)p->animation);
 		}
 		break;
 	}

@@ -175,6 +175,11 @@ void CPlayer::Rotate(float x, float y, float z)
 
 void CPlayer::Update(float fTimeElapsed)
 {
+	if (CPlayerManager::Get_Instance()->Get_Coll())
+	{
+		SetPosition(CPlayerManager::Get_Instance()->Get_Pos());
+		CPlayerManager::Get_Instance()->Set_Coll(true);
+	}
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, m_xmf3Gravity);
 	float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 	float fMaxVelocityXZ = m_fMaxVelocityXZ;
@@ -225,6 +230,8 @@ void CPlayer::Update(float fTimeElapsed)
 		CPlayerManager::Get_Instance()->Set_xmf3Right(GetRightVector());        //유월이일
 		CNetwork::Get_Instance()->SetSendPacket(CS_CAMERA);					//HY
 	}
+
+
 }
 
 CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)

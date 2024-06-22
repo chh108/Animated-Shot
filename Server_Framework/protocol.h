@@ -8,14 +8,17 @@ constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
 constexpr char CS_CAMERA = 2;
 constexpr char CS_ANIMATION = 3;
+constexpr char CS_BULLET = 4;
 
-constexpr char SC_LOGIN_FAIL = 4;
-constexpr char SC_LOGIN_SUCESS_INFO = 5;
-constexpr char SC_ADD_PLAYER = 6;
-constexpr char SC_REMOVE_PLAYER = 7;
-constexpr char SC_MOVE_PLAYER = 8;
-constexpr char SC_CAMERA_PLAYER = 9;
-constexpr char SC_ANIMATION_PLAYER = 10;
+constexpr char SC_LOGIN_FAIL = 5;
+constexpr char SC_LOGIN_SUCESS_INFO = 6;
+constexpr char SC_ADD_PLAYER = 7;
+constexpr char SC_REMOVE_PLAYER = 8;
+constexpr char SC_MOVE_PLAYER = 9;
+constexpr char SC_MOVE_FAIL_PLAYER = 10;
+constexpr char SC_CAMERA_PLAYER = 11;
+constexpr char SC_ANIMATION_PLAYER = 12;
+constexpr char SC_BULLET_COLLISION = 13;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET {
@@ -96,8 +99,13 @@ struct SC_MOVE_PLAYER_PACKET {
 	unsigned char size;
 	char	type;
 	short	id;
-	char	chartype;
 	float	x, y, z;
+};
+
+struct SC_MOVE_FAIL_PLAYER_PACKET {
+	unsigned char size;
+	char	type;
+	short	id;
 };
 
 struct SC_CAMERA_PLAYER_PACKET
