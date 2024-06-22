@@ -352,19 +352,22 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Monster/Rabby_Queen.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
-	
+	// 20240622 
 	CLoadedModelInfo* pBulletModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
+	SetChild(pBulletModel->m_pModelRootObject, true);
+
 	CBullet* pBullet = NULL;
-	// bullet 만들어줘야 함.
 
 	for (int i = 0; i < BULLET; i++)
 	{
 		pBullet = new CBullet();
+		pBullet->SetMesh(pBulletModel->m_pModelRootObject->m_pMesh);
+		pBullet->m_ppMaterials = pBulletModel->m_pModelRootObject->m_ppMaterials;
+		pBullet->m_nMaterials = pBulletModel->m_pModelRootObject->m_nMaterials;
 		pBullet->SetPosition(0.0f, 0.0f, 0.0f);
 		pBullet->SetScale(1.0f, 1.0f, 1.0f);
 		pBullet->Rotate(0.0f, 0.0f, 0.0f);
 		pBullet->m_xmf3MovingDir = GetLook();
-		pBullet->m_fDuringTime = 2.5f;
 
 		m_ppBullets[i] = pBullet;
 		m_ppBullets[i]->m_bBullet = false; // MAKE BULLET FOR PLAYER
@@ -497,7 +500,7 @@ void CAngrybotPlayer::FireBullet()
 			m_ppBullets[i]->SetPosition(GetPosition());
 			m_ppBullets[i]->UpdateTransform();
 			m_ppBullets[i]->UpdateBoundingBox();
-			m_ppBullets[i]->m_xmf3MovingDir = XMFLOAT3(GetLook().x, GetLook().y, GetLook().z);
+			m_ppBullets[i]->m_xmf3MovingDir = XMFLOAT3(GetLook().x, GetLook().y + m_fCorrection, GetLook().z);
 			m_ppBullets[i]->m_bBullet = true;
 			break;
 		}
@@ -515,6 +518,7 @@ CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, -400.0f, 0.0f));
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
+		m_fCorrection = 0;
 		m_pCamera = OnChangeCamera(FIRST_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.0f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 20.0f, 0.0f));
@@ -527,6 +531,7 @@ CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
+		m_fCorrection = 0;
 		m_pCamera = OnChangeCamera(SPACESHIP_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.0f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -539,6 +544,7 @@ CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, -250.0f, 0.0f));
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
+		m_fCorrection = -(2.5/30);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 50.0f, -70.0f));
@@ -595,6 +601,8 @@ void CAngrybotPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 
 void CAngrybotPlayer::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 {
+	CPlayer::Animate(fTimeElapsed);
+
 	for (int i = 0; i < BULLET; i++)
 	{
 		if (m_ppBullets[i]->m_bBullet)

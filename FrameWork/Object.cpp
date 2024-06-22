@@ -1503,7 +1503,7 @@ CGameObject* CGameObject::LoadGeometryFromFile(ID3D12Device* pd3dDevice, ID3D12G
 	::fopen_s(&pInFile, pstrFileName, "rb");
 	::rewind(pInFile);
 
-	CGameObject* pGameObject = NULL;
+	CGameObject *pGameObject = NULL;
 	char pstrToken[64] = { '\0' };
 
 	int nFrames = 0, nSkinnedMeshes = 0;
