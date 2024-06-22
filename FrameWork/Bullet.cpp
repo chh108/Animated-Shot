@@ -7,7 +7,7 @@
 
 CBullet::CBullet(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature) : CGameObject(1)
 {
-	CCubeMesh* pCubeMesh = new CCubeMesh(pd3dDevice, pd3dCommandList, 5.0f, 5.0f, 2.0f);
+	CCubeMesh* pCubeMesh = new CCubeMesh(pd3dDevice, pd3dCommandList, 4.0f, 4.0f, 2.0f);
 	SetMesh(pCubeMesh);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);

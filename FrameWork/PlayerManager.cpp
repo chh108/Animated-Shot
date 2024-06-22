@@ -29,6 +29,7 @@ XMFLOAT3 CPlayerManager::Get_Shift()
 {
 	return m_fShiftPos;
 }
+
 void CPlayerManager::Set_Shift(XMFLOAT3 fPlayerPos)
 {
 	m_fShiftPos = fPlayerPos;

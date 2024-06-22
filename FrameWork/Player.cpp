@@ -668,8 +668,15 @@ void CAngrybotPlayer::Update(float fTimeElapsed)
 			CNetwork::Get_Instance()->SetSendPacket(CS_ANIMATION);
 		}
 		//HY
-	}
 
+		for (int i = 0; i < BULLET; i++)
+		{
+			if (m_ppBullets[i]->m_bBullet)
+			{
+				m_ppBullets[i]->AnimateBullet(fTimeElapsed);
+			}
+		}
+	}
 }
 #endif
 
