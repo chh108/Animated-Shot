@@ -1,5 +1,6 @@
 #pragma once
 #include "Session.h"
+#include "stdafx.h"
 
 enum CHARACTER_TYPE { C_HEALER, C_DEALER, C_TANKER };
 class CUser : public CSession

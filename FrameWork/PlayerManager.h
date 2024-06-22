@@ -57,6 +57,9 @@ public:
 	char Get_Login() { return m_bLogin; };
 	void Set_Login(char Login) { m_bLogin = Login; };
 
+	XMFLOAT3 Get_Scale() { return m_fScale; };
+	void Set_Scale(XMFLOAT3 fScale) { m_fScale = fScale;};
+
 private:
 	static CPlayerManager* m_pInstance;
 
@@ -68,6 +71,7 @@ private:
 	char		m_cAnimation = -1;
 	bool		m_bLogin = false;
 
-	XMFLOAT3 m_xmf3Look, m_xmf3Right, m_xmf3Up;
+	XMFLOAT3	m_xmf3Look, m_xmf3Right, m_xmf3Up;
+	XMFLOAT3	m_fScale;
 };
 

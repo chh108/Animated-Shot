@@ -126,4 +126,3 @@ public:
 	virtual void Update(float fTimeElapsed);
 #endif
 };
-

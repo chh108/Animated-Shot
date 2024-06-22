@@ -444,6 +444,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	SetPosition(CPlayerManager::Get_Instance()->Get_Pos());
 	SetScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	CPlayerManager::Get_Instance()->Set_Pos(GetPosition());
+	CPlayerManager::Get_Instance()->Set_Scale(GetScale());
 }
 
 CAngrybotPlayer::~CAngrybotPlayer()

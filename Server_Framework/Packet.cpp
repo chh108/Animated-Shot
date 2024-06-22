@@ -21,7 +21,6 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 		if (DB->Login(p->name, clients[c_id]))
 		{
 			std::cout << "로그인 성공" << std::endl;
-			/*strcpy_s(clients[c_id].m_cName, p->name);*/
 			clients[c_id].send_login_info_packet();
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			{
@@ -35,7 +34,6 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 				}
 				if (pl.m_cId == c_id) continue;
 				pl.send_add_player_packet(c_id, clients[c_id]);
-				std::this_thread::sleep_for(std::chrono::seconds(1));
 				clients[c_id].send_add_player_packet(pl.m_cId, pl);
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 			}
@@ -86,12 +84,6 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 		clients[c_id].y = p->y;
 		clients[c_id].z = p->z;
 
-		bool isColliding = clients[c_id].Collision_AABB();
-
-		if (isColliding)
-			std::cout << "Users are colliding!" << std::endl;
-		else
-			std::cout << "Users are not colliding." << std::endl;
 		for (auto& pl : clients) {
 			{
 				std::lock_guard<std::mutex> ll{ pl.m_s_lock };
@@ -99,9 +91,15 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 			}
 			if (pl.m_cId == c_id)continue;
 			if (!clients[c_id].Collision_AABB(&pl))
+			{
 				pl.send_move_packet(c_id, clients[c_id]);
+				std::cout << "not colliding." << std::endl;
+			}
 			else
+			{
 				pl.send_fail_move_packet(c_id, clients[c_id]);
+				std::cout << "colliding!" << std::endl;
+			}
 		}
 		break;
 	}

@@ -50,6 +50,15 @@ struct CS_ANIMATION_PACKET
 	char	animation;
 };
 
+struct CS_BULLET_PACKET {
+	unsigned char size;
+	char	type;
+	float	x;
+	float	y;
+	float	z;
+	float	extend;
+};
+
 struct SC_LOGIN_SUCESS_INFO_PACKET {
 	unsigned char size;
 	char	type;
@@ -109,4 +118,13 @@ struct SC_ANIMATION_PLAYER_PACKET
 	short	id;
 	char	animation;
 };
+
+struct SC_BULLET_COLLISION_PACKET {
+	unsigned char size;
+	char	type;
+	bool	IsColl;
+	char	hp;
+};
+
+
 #pragma pack (pop)

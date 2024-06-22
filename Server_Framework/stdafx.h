@@ -21,6 +21,8 @@
 #include <wchar.h>
 #include <new>
 #include <DirectXMath.h>
+#include <algorithm>
+
 
 #include "protocol.h"
 #pragma comment(lib, "ws2_32")

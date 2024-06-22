@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\protocol.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:protocol.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:User.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -11,28 +15,87 @@
       "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:Packet.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:User.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party1.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\DBConnection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:DBConnection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\AABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PartyManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\AABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PlayerManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CBeezObject.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CCatusoObject.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Transform.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Transform.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\AABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PartyManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Client_Defines.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\stdafx.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:stdafx.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Network.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CBeezObject.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\AABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:User.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\Packet.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:Packet.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\GameFramework.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Player.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65253246-029B-47B6-BA29-ECAB89223433}|..\\FrameWork\\LabProject08-8-6(Fbx Animation).vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Object.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\DBConnection.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:DBConnection.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\DBConnection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:DBConnection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -53,10 +116,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\EXP_Over.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:EXP_Over.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\protocol.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{CE05EB30-6C9E-49D4-8DB8-C84FEC4C0E35}|Server_Framework.vcxproj|solutionrelative:protocol.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Party1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -125,12 +184,116 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 250,
-          "SelectedChildIndex": 7,
+          "DockedWidth": 218,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 18,
+              "Title": "CBeezObject.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CBeezObject.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\CBeezObject.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CBeezObject.cpp",
+              "RelativeToolTip": "..\\FrameWork\\CBeezObject.cpp",
+              "ViewState": "AQIAABsAAAAAAAAAAAAAAEEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T05:06:25.229Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CCatusoObject.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CCatusoObject.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\CCatusoObject.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CCatusoObject.cpp",
+              "RelativeToolTip": "..\\FrameWork\\CCatusoObject.cpp",
+              "ViewState": "AQIAADMAAAAAAAAAAADwvzwAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T05:06:10.96Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Network.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Network.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Network.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Network.cpp",
+              "RelativeToolTip": "..\\FrameWork\\Network.cpp",
+              "ViewState": "AQIAADYAAAAAAAAAAADwv1QAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T04:50:49.747Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "User.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.cpp",
+              "RelativeDocumentMoniker": "User.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.cpp",
+              "RelativeToolTip": "User.cpp",
+              "ViewState": "AQIAAG8AAAAAAAAAAAAAAIsAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-02T08:27:18.872Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "GameFramework.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\GameFramework.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\GameFramework.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\GameFramework.cpp",
+              "RelativeToolTip": "..\\FrameWork\\GameFramework.cpp",
+              "ViewState": "AQIAAJUBAAAAAAAAAAAAAKUBAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T05:09:49.821Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Party2.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party2.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Party2.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party2.cpp",
+              "RelativeToolTip": "..\\FrameWork\\Party2.cpp",
+              "ViewState": "AQIAACwBAAAAAAAAAADwv0IBAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T07:20:44.716Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "User.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.h",
+              "RelativeDocumentMoniker": "User.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.h",
+              "RelativeToolTip": "User.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-02T08:29:36.696Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Party1.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party1.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Party1.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party1.cpp",
+              "RelativeToolTip": "..\\FrameWork\\Party1.cpp",
+              "ViewState": "AQIAAAsCAAAAAAAAAAAAACYCAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T07:20:28.306Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
               "Title": "GameServer.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\GameServer.h",
               "RelativeDocumentMoniker": "GameServer.h",
@@ -143,7 +306,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 28,
               "Title": "DBConnection.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\DBConnection.h",
               "RelativeDocumentMoniker": "DBConnection.h",
@@ -156,20 +319,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 27,
               "Title": "DBConnection.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\DBConnection.cpp",
               "RelativeDocumentMoniker": "DBConnection.cpp",
               "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\DBConnection.cpp",
               "RelativeToolTip": "DBConnection.cpp",
-              "ViewState": "AQIAAHUAAAAAAAAAAAAAAJQAAAAJAAAA",
+              "ViewState": "AQIAAGYAAAAAAAAAAAAAAHMAAAAmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-02T07:59:42.274Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 29,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\main.cpp",
               "RelativeDocumentMoniker": "main.cpp",
@@ -182,7 +345,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 40,
               "Title": "Object.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Object.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Object.cpp",
@@ -194,46 +357,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 31,
               "Title": "GameServer.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\GameServer.cpp",
               "RelativeDocumentMoniker": "GameServer.cpp",
               "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\GameServer.cpp",
               "RelativeToolTip": "GameServer.cpp",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAACoAAAACAAAA",
+              "ViewState": "AQIAABAAAAAAAAAAAABAwCoAAAACAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-02T07:59:46.653Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "User.h",
-              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.h",
-              "RelativeDocumentMoniker": "User.h",
-              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.h",
-              "RelativeToolTip": "User.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAPAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-06-02T08:29:36.696Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "User.cpp",
-              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.cpp",
-              "RelativeDocumentMoniker": "User.cpp",
-              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\User.cpp",
-              "RelativeToolTip": "User.cpp",
-              "ViewState": "AQIAADMAAAAAAAAAAAAvwEkAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-06-02T08:27:18.872Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 39,
               "Title": "Network.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Network.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Network.h",
@@ -245,7 +382,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 38,
               "Title": "Player.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Player.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Player.cpp",
@@ -257,7 +394,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 37,
               "Title": "Object.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Object.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Object.h",
@@ -269,7 +406,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 36,
               "Title": "Network.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Network.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Network.cpp",
@@ -281,7 +418,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 35,
               "Title": "Party2.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Party2.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Party2.h",
@@ -293,7 +430,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 41,
               "Title": "GameFramework.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\GameFramework.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\GameFramework.cpp",
@@ -305,7 +442,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 42,
               "Title": "Party1.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Party1.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Party1.h",
@@ -317,7 +454,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 43,
               "Title": "Player.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Player.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Player.h",
@@ -329,7 +466,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 44,
               "Title": "Camera.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Camera.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Camera.cpp",
@@ -341,7 +478,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 45,
               "Title": "Mesh.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Mesh.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Mesh.cpp",
@@ -353,7 +490,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 46,
               "Title": "AnimatedShot.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\AnimatedShot.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\AnimatedShot.h",
@@ -365,7 +502,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 47,
               "Title": "AnimatedShot.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\AnimatedShot.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\AnimatedShot.cpp",
@@ -378,12 +515,38 @@
           ]
         },
         {
-          "DockedWidth": 150,
-          "SelectedChildIndex": 5,
+          "DockedWidth": 182,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
+              "Title": "Party1.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party1.h",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Party1.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Party1.h",
+              "RelativeToolTip": "..\\FrameWork\\Party1.h",
+              "ViewState": "AQIAABgAAAAAAAAAAAAAADcAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T08:40:11.31Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Collider.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Collider.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.cpp",
+              "RelativeToolTip": "..\\FrameWork\\Collider.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-21T16:10:00.864Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "Collider.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.h",
               "RelativeDocumentMoniker": "..\\FrameWork\\Collider.h",
@@ -397,32 +560,149 @@
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "Collider.cpp",
-              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.cpp",
-              "RelativeDocumentMoniker": "..\\FrameWork\\Collider.cpp",
-              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Collider.cpp",
-              "RelativeToolTip": "..\\FrameWork\\Collider.cpp",
+              "Title": "CBeezObject.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CBeezObject.h",
+              "RelativeDocumentMoniker": "..\\FrameWork\\CBeezObject.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\CBeezObject.h",
+              "RelativeToolTip": "..\\FrameWork\\CBeezObject.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvw8AAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T08:01:43.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PlayerManager.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PlayerManager.h",
+              "RelativeDocumentMoniker": "..\\FrameWork\\PlayerManager.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PlayerManager.h",
+              "RelativeToolTip": "..\\FrameWork\\PlayerManager.h",
+              "ViewState": "AQIAACcAAAAAAAAAAADwvzgAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T08:10:25.28Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Packet.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\Packet.cpp",
+              "RelativeDocumentMoniker": "Packet.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\Packet.cpp",
+              "RelativeToolTip": "Packet.cpp",
+              "ViewState": "AQIAAFoAAAAAAAAAAAAAAHQAAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-02T08:07:10.799Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "protocol.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\protocol.h",
+              "RelativeDocumentMoniker": "protocol.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\protocol.h",
+              "RelativeToolTip": "protocol.h",
+              "ViewState": "AQIAAFwAAAAAAAAAAAAAAHUAAAAKAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-02T08:05:19.952Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Transform.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Transform.h",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Transform.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Transform.h",
+              "RelativeToolTip": "..\\FrameWork\\Transform.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T08:39:19.299Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Transform.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Transform.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Transform.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Transform.cpp",
+              "RelativeToolTip": "..\\FrameWork\\Transform.cpp",
               "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-06-21T16:10:00.864Z",
+              "WhenOpened": "2024-06-22T08:39:18.16Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
+              "Title": "PartyManager.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PartyManager.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\PartyManager.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PartyManager.cpp",
+              "RelativeToolTip": "..\\FrameWork\\PartyManager.cpp",
+              "ViewState": "AQIAAEUAAAAAAAAAAADwv18AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T08:37:50.42Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "PartyManager.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PartyManager.h",
+              "RelativeDocumentMoniker": "..\\FrameWork\\PartyManager.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\PartyManager.h",
+              "RelativeToolTip": "..\\FrameWork\\PartyManager.h",
+              "ViewState": "AQIAAD8AAAAAAAAAAADwv0oAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T08:37:54.266Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "stdafx.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\stdafx.h",
+              "RelativeDocumentMoniker": "stdafx.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\stdafx.h",
+              "RelativeToolTip": "stdafx.h",
+              "ViewState": "AQIAABIAAAAAAAAAAADwvxEAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T08:18:39.788Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Player.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Player.h",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Player.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Player.h",
+              "RelativeToolTip": "..\\FrameWork\\Player.h",
+              "ViewState": "AQIAABUAAAAAAAAAAADwv0AAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T05:13:42.987Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "AABB.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\AABB.cpp",
               "RelativeDocumentMoniker": "..\\FrameWork\\AABB.cpp",
               "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\AABB.cpp",
               "RelativeToolTip": "..\\FrameWork\\AABB.cpp",
-              "ViewState": "AQIAAE4AAAAAAAAAAAAAAFUAAAAAAAAA",
+              "ViewState": "AQIAADkAAAAAAAAAAAAAAF8AAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-21T15:31:56.522Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 19,
               "Title": "AABB.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\AABB.h",
               "RelativeDocumentMoniker": "..\\FrameWork\\AABB.h",
@@ -435,7 +715,46 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 22,
+              "Title": "Player.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Player.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Player.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Player.cpp",
+              "RelativeToolTip": "..\\FrameWork\\Player.cpp",
+              "ViewState": "AQIAAKIBAAAAAAAAAAAAAL4BAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T04:54:26.774Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Packet.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\Packet.h",
+              "RelativeDocumentMoniker": "Packet.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\Packet.h",
+              "RelativeToolTip": "Packet.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvw4AAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T04:51:55.937Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "Object.cpp",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Object.cpp",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Object.cpp",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Object.cpp",
+              "RelativeToolTip": "..\\FrameWork\\Object.cpp",
+              "ViewState": "AQIAAHwDAAAAAAAAAAAAAI8DAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-06-22T04:54:24.515Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
               "Title": "EXP_Over.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\EXP_Over.h",
               "RelativeDocumentMoniker": "EXP_Over.h",
@@ -448,20 +767,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Packet.cpp",
-              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\Packet.cpp",
-              "RelativeDocumentMoniker": "Packet.cpp",
-              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\Packet.cpp",
-              "RelativeToolTip": "Packet.cpp",
-              "ViewState": "AQIAAE4AAAAAAAAAAAAAAGcAAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-06-02T08:07:10.799Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 33,
               "Title": "EXP_Over.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\EXP_Over.cpp",
               "RelativeDocumentMoniker": "EXP_Over.cpp",
@@ -474,7 +780,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 34,
               "Title": "Party1.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Party1.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Party1.cpp",
@@ -482,12 +788,11 @@
               "RelativeToolTip": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Party1.cpp",
               "ViewState": "AQIAABYCAAAAAAAAAAAAADACAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-06-02T08:36:11.98Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-02T08:36:11.98Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 49,
               "Title": "PartyManager.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\PartyManager.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\PartyManager.h",
@@ -499,7 +804,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 50,
               "Title": "PlayerManager.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\PlayerManager.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\PlayerManager.h",
@@ -511,7 +816,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 51,
               "Title": "PartyManager.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\PartyManager.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\PartyManager.cpp",
@@ -523,20 +828,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "protocol.h",
-              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\protocol.h",
-              "RelativeDocumentMoniker": "protocol.h",
-              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\Server_Framework\\protocol.h",
-              "RelativeToolTip": "protocol.h",
-              "ViewState": "AQIAADMAAAAAAAAAAAAAABMAAAAWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-06-02T08:05:19.952Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 48,
               "Title": "Party2.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\Party2.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\Party2.cpp",
@@ -548,7 +840,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 52,
               "Title": "N_Header.h",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\N_Header.h",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\N_Header.h",
@@ -560,7 +852,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 53,
               "Title": "PlayerManager.cpp",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Graduation_Project\\FrameWork\\FrameWork\\PlayerManager.cpp",
               "RelativeDocumentMoniker": "..\\..\\Graduation_Project\\FrameWork\\FrameWork\\PlayerManager.cpp",
@@ -569,6 +861,40 @@
               "ViewState": "AQIAABIAAAAAAAAAAAAAACoAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-02T08:21:32.713Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "a3c27339-8922-4d4c-a587-dd16ec036633",
+        "Display": 1,
+        "X": 176,
+        "Y": 185,
+        "Width": 955,
+        "Height": 1065,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Client_Defines.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Client_Defines.h",
+              "RelativeDocumentMoniker": "..\\FrameWork\\Client_Defines.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\HyeYeon\\Animated-Shot\\FrameWork\\Client_Defines.h",
+              "RelativeToolTip": "..\\FrameWork\\Client_Defines.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwgAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-22T08:38:10.539Z",
+              "EditorCaption": ""
             }
           ]
         }

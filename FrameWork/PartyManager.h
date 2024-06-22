@@ -73,11 +73,11 @@ public:
 	XMFLOAT3 Get_P2Up() { return m_P2f3Up; };
 	void Set_P2Up(XMFLOAT3 xmf3Up) { m_P2f3Up = xmf3Up; };	
 
-	char Get_P1Animation() { return m_Party1Animation; };
-	void Set_P1Animation(char Animation) { m_Party1Animation = Animation; };
+	PLAYERSTATE Get_P1Animation() { return m_Party1Animation; };
+	void Set_P1Animation(PLAYERSTATE Animation) { m_Party1Animation = Animation; };
 
-	char Get_P2Animation() { return m_Party2Animation; };
-	void Set_P2Animation(char Animation) { m_Party2Animation = Animation; };
+	PLAYERSTATE Get_P2Animation() { return m_Party2Animation; };
+	void Set_P2Animation(PLAYERSTATE Animation) { m_Party2Animation = Animation; };
 
 	char Get_P1State() { return m_Party1State; };
 	void Set_P1State(char Party1State) { m_Party1State = Party1State; };
@@ -119,8 +119,8 @@ private:
 	XMFLOAT3	m_P2f3Up;
 	XMFLOAT3	m_P2f3Look;
 
-	char		m_Party1Animation;
-	char		m_Party2Animation;
+	PLAYERSTATE		m_Party1Animation;
+	PLAYERSTATE		m_Party2Animation;
 
 	bool		m_Party1State = false;
 	bool		m_Party2State = false;

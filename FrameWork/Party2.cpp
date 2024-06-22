@@ -172,12 +172,6 @@ void CParty2::Update(float fTimeElapsed)
 	SetUpVector(CPartyManager::Get_Instance()->Get_P2Up());
 	SetRightVector(CPartyManager::Get_Instance()->Get_P2Right());
 
-	if (CNetwork::Get_Instance()->GetAddParty2Packet())
-	{
-		CPartyManager::Get_Instance()->Get_Party2Type();	//HH
-	}
-
-
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, m_xmf3Gravity);
 	float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 	float fMaxVelocityXZ = m_fMaxVelocityXZ;

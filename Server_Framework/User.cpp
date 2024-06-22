@@ -42,7 +42,7 @@ void CUser::send_add_player_packet(int c_id, CUser& cl)
 	add_packet.id = cl.m_cId;
 	strcpy_s(add_packet.name, m_cName);
 	add_packet.type = SC_ADD_PLAYER;
-	add_packet.chartype = cl.m_cId + 1;
+	add_packet.chartype = m_eType;
 	{
 		std::lock_guard<std::mutex> ll{ cl.m_p_lock };
 		add_packet.x = cl.x;
@@ -112,12 +112,12 @@ void CUser::send_remove_packet(int c_id, CUser& cl)
 
 DirectX::XMFLOAT3 CUser::Compute_Min()
 {
-	return DirectX::XMFLOAT3(x - 0.5f, y - 0.5f, z - 0.5f);
+	return DirectX::XMFLOAT3(x - 0.3f, y - 0.3f, z - 0.3f);
 }
 
 DirectX::XMFLOAT3 CUser::Compute_Max()
 {
-	return DirectX::XMFLOAT3(x + 0.5f, y + 0.5f, z + 0.5f);
+	return DirectX::XMFLOAT3(x + 0.3f, y + 0.3f, z + 0.3f);
 }
 
 bool CUser::Collision_AABB(CUser* pTargetUser)
@@ -127,6 +127,11 @@ bool CUser::Collision_AABB(CUser* pTargetUser)
 
 	DirectX::XMFLOAT3 vDestMin = pTargetUser->Compute_Min();
 	DirectX::XMFLOAT3 vDestMax = pTargetUser->Compute_Max();
+
+	std::cout << vSourMin.x << ", "<< vSourMin.y << ", " << vSourMin.z<< std::endl;
+	std::cout << vSourMax.x << ", "<< vSourMax.y << ", " << vSourMax.z<< std::endl;
+	std::cout << vDestMin.x << ", "<< vDestMin.y << ", " << vDestMin.z<< std::endl;
+	std::cout << vDestMax.x << ", "<< vDestMax.y << ", " << vDestMax.z<< std::endl;
 
 	/* ³Êºñ·Î °ãÃÆ´ÂÁö È®ÀÎ */
 	if (max(vSourMin.x, vDestMin.x) > min(vSourMax.x, vDestMax.x))
