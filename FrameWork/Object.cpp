@@ -1497,42 +1497,6 @@ CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd
 	return(pLoadedModel);
 }
 
-CGameObject* CGameObject::LoadGeometryFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader)
-{
-	FILE* pInFile = NULL;
-	::fopen_s(&pInFile, pstrFileName, "rb");
-	::rewind(pInFile);
-
-	CGameObject *pGameObject = NULL;
-	char pstrToken[64] = { '\0' };
-
-	int nFrames = 0, nSkinnedMeshes = 0;
-
-	for (; ; )
-	{
-		::ReadStringFromFile(pInFile, pstrToken);
-
-		if (!strcmp(pstrToken, "<Hierarchy>:"))
-		{
-			pGameObject = CGameObject::LoadFrameHierarchyFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, NULL, pInFile, pShader, &nSkinnedMeshes, &nFrames);
-		}
-		else if (!strcmp(pstrToken, "</Hierarchy>"))
-		{
-			break;
-		}
-	}
-
-#ifdef _WITH_DEBUG_FRAME_HIERARCHY
-	TCHAR pstrDebug[256] = { 0 };
-	_stprintf_s(pstrDebug, 256, _T("Frame Hierarchy\n"));
-	OutputDebugString(pstrDebug);
-
-	CGameObject::PrintFrameInfo(pGameObject, NULL);
-#endif
-
-	return(pGameObject);
-}
-
 void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 {
 	TCHAR pstrDebug[256] = { 0 };

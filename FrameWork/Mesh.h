@@ -101,6 +101,32 @@ public:
 	void LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
 };
 
+class CLoadMeshInfo // Check 
+{
+public:
+	CLoadMeshInfo() { }
+	~CLoadMeshInfo();
+
+public:
+	char			m_pstrMeshName[256] = { 0 };
+	UINT			m_nType = 0x00;
+
+	XMFLOAT3		m_xmf3AABBCenter = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3		m_xmf3AABBExtents = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	int				m_nVertices = 0;
+	XMFLOAT3		*m_pxmf3Positions = NULL;
+	XMFLOAT4		*m_pxmf4Colors = NULL;
+	XMFLOAT3		*m_pxmf3Normals = NULL;
+
+	int				m_nIndices = 0;
+	UINT			*m_pnIndices = NULL;
+
+	int				m_nSubMeshes = 0;
+	int				*m_pnSubSetIndices = NULL;
+	UINT			**m_ppnSubSetIndices = NULL;
+};
+
 class C2DUIMesh : public CMesh {
 public:
 	C2DUIMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth, float fHeight) : CMesh(pd3dDevice, pd3dCommandList) {
@@ -260,4 +286,14 @@ public:
 	virtual ~CSkyBoxMesh();
 
 	virtual void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext); //0509 SkyBoxRender
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class CCubeMesh : public CMesh
+{
+public:
+	CCubeMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth, float fHeight, float fDepth);
+	virtual ~CCubeMesh();
+
+	virtual void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext); //0622 Bullet
 };

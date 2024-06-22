@@ -353,17 +353,13 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
 	// 20240622 
-	CLoadedModelInfo* pBulletModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Monster/Cactuso.bin", NULL);
-	SetChild(pBulletModel->m_pModelRootObject, true);
-
+	CCubeMesh* pMesh = new CCubeMesh(pd3dDevice, pd3dCommandList, 1.0f, 1.0f, 1.0f);
 	CBullet* pBullet = NULL;
 
 	for (int i = 0; i < BULLET; i++)
 	{
 		pBullet = new CBullet();
-		pBullet->SetMesh(pBulletModel->m_pModelRootObject->m_pMesh);
-		pBullet->m_ppMaterials = pBulletModel->m_pModelRootObject->m_ppMaterials;
-		pBullet->m_nMaterials = pBulletModel->m_pModelRootObject->m_nMaterials;
+		pBullet->SetMesh(pMesh);
 		pBullet->SetPosition(0.0f, 0.0f, 0.0f);
 		pBullet->SetScale(1.0f, 1.0f, 1.0f);
 		pBullet->Rotate(0.0f, 0.0f, 0.0f);
