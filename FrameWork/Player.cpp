@@ -27,7 +27,7 @@ CPlayer::CPlayer() : CGameObject(1)
 	m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_fMaxVelocityXZ = 0.0f;
 	m_fMaxVelocityY = 0.0f;
-	m_fFriction = 0.0f;
+	m_fFriction = 0.0f;	
 
 	//m_pxmf4x4Trans = new XMFLOAT4X4
 	//{
@@ -43,6 +43,9 @@ CPlayer::CPlayer() : CGameObject(1)
 
 	m_pPlayerUpdatedContext = NULL;
 	m_pCameraUpdatedContext = NULL;
+
+	m_xmOOBB_Parent = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_xmOOBB_Object = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)); // Player Scale Get 해서 넘겨주기.
 }
 
 CPlayer::~CPlayer()
@@ -207,15 +210,13 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fDeceleration > fLength) fDeceleration = fLength;
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));		// false
 
-
-	if (GetPosition().x != CPlayerManager::Get_Instance()->Get_Pos().x ||
-		GetPosition().y != CPlayerManager::Get_Instance()->Get_Pos().y ||
+	if (GetPosition().x != CPlayerManager::Get_Instance()->Get_Pos().x||
+		GetPosition().y != CPlayerManager::Get_Instance()->Get_Pos().y || 
 		GetPosition().z != CPlayerManager::Get_Instance()->Get_Pos().z)
 	{
 		CPlayerManager::Get_Instance()->Set_Pos(GetPosition());        //유월이일
 		CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
 	}
-
 
 	if (GetLookVector().x != CPlayerManager::Get_Instance()->Get_xmf3Look().x ||
 		GetLookVector().y != CPlayerManager::Get_Instance()->Get_xmf3Look().y ||
@@ -232,8 +233,6 @@ void CPlayer::Update(float fTimeElapsed)
 		CPlayerManager::Get_Instance()->Set_xmf3Right(GetRightVector());        //유월이일
 		CNetwork::Get_Instance()->SetSendPacket(CS_CAMERA);					//HY
 	}
-
-
 }
 
 CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
@@ -358,6 +357,22 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 		"Monster/Rabby_Queen.bin", NULL);
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 
+	// 20240622 
+
+	CBullet* pBullet = NULL;
+
+	for (int i = 0; i < BULLET; i++)
+	{
+		pBullet = new CBullet(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+		pBullet->SetPosition(0.0f, 0.0f, 0.0f);
+		pBullet->SetScale(1.0f, 1.0f, 1.0f);
+		pBullet->Rotate(0.0f, 0.0f, 0.0f);
+		pBullet->m_xmf3MovingDir = GetLook();
+
+		m_ppBullets[i] = pBullet;
+		m_ppBullets[i]->m_bBullet = false; // MAKE BULLET FOR PLAYER
+	}
+
 	/*CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
 	CMaterial* pMaterial = CMaterial::v_Materials[16];
 	CTextureProperty TextureProperty = pMaterial->GetTextureProperty(0);
@@ -453,7 +468,6 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	SetPosition(CPlayerManager::Get_Instance()->Get_Pos());
 	SetScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	CPlayerManager::Get_Instance()->Set_Pos(GetPosition());
-	CPlayerManager::Get_Instance()->Set_Scale(GetScale());
 }
 
 CAngrybotPlayer::~CAngrybotPlayer()
@@ -468,6 +482,39 @@ void CAngrybotPlayer::OnPrepareRender()
 	//m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationX(-90.0f), m_xmf4x4ToParent);
 }
 
+void CAngrybotPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	for (int i = 0; i < BULLET; ++i)
+		if (m_ppBullets[i]->m_bBullet)
+			m_ppBullets[i]->Render(pd3dCommandList, pCamera);
+
+	CPlayer::Render(pd3dCommandList, pCamera);
+}
+
+void CAngrybotPlayer::FireBullet()
+{
+	for (int i = 0; i < BULLET; ++i)
+	{
+		if (!m_ppBullets[i]->m_bBullet)
+		{
+			m_ppBullets[i]->SetPosition(GetPosition());
+			m_ppBullets[i]->UpdateTransform();
+			//m_ppBullets[i]->UpdateBoundingBox();
+			m_ppBullets[i]->m_xmf3MovingDir = XMFLOAT3(GetLook().x, GetLook().y + m_fCorrection, GetLook().z);
+			m_ppBullets[i]->m_bBullet = true;
+			break;
+		}
+	}
+}
+
+void CAngrybotPlayer::ResetBullet()
+{
+	for (int i = 0; i < BULLET; ++i)
+	{
+		m_ppBullets[i]->Reset();
+	}
+}
+
 CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 {
 	DWORD nCurrentCameraMode = (m_pCamera) ? m_pCamera->GetMode() : 0x00;
@@ -479,6 +526,7 @@ CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, -400.0f, 0.0f));
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
+		m_fCorrection = 0;
 		m_pCamera = OnChangeCamera(FIRST_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.0f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 20.0f, 0.0f));
@@ -491,6 +539,7 @@ CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
+		m_fCorrection = 0;
 		m_pCamera = OnChangeCamera(SPACESHIP_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.0f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -503,6 +552,7 @@ CCamera* CAngrybotPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, -250.0f, 0.0f));
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
+		m_fCorrection = -(2.5/30);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 50.0f, -70.0f));
@@ -553,6 +603,20 @@ void CAngrybotPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 		{
 			CThirdPersonCamera* p3rdPersonCamera = (CThirdPersonCamera*)m_pCamera;
 			p3rdPersonCamera->SetLookAt(GetPosition());
+		}
+	}
+}
+
+void CAngrybotPlayer::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
+{
+	CPlayer::Animate(fTimeElapsed);
+
+	for (int i = 0; i < BULLET; i++)
+	{
+		if (m_ppBullets[i]->m_bBullet)
+		{
+			m_ppBullets[i]->Rotate(0.0f, fTimeElapsed, 0.0f);
+			m_ppBullets[i]->Animate(fTimeElapsed);
 		}
 	}
 }
@@ -609,6 +673,15 @@ void CAngrybotPlayer::Update(float fTimeElapsed)
 			CNetwork::Get_Instance()->SetSendPacket(CS_ANIMATION);
 		}
 		//HY
+
+		for (int i = 0; i < BULLET; i++)
+		{
+			if (m_ppBullets[i]->m_bBullet)
+			{
+				m_ppBullets[i]->AnimateBullet(fTimeElapsed);
+			}
+		}
 	}
 }
 #endif
+

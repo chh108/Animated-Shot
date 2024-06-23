@@ -170,6 +170,7 @@
     <ClInclude Include="..\Server_Framework\protocol.h" />
     <ClInclude Include="AABB.h" />
     <ClInclude Include="Base.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="CAntoObject.h" />
@@ -233,6 +234,7 @@
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Base.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CAntoObject.cpp" />

@@ -338,6 +338,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				case VK_F9:
 					ChangeSwapChainState();
 					break;
+				case VK_SPACE:
+					((CAngrybotPlayer*)m_pPlayer)->ResetBullet();
+				case VK_CONTROL:
+					((CAngrybotPlayer*)m_pPlayer)->FireBullet();
 				default:
 					break;
 			}
@@ -423,9 +427,9 @@ void CGameFramework::BuildObjects()
 	CAngrybotParty1* pParty1 = new CAngrybotParty1(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 	CAngrybotParty2* pParty2 = new CAngrybotParty2(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
-	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-	m_pScene->m_pParty1 = m_pParty1 = pParty1;
-	m_pScene->m_pParty2 = m_pParty2 = pParty2;
+	m_pScene->m_pPlayer = m_pPlayer = pPlayer; // 나
+	m_pScene->m_pParty1 = m_pParty1 = pParty1; // 파티1
+	m_pScene->m_pParty2 = m_pParty2 = pParty2; // 파티2
 
 	//m_pPlayer->SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_pCamera = m_pPlayer->GetCamera();
@@ -473,15 +477,9 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 		
-	/*	if (CPlayerManager::Get_Instance()->Get_MoveKey()!= 0)
-		{
-			if (dwDirection == 0)
-			{
-				CPlayerManager::Get_Instance()->Set_MoveKey(dwDirection);
-				CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);
-			}
-		}*/
-		CPlayerManager::Get_Instance()->Set_MoveKey(dwDirection);
+		
+		CPlayerManager::Get_Instance()->Set_MoveKey(dwDirection);			//HY
+		CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
 
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
@@ -589,34 +587,28 @@ void CGameFramework::FrameAdvance()
 	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif
 
-	/*if (m_pPlayer)
-		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
-	if (m_pParty1) 
-		m_pParty1->Render(m_pd3dCommandList, m_pCamera);
-	if (m_pParty2) 
-		m_pParty2->Render(m_pd3dCommandList, m_pCamera);*/
-
 	if (m_pPlayer)
-		if (CPlayerManager::Get_Instance()->Get_Login())
+		if (CNetwork::Get_Instance()->GetLoginPacket())
 		{
-			m_pPlayer->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, (int)CPlayerManager::Get_Instance()->Get_Type(), NULL);
-			CPlayerManager::Get_Instance()->Set_Login(false);
+			m_pPlayer->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPlayerManager::Get_Instance()->Get_Type()), NULL);
+			CNetwork::Get_Instance()->SetLoginPacket(false);
 		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 	if (m_pParty1)
 		if (CNetwork::Get_Instance()->GetAddParty1Packet())
 		{
-			m_pParty1->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, (int)CPartyManager::Get_Instance()->Get_Party1Type(), NULL);
+			m_pParty1->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPartyManager::Get_Instance()->Get_Party1Type()), NULL);
 			CNetwork::Get_Instance()->SetAddParty1Packet(false);
 		}
-	m_pParty1->Render(m_pd3dCommandList, m_pCamera);
+		m_pParty1->Render(m_pd3dCommandList, m_pCamera);
 	if (m_pParty2)
 		if (CNetwork::Get_Instance()->GetAddParty2Packet())
 		{
-			m_pParty2->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, (int)CPartyManager::Get_Instance()->Get_Party2Type(), NULL);
+			m_pParty2->SetTextureByType(m_pd3dDevice, m_pd3dCommandList, int(CPartyManager::Get_Instance()->Get_Party2Type()), NULL);
 			CNetwork::Get_Instance()->SetAddParty2Packet(false);
 		}
-	m_pParty2->Render(m_pd3dCommandList, m_pCamera);
+		m_pParty2->Render(m_pd3dCommandList, m_pCamera);
+
 	d3dResourceBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	d3dResourceBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	d3dResourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
@@ -650,7 +642,13 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
 	size_t nLength = _tcslen(m_pszFrameRate);
 	XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
-	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%4f, %4f, %4f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
+	int count = 0;
+	for (int i = 0; i < BULLET; i++)
+	{
+		if (!((CAngrybotPlayer*)m_pPlayer)->m_ppBullets[i]->m_bBullet)
+			count++;
+	}
+	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%4f, %4f, %4f), Bullet: %d"), xmf3Position.x, xmf3Position.y, xmf3Position.z, count);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
 

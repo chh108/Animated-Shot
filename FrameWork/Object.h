@@ -510,6 +510,7 @@ public:
 
 public:
 	bool							m_bActive = true;
+	bool							m_bBullet = false;
 
 	char							m_pstrFrameName[64];
 
@@ -537,6 +538,11 @@ public:
 	CGameObject*					m_pParent = NULL;
 	CGameObject*					m_pChild = NULL;
 	CGameObject*					m_pSibling = NULL;
+
+	// ADD BOUNDING BOX
+	BoundingOrientedBox m_xmOOBB_Parent = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	BoundingOrientedBox m_xmOOBB_Object = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	// XMFLOAT 3 -> Center of the box. XMFLOAT3 -> Distance from the center to each side. XMFLOAT4 -> Unit quaternion representing rotation (box -> world).
 
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);
@@ -597,6 +603,8 @@ public:
 
 	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0x00); }
 
+	//void UpdateBoundingBox(); // 0608
+
 public:
 	CAnimationController *m_pSkinnedAnimationController = NULL;
 
@@ -612,7 +620,10 @@ public:
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader, int* pnSkinnedMeshes, int* pnFrames);
 
 	static CLoadedModelInfo* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader);
-
+	
+	//202406 Ãß°¡
+	static CGameObject* LoadGeometryFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName);
+	
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 };
 

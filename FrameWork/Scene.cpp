@@ -94,7 +94,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 60); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
+	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 60);
 
 	InitializeShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -182,7 +182,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	CLoadedModelInfo* pRabbyModel = NULL;
 	m_ppGameObjects[11] = new CRabbyObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pRabbyModel, 1);
 	m_ppGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, MS_DAMAGE);
-	m_ppGameObjects[9]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
+	m_ppGameObjects[11]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5f);
 	m_ppGameObjects[11]->SetPosition(150.0f, m_pTerrain->GetHeight(150.0f, 200.0f), 200.0f);
 	if (pRabbyModel) delete pRabbyModel;
 
@@ -566,7 +566,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	m_fElapsedTime = fTimeElapsed;
 
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
-
 	if (m_pLights)
 	{
 		m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
@@ -605,6 +604,25 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 		if (m_ppShaders[i]) 
 			m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 
-
 	if (m_pDoranSword) m_pDoranSword->Render(pd3dCommandList, pCamera);
+}
+
+void CScene::CheckCollision()
+{
+	CBullet** ppBullets = ((CAngrybotPlayer*)m_pPlayer)->m_ppBullets;
+	for (int i = 0; i < m_nGameObjects; ++i)
+	{
+		if (m_ppGameObjects[i]->m_bActive && !((CGameObject*)m_ppGameObjects[i])->m_bActive)
+		{
+			for (int j = 0; j < BULLET; j++)
+			{
+				if (ppBullets[j]->m_bBullet && m_ppGameObjects[i]->m_xmOOBB_Object.Intersects(ppBullets[j]->m_xmOOBB_Object))
+				{
+					ppBullets[j]->Reset();
+					// m_pPlayer->Score++; // 추후 추가 
+					((CGameObject*)m_ppGameObjects[i])->m_bActive = false; // 추후에 죽는 애니메이션 실행되도록 수정.
+				}
+			}
+		}
+	}
 }
