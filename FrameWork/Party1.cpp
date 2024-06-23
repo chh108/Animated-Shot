@@ -534,8 +534,8 @@ void CAngrybotParty1::Update(float fTimeElapsed)
 		{
 		case PS_IDLE:
 			//if (!::IsZero(fLength)) {
-				m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
-				m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, true);
+				m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, true);
+				m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, false);
 			//}
 			break;
 		case PS_WALK:
@@ -545,8 +545,8 @@ void CAngrybotParty1::Update(float fTimeElapsed)
 			//	float fDuration = m_pSkinnedAnimationController->m_pAnimationTracks[PS_WALK].m_fLength;
 
 				//if (fCurrent >= fDuration) {
-					m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, Moving);
-					m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, !Moving);
+					m_pSkinnedAnimationController->SetTrackEnable(PS_IDLE, false);
+					m_pSkinnedAnimationController->SetTrackEnable(PS_WALK, true);
 				//}
 			//}
 			break;

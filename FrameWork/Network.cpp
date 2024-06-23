@@ -119,7 +119,7 @@ void CNetwork::SetSendPacket(int packet_id)
 		animation_packet.type = CS_ANIMATION;
 		animation_packet.size = sizeof(animation_packet);
 
-		animation_packet.animation = CPlayerManager::Get_Instance()->Get_Animation();
+		animation_packet.animation = (char)CPlayerManager::Get_Instance()->Get_Animation();
 
 		wsabuf.buf = reinterpret_cast<char*>(&animation_packet);
 		wsabuf.len = animation_packet.size;

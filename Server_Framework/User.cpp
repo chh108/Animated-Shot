@@ -41,15 +41,13 @@ void CUser::send_add_player_packet(int c_id, CUser& cl)
 {
 	SC_ADD_PLAYER_PACKET add_packet;
 	add_packet.id = cl.m_cId;
-	strcpy_s(add_packet.name, m_cName);
+	strcpy_s(add_packet.name, cl.m_cName);
 	add_packet.type = SC_ADD_PLAYER;
 	add_packet.chartype = cl.m_eType;
-	{
-		std::lock_guard<std::mutex> ll{ cl.m_p_lock };
+
 		add_packet.x = cl.x;
 		add_packet.y = cl.y;
 		add_packet.z = cl.z;
-	}
 	add_packet.hp = cl.m_iHp;
 	add_packet.level = cl.m_iLevel;
 	add_packet.size = sizeof(add_packet);
@@ -101,6 +99,7 @@ void CUser::send_animation_packet(int c_id, CUser& cl)
 	p.type = SC_ANIMATION_PLAYER;
 
 	p.animation = cl.m_animation;
+	std::cout << p.id <<", "<< p.animation << std::endl;
 	p.size = sizeof(p);
 
 	do_send(&p);

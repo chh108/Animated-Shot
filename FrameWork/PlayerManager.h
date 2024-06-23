@@ -51,8 +51,8 @@ public:
 	XMFLOAT3 Get_xmf3Up() { return m_xmf3Up; };
 	void Set_xmf3Up(XMFLOAT3 xmf3Up) { m_xmf3Up = xmf3Up; };
 
-	char Get_Animation() { return m_cAnimation; };
-	void Set_Animation(char Animation) { m_cAnimation = Animation; };
+	int Get_Animation() { return m_iAnimation; };
+	void Set_Animation(int Animation) { m_iAnimation = Animation; };
 
 	char Get_Login() { return m_bLogin; };
 	void Set_Login(char Login) { m_bLogin = Login; };
@@ -74,7 +74,7 @@ private:
 	XMFLOAT3	m_fShiftPos;
 	char		m_cType;
 	DWORD		m_wMoveKey;
-	char		m_cAnimation = -1;
+	int			m_iAnimation = -1;
 	bool		m_bLogin = false;
 	bool		m_bColl;
 	int			m_iId;

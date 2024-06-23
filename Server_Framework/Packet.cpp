@@ -35,7 +35,6 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 				if (pl.m_cId == c_id) continue;
 				pl.send_add_player_packet(c_id, clients[c_id]);
 				clients[c_id].send_add_player_packet(pl.m_cId, pl);
-				std::this_thread::sleep_for(std::chrono::seconds(1));
 			}
 		}
 		else
@@ -126,7 +125,7 @@ void CPacket::process_packet(int c_id, char* packet, std::array<CUser, MAX_USER>
 		CS_ANIMATION_PACKET* p = reinterpret_cast<CS_ANIMATION_PACKET*>(packet);
 
 		clients[c_id].m_animation = p->animation;
-
+		std::cout << "¹ÞÀº animaiton : " << clients[c_id].m_animation << std::endl;
 		for (auto& pl : clients) {
 			{
 				std::lock_guard<std::mutex> ll{ pl.m_s_lock };

@@ -31,7 +31,7 @@ public:
 	int					m_iLevel;
 	S_STATE				m_eState;
 	int					m_eType;
-	char				m_animation;
+	int					m_animation;
 
 	DirectX::XMFLOAT3	m_f3Right;
 	DirectX::XMFLOAT3	m_f3Look;

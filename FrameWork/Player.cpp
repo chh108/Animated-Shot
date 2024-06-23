@@ -207,16 +207,15 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fDeceleration > fLength) fDeceleration = fLength;
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));		// false
 
-	if (CNetwork::Get_Instance()->GetLoginPacket())
+
+	if (GetPosition().x != CPlayerManager::Get_Instance()->Get_Pos().x ||
+		GetPosition().y != CPlayerManager::Get_Instance()->Get_Pos().y ||
+		GetPosition().z != CPlayerManager::Get_Instance()->Get_Pos().z)
 	{
-		if (GetPosition().x != CPlayerManager::Get_Instance()->Get_Pos().x ||
-			GetPosition().y != CPlayerManager::Get_Instance()->Get_Pos().y ||
-			GetPosition().z != CPlayerManager::Get_Instance()->Get_Pos().z)
-		{
-			CPlayerManager::Get_Instance()->Set_Pos(GetPosition());        //유월이일
-			CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
-		}
+		CPlayerManager::Get_Instance()->Set_Pos(GetPosition());        //유월이일
+		CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
 	}
+
 
 	if (GetLookVector().x != CPlayerManager::Get_Instance()->Get_xmf3Look().x ||
 		GetLookVector().y != CPlayerManager::Get_Instance()->Get_xmf3Look().y ||
