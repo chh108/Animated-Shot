@@ -175,10 +175,10 @@ void CPlayer::Rotate(float x, float y, float z)
 
 void CPlayer::Update(float fTimeElapsed)
 {
-	if (CPlayerManager::Get_Instance()->Get_Coll())
+	if (CNetwork::Get_Instance()->GetLoginPacket())
 	{
 		SetPosition(CPlayerManager::Get_Instance()->Get_Pos());
-		CPlayerManager::Get_Instance()->Set_Coll(true);
+		CNetwork::Get_Instance()->SetLoginPacket(false);
 	}
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, m_xmf3Gravity);
 	float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
@@ -207,12 +207,15 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fDeceleration > fLength) fDeceleration = fLength;
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));		// false
 
-	if (GetPosition().x != CPlayerManager::Get_Instance()->Get_Pos().x||
-		GetPosition().y != CPlayerManager::Get_Instance()->Get_Pos().y || 
-		GetPosition().z != CPlayerManager::Get_Instance()->Get_Pos().z)
+	if (CNetwork::Get_Instance()->GetLoginPacket())
 	{
-		CPlayerManager::Get_Instance()->Set_Pos(GetPosition());        //유월이일
-		CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
+		if (GetPosition().x != CPlayerManager::Get_Instance()->Get_Pos().x ||
+			GetPosition().y != CPlayerManager::Get_Instance()->Get_Pos().y ||
+			GetPosition().z != CPlayerManager::Get_Instance()->Get_Pos().z)
+		{
+			CPlayerManager::Get_Instance()->Set_Pos(GetPosition());        //유월이일
+			CNetwork::Get_Instance()->SetSendPacket(CS_MOVE);					//HY
+		}
 	}
 
 	if (GetLookVector().x != CPlayerManager::Get_Instance()->Get_xmf3Look().x ||

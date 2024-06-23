@@ -30,6 +30,7 @@ void CUser::send_login_info_packet()
 	p.x = x;
 	p.y = y;
 	p.z = z;
+
 	p.level = m_iLevel;
 	p.hp = m_iHp;
 	p.exp = m_iExp;
@@ -42,7 +43,7 @@ void CUser::send_add_player_packet(int c_id, CUser& cl)
 	add_packet.id = cl.m_cId;
 	strcpy_s(add_packet.name, m_cName);
 	add_packet.type = SC_ADD_PLAYER;
-	add_packet.chartype = m_eType;
+	add_packet.chartype = cl.m_eType;
 	{
 		std::lock_guard<std::mutex> ll{ cl.m_p_lock };
 		add_packet.x = cl.x;

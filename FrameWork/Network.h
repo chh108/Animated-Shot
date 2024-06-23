@@ -15,6 +15,7 @@ private:
 
 	bool m_bAddParty1 = false;
 	bool m_bAddParty2 = false;
+	int	 m_iremain_data;
 public:
 	static CNetwork* Get_Instance(void) {
 		if (!m_pInstance) 

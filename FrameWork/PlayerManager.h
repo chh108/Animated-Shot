@@ -63,6 +63,9 @@ public:
 	bool Get_Coll() { return m_bColl; }
 	void Set_Coll(bool Coll) { m_bColl = Coll; }
 
+	int Get_ID() { return m_iId; }
+	void Set_ID(bool Id) { m_iId = Id; }
+
 private:
 	static CPlayerManager* m_pInstance;
 
@@ -74,7 +77,7 @@ private:
 	char		m_cAnimation = -1;
 	bool		m_bLogin = false;
 	bool		m_bColl;
-
+	int			m_iId;
 	XMFLOAT3	m_xmf3Look, m_xmf3Right, m_xmf3Up;
 	XMFLOAT3	m_fScale;
 };

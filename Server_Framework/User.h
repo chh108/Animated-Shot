@@ -37,4 +37,3 @@ public:
 	DirectX::XMFLOAT3	m_f3Look;
 	DirectX::XMFLOAT3	m_f3Up;
 };
-

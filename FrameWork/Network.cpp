@@ -141,9 +141,9 @@ void CNetwork::RecvPacket()
 	DWORD recv_flag = 0;
 	DWORD recv_byte;
 	WSABUF wsabuf;
-	char send_buf[BUF_SIZE];
+	char recv_buf[BUF_SIZE];
 	wsabuf.len = BUF_SIZE;
-	wsabuf.buf = send_buf;
+	wsabuf.buf = recv_buf;
 	int ret = WSARecv(m_clsocket, &wsabuf, 1, &recv_byte, &recv_flag, 0, 0);
 
 	if (ret == SOCKET_ERROR)
@@ -157,9 +157,21 @@ void CNetwork::RecvPacket()
 	}
 	else
 	{
-		if (recv_byte > 0)
-		{
-			ProcessPacket(send_buf);
+		int remain_data = recv_byte + m_iremain_data;
+		char* p = recv_buf;
+		while (remain_data > 0) {
+			char packet_size = p[0];
+			if (packet_size <= remain_data) {
+				ProcessPacket(p);
+				p = p + packet_size;
+				remain_data = remain_data - packet_size;
+			}
+			else break;
+		}
+		m_iremain_data = remain_data;
+		if (remain_data > 0) {
+			memcpy(recv_buf, p, remain_data);
+			recv_byte = 0;
 		}
 	}
 }
@@ -181,6 +193,7 @@ void CNetwork::ProcessPacket(char* packet)
 		CPlayerManager::Get_Instance()->Set_Pos(XMFLOAT3(p->x, p->y, p->z));
 		CPlayerManager::Get_Instance()->Set_Type(p->chartype);
 		CPlayerManager::Get_Instance()->Set_Login(true);
+		CPlayerManager::Get_Instance()->Set_ID(p->id);
 		m_bLoginPacket = true;
 		break;
 	}
@@ -188,7 +201,7 @@ void CNetwork::ProcessPacket(char* packet)
 	case SC_ADD_PLAYER:
 	{
 		SC_ADD_PLAYER_PACKET* p = reinterpret_cast<SC_ADD_PLAYER_PACKET*>(packet);
-		if (CPartyManager::Get_Instance()->Get_Party1Type() == -1)
+		if (CPlayerManager::Get_Instance()->Get_ID()!= p->id)
 		{
 			CPartyManager::Get_Instance()->Set_Party1Name(p->name);
 			CPartyManager::Get_Instance()->Set_Party1Pos(XMFLOAT3(p->x, p->y, p->z));

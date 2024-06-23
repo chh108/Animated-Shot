@@ -45,7 +45,7 @@ bool CDBConnection::Connect()
 	m_retcode = SQLConnect(m_hdbc, (SQLWCHAR*)L"AnimatedShot_DB", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
 	m_retcode = SQLAllocHandle(SQL_HANDLE_STMT, m_hdbc, &m_hstmt);
 	
-	m_retcode = SQLExecDirect(m_hstmt, (SQLWCHAR*)L"SELECT user_id, user_name, user_type, user_level, user_hp, user_exp, user_posX, user_posY, user_posZ FROM [Animated_Shot].[dbo].[user_table]", SQL_NTS);
+	m_retcode = SQLExecDirect(m_hstmt, (SQLWCHAR*)L"SELECT _id, _name, _type, _hp, _exp, _posX, _posY, _posZ FROM [Animated_Shot].[dbo].[_user_table]", SQL_NTS);
 	//m_retcode = SQLExecDirect(m_hstmt, 
 		//(SQLWCHAR*)L"SELECT user_id, user_name, user_type, user_level, user_hp, user_exp, user_posX, user_posY, user_posZ, user_collisionX, user_collisionY, user_collisionZ, user_collisiontype FROM user_table", SQL_NTS);
 	if (m_retcode == SQL_SUCCESS || m_retcode == SQL_SUCCESS_WITH_INFO)
@@ -92,37 +92,24 @@ bool CDBConnection::BindCol()
 	m_retcode = SQLBindCol(m_hstmt, 1, SQL_INTEGER, &dId, 0, &cbId);
 	m_retcode = SQLBindCol(m_hstmt, 2, SQL_C_WCHAR, szName, sizeof(szName), &cbName);
 	m_retcode = SQLBindCol(m_hstmt, 3, SQL_C_SHORT, &dType, 0, &cbType);
-	m_retcode = SQLBindCol(m_hstmt, 4, SQL_C_SHORT, &dLevel, 0, &cbLevel);
-	m_retcode = SQLBindCol(m_hstmt, 5, SQL_C_SHORT, &dHp, 0, &cbHp);
-	m_retcode = SQLBindCol(m_hstmt, 6, SQL_C_SHORT, &dExp, 0, &cbExp);
-	m_retcode = SQLBindCol(m_hstmt, 7, SQL_C_FLOAT, &dPosX, sizeof(SQLFLOAT), &cbPosX);
-	if (m_retcode != SQL_SUCCESS && m_retcode != SQL_SUCCESS_WITH_INFO) 
-		std::cout << "PosX error" << std::endl;
-	m_retcode = SQLBindCol(m_hstmt, 8, SQL_C_FLOAT, &dPosY, sizeof(SQLFLOAT), &cbPosY);
-	if (m_retcode != SQL_SUCCESS && m_retcode != SQL_SUCCESS_WITH_INFO)
-		std::cout << "PosY error" << std::endl;
-	m_retcode = SQLBindCol(m_hstmt, 9, SQL_C_FLOAT, &dPosZ, sizeof(SQLFLOAT), &cbPosZ);
-	if (m_retcode != SQL_SUCCESS && m_retcode != SQL_SUCCESS_WITH_INFO)
-		std::cout << "PosZ error" << std::endl;
-	//m_retcode = SQLBindCol(m_hstmt, 10, SQL_C_FLOAT, &dColPosX, 60, &cbColPosX);
-	//m_retcode = SQLBindCol(m_hstmt, 11, SQL_C_FLOAT, &dColPosY, 60, &cbColPosY);
-	//m_retcode = SQLBindCol(m_hstmt, 12, SQL_C_FLOAT, &dColPosZ, 60, &cbColPosZ);
-	//m_retcode = SQLBindCol(m_hstmt, 13, SQL_C_SHORT, &dColType, 60, &cbColType);
-	if (m_retcode != SQL_SUCCESS && m_retcode != SQL_SUCCESS_WITH_INFO)
-		return false;
+	m_retcode = SQLBindCol(m_hstmt, 4, SQL_C_SHORT, &dHp, 0, &cbHp);
+	m_retcode = SQLBindCol(m_hstmt, 5, SQL_C_SHORT, &dExp, 0, &cbExp);
+	m_retcode = SQLBindCol(m_hstmt, 6, SQL_C_SHORT, &dPosX, 0, &cbPosX);
+	m_retcode = SQLBindCol(m_hstmt, 7, SQL_C_SHORT, &dPosY, 0, &cbPosY);
+	m_retcode = SQLBindCol(m_hstmt, 8, SQL_C_SHORT, &dPosZ, 0, &cbPosZ);
 	return true;
 }
 
 void CDBConnection::PrintInfo(int num)
 {
-	wprintf(L"%d: %6d %20s %3d %3d %3d %3d %f %f %f\n", 
-		num + 1, dId, szName, dType, dLevel, dHp, dExp, dPosX, dPosY, dPosZ/*, dColPosX, dColPosY, dColPosZ, dColType*/);
+	wprintf(L"%d: %6d %20s %3d %3d %3d %d %d %d\n", 
+		num + 1, dId, szName, dType, dHp, dExp, dPosX, dPosY, dPosZ);
 }
 
 bool CDBConnection::Login(TCHAR* Name, CUser& user)
 {
 	std::lock_guard<std::mutex> lock(user.m_p_lock);
-	m_retcode = SQLExecDirect(m_hstmt, (SQLWCHAR*)L"SELECT user_id, user_name, user_type, user_level, user_hp, user_exp, user_posX, user_posY, user_posZ FROM [Animated_Shot].[dbo].[user_table]", SQL_NTS);
+	m_retcode = SQLExecDirect(m_hstmt, (SQLWCHAR*)L"SELECT _id, _name, _type, _hp, _exp, _posX, _posY, _posZ FROM [Animated_Shot].[dbo].[_user_table]", SQL_NTS);
 	if (m_retcode != SQL_SUCCESS && m_retcode != SQL_SUCCESS_WITH_INFO)
 		return false;
 	if (!BindCol())
