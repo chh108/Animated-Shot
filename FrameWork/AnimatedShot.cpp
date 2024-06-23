@@ -126,10 +126,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-
 	switch (message)
 	{
 	case WM_SIZE:
+		// 창 크기 변경 시 GameFramework의 OnResize 호출
+		gGameFramework.OnResize(LOWORD(lParam), HIWORD(lParam));
+		break;
 	case WM_LBUTTONDOWN:
 	case WM_LBUTTONUP:
 	case WM_RBUTTONDOWN:
@@ -148,7 +150,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			::DialogBox(ghAppInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
 		case IDC_BUTTON_LOGIN:
-			// 로그인 버튼 클릭 시 처리
 			GetWindowText(hEditUserID, szUserID, MAX_LOADSTRING);  // 에디트 박스에서 사용자 ID 읽기
 			CNetwork::Get_Instance()->SetUserID(szUserID);
 			CNetwork::Get_Instance()->SetSendPacket(CS_LOGIN);
@@ -176,7 +177,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		CNetwork::Get_Instance()->RecvPacket();
 		return(::DefWindowProc(hWnd, message, wParam, lParam));
 	}
-
 
 	return 0;
 }
